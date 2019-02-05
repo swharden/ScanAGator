@@ -77,6 +77,7 @@ namespace ScanAGator
 
             // all the parsing and data loading is handled here
             lsFolder = new LineScanFolder(pathLinescan);
+            tbInformation.Text = lsFolder.log.Replace("\n", "\r\n");
             if (!lsFolder.IsValidLinescan)
             {
                 SetStatus($"Error - Invalid linescan folder: {folderName}");
@@ -86,7 +87,7 @@ namespace ScanAGator
             // by this point everything is valid, so just populate the GUI based on it.
             SetStatus($"Successfully loaded linescan folder: {folderName}");
             Text = $"Scan-A-Gator - {folderName}";
-            pbRef.BackgroundImage = lsFolder.GetRepresentativeBitmap();
+            pbRef.BackgroundImage = lsFolder.BmpReference;
         }
 
         public void ClearLinescan()
@@ -136,6 +137,14 @@ namespace ScanAGator
         private void btnFolderRefresh_Click(object sender, EventArgs e)
         {
             SelectFolder(PathFolder);
+        }
+
+        private void lbFolders_DoubleClick(object sender, EventArgs e)
+        {
+            if (lbFolders.SelectedIndex < 0)
+                return;
+            string pathLinescan = System.IO.Path.Combine(PathFolder, lbFolders.SelectedItem.ToString());
+            System.Diagnostics.Process.Start("explorer.exe", pathLinescan);
         }
     }
 }

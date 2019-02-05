@@ -89,9 +89,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 394);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 593);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1023, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(761, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -108,7 +108,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1023, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(761, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -175,9 +175,10 @@
             this.lbFolders.FormattingEnabled = true;
             this.lbFolders.Location = new System.Drawing.Point(12, 27);
             this.lbFolders.Name = "lbFolders";
-            this.lbFolders.Size = new System.Drawing.Size(199, 329);
+            this.lbFolders.Size = new System.Drawing.Size(199, 524);
             this.lbFolders.TabIndex = 3;
             this.lbFolders.SelectedIndexChanged += new System.EventHandler(this.lbFolders_SelectedIndexChanged);
+            this.lbFolders.DoubleClick += new System.EventHandler(this.lbFolders_DoubleClick);
             // 
             // pbLinescan
             // 
@@ -222,9 +223,9 @@
             // groupBox5
             // 
             this.groupBox5.Controls.Add(this.pbAnalysis);
-            this.groupBox5.Location = new System.Drawing.Point(753, 112);
+            this.groupBox5.Location = new System.Drawing.Point(217, 394);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(262, 276);
+            this.groupBox5.Size = new System.Drawing.Size(262, 186);
             this.groupBox5.TabIndex = 8;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Analysis (d[G/R])";
@@ -232,9 +233,10 @@
             // pbAnalysis
             // 
             this.pbAnalysis.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pbAnalysis.Location = new System.Drawing.Point(6, 19);
+            this.pbAnalysis.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pbAnalysis.Location = new System.Drawing.Point(3, 16);
             this.pbAnalysis.Name = "pbAnalysis";
-            this.pbAnalysis.Size = new System.Drawing.Size(250, 250);
+            this.pbAnalysis.Size = new System.Drawing.Size(256, 167);
             this.pbAnalysis.TabIndex = 5;
             this.pbAnalysis.TabStop = false;
             // 
@@ -441,9 +443,9 @@
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.tbInformation);
-            this.groupBox7.Location = new System.Drawing.Point(753, 27);
+            this.groupBox7.Location = new System.Drawing.Point(485, 394);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(262, 79);
+            this.groupBox7.Size = new System.Drawing.Size(262, 186);
             this.groupBox7.TabIndex = 22;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Information";
@@ -453,15 +455,18 @@
             this.tbInformation.BackColor = System.Drawing.SystemColors.Control;
             this.tbInformation.BorderStyle = System.Windows.Forms.BorderStyle.None;
             this.tbInformation.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tbInformation.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.tbInformation.Location = new System.Drawing.Point(3, 16);
             this.tbInformation.Multiline = true;
             this.tbInformation.Name = "tbInformation";
-            this.tbInformation.Size = new System.Drawing.Size(256, 60);
+            this.tbInformation.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbInformation.Size = new System.Drawing.Size(256, 167);
             this.tbInformation.TabIndex = 0;
+            this.tbInformation.WordWrap = false;
             // 
             // btnFolderSelect
             // 
-            this.btnFolderSelect.Location = new System.Drawing.Point(12, 365);
+            this.btnFolderSelect.Location = new System.Drawing.Point(12, 557);
             this.btnFolderSelect.Name = "btnFolderSelect";
             this.btnFolderSelect.Size = new System.Drawing.Size(100, 23);
             this.btnFolderSelect.TabIndex = 23;
@@ -471,7 +476,7 @@
             // 
             // btnFolderRefresh
             // 
-            this.btnFolderRefresh.Location = new System.Drawing.Point(118, 365);
+            this.btnFolderRefresh.Location = new System.Drawing.Point(118, 557);
             this.btnFolderRefresh.Name = "btnFolderRefresh";
             this.btnFolderRefresh.Size = new System.Drawing.Size(93, 23);
             this.btnFolderRefresh.TabIndex = 24;
@@ -483,14 +488,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1023, 416);
+            this.ClientSize = new System.Drawing.Size(761, 615);
             this.Controls.Add(this.btnFolderRefresh);
+            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.btnFolderSelect);
             this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.lbFolders);
