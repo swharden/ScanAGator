@@ -1,0 +1,71 @@
+[Main]
+Acquisition type=LINESCAN
+Bit depth=12
+PMT 1 label=Ch 1 HV
+PMT 1 gain=650
+PMT 2 label=Ch 2 HV
+PMT 2 gain=825
+Channel 1 active=True
+Channel 2 active=True
+Channel 3 active=False
+Channel 4 active=False
+Number of lasers=1
+Laser 1=15
+positionCurrent_XAxis=-55.9375
+positionCurrent_YAxis=-131.09375
+positionCurrent_ZAxis=82.31875
+Dwell time (us)=7.2
+File type=.TIF
+Frame period (us)=498419.8
+Lines per frame=256
+Number of frames to average=1
+Optical zoom=4.00
+Pixels per line=256
+Scanline period (us)=2363.5
+Scanline time (us)=1843.2
+System=Prairie View
+Version=4.3.2.13
+X Microns Per Pixel=5.49
+Y Microns Per Pixel=5.49
+Objective Lens=10X Plan N
+
+[File Info]
+Base name=LineScan-03292014-1525-552_Ch2
+Source=LineScan-03292014-1525-552-Cycle00001_Ch2Source.tif
+VClamp Data=False
+Arbitrary Shape=False
+Reference=References\LineScan-03292014-1525-552-Cycle00001-LinescanReference.tif
+
+[Image Orientation]
+XPolarity=1
+YPolarity=1
+Source Integration Period=0.007200
+Two Photon=TRUE
+
+[Profile Info]
+[Line Info]
+Number Lines=1
+Line1 Pos=138
+Line1 Image=LineScan-03292014-1525-552_Cycle00001_CurrentSettings_Ch2_000001.tif
+Line1 Data=LineScan-03292014-1525-552_Cycle00001_Data_Line000001.prm
+Line1 Source=LineScan-03292014-1525-552-Cycle00001_Ch2Source.tif
+Line1 Reference=References\LineScan-03292014-1525-552-Cycle00001-LinescanReference.tif
+Line1 Start Pixel=76
+Line1 Frame Start Delay=1.549938
+Line1 Inter-Line Time=4.727076
+Line1 Line Time=0.813600
+Line1 Sync Z Enabled=False
+Line1 Save Images=False
+Line1 Piezo Min Voltage=0.0000
+Line1 Piezo Min Voltage=0.0000
+Line1 Piezo Min Position=0.0000
+Line1 Piezo Max Position=0.0000
+Line1 Piezo Z Start Voltage=0.0000
+Line1 Piezo Z Stop Voltage=0.0000
+Line1 Piezo Z Start Position=0.0000
+Line1 Piezo Z Stop Position=0.0000
+Line1 Galvo Multiplication Factor=1.3333
+Line1 Line Start Pixel Y=138
+Line1 Line Start Pixel X=76
+Line1 Line Stop Pixel X=188
+Line1 Line Length (um)=155.065

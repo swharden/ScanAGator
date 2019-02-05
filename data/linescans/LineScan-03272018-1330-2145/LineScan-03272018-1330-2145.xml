@@ -1,0 +1,92 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PVScan version="5.3.64.400" date="3/27/2018 4:44:28 PM" notes="">
+  <PVStateShard>
+    <PVStateValue key="activeMode" value="Galvo" />
+    <PVStateValue key="bitDepth" value="12" />
+    <PVStateValue key="daq">
+      <IndexedValue index="0" value="Gain10" description="10x" />
+      <IndexedValue index="1" value="Gain10" description="10x" />
+      <IndexedValue index="2" value="Gain10" description="10x" />
+      <IndexedValue index="3" value="Gain10" description="10x" />
+    </PVStateValue>
+    <PVStateValue key="dwellTime" value="14.4" />
+    <PVStateValue key="framePeriod" value="1.02184109702334" />
+    <PVStateValue key="interlacedScanTrackCount" value="0" />
+    <PVStateValue key="laserPower">
+      <IndexedValue index="0" value="1" description="Pockels" />
+    </PVStateValue>
+    <PVStateValue key="linesPerFrame" value="256" />
+    <PVStateValue key="maxVoltage">
+      <IndexedValue index="XAxis" value="1.5" />
+      <IndexedValue index="YAxis" value="-1.5" />
+    </PVStateValue>
+    <PVStateValue key="micronsPerPixel">
+      <IndexedValue index="XAxis" value="0.294117647058823" />
+      <IndexedValue index="YAxis" value="0.294117647058823" />
+    </PVStateValue>
+    <PVStateValue key="minVoltage">
+      <IndexedValue index="XAxis" value="-1.5" />
+      <IndexedValue index="YAxis" value="1.5" />
+    </PVStateValue>
+    <PVStateValue key="objectiveLens" value="40x" />
+    <PVStateValue key="objectiveLensMag" value="40" />
+    <PVStateValue key="objectiveLensNA" value="0.8" />
+    <PVStateValue key="opticalZoom" value="4" />
+    <PVStateValue key="pixelsPerLine" value="256" />
+    <PVStateValue key="pmtGain">
+      <IndexedValue index="0" value="605" description="Ch 1 HV" />
+      <IndexedValue index="1" value="825" description="Ch 2 HV" />
+    </PVStateValue>
+    <PVStateValue key="positionCurrent">
+      <SubindexedValues index="XAxis">
+        <SubindexedValue subindex="0" value="5508.25" />
+      </SubindexedValues>
+      <SubindexedValues index="YAxis">
+        <SubindexedValue subindex="0" value="-246.5" />
+      </SubindexedValues>
+      <SubindexedValues index="ZAxis">
+        <SubindexedValue subindex="0" value="-4381.73" />
+      </SubindexedValues>
+    </PVStateValue>
+    <PVStateValue key="preampFilter" value="Filter750KHz" description="0.75 MHz" />
+    <PVStateValue key="preampGain">
+      <SubindexedValues index="0">
+        <SubindexedValue subindex="0" value="7.843137255" description="Ch1" />
+        <SubindexedValue subindex="1" value="0" description="Ch2" />
+      </SubindexedValues>
+    </PVStateValue>
+    <PVStateValue key="preampOffset">
+      <SubindexedValues index="0">
+        <SubindexedValue subindex="0" value="0" description="Ch1" />
+        <SubindexedValue subindex="1" value="0" description="Ch2" />
+      </SubindexedValues>
+    </PVStateValue>
+    <PVStateValue key="rastersPerFrame" value="1" />
+    <PVStateValue key="rotation" value="0" />
+    <PVStateValue key="scanLinePeriod" value="0.00397603539697798" />
+    <PVStateValue key="useInterlacedScanPattern" value="False" />
+    <PVStateValue key="xYStageGridIndex" value="-1" />
+    <PVStateValue key="xYStageGridXIndex" value="-1" />
+    <PVStateValue key="xYStageGridYIndex" value="-1" />
+    <PVStateValue key="yAspectExpansion" value="1" />
+    <PVStateValue key="zDevice" value="0" />
+  </PVStateShard>
+  <Sequence type="Linescan" cycle="1" time="16:44:28.2581654" xYStageGridNumXPositions="0" xYStageGridNumYPositions="0" xYStageGridOverlapPercentage="10" xYStageGridXOverlap="10" xYStageGridYOverlap="10">
+    <PVLinescanSynchZ enabled="False" saveImages="False" piezoMinVoltage="0" piezoMaxVoltage="0" piezoMinPosition="0" piezoMaxPosition="0" piezoZStartVoltage="0" piezoZStopVoltage="0" piezoZStartPosition="0" piezoZStopPosition="0" galvoMultiplicationFactor="1.3333" />
+    <PVLinescanDefinition scanContinuous="False" mode="straightLine" SourcePixelsPerLine="256" SourceLinesPerFrame="256">
+      <Line startPixelY="91" startPixelX="95" stopPixelX="164" lineLength="20.5882352941176" />
+      <PVLine startPixelY="0.357045143638851" startPixelX="0.372093023255814" stopPixelX="0.641586867305062" />
+    </PVLinescanDefinition>
+    <PVStateShard />
+    <Frame relativeTime="0" absoluteTime="30.7980000000007" index="1" parameterSet="CurrentSettings">
+      <File channel="1" channelName="Ch1" filename="LineScan-03272018-1330-2145_Cycle00001_Ch1_000001.ome.tif" source="LineScan-03272018-1330-2145-Cycle00001_Ch1Source.tif" />
+      <File channel="2" channelName="Ch2" filename="LineScan-03272018-1330-2145_Cycle00001_Ch2_000001.ome.tif" source="LineScan-03272018-1330-2145-Cycle00001_Ch2Source.tif" />
+      <PVStateShard>
+        <PVStateValue key="framePeriod" value="3.97463359866779" />
+        <PVStateValue key="linesPerFrame" value="1000" />
+        <PVStateValue key="pixelsPerLine" value="70" />
+        <PVStateValue key="scanLinePeriod" value="0.0119239007960034" />
+      </PVStateShard>
+    </Frame>
+  </Sequence>
+</PVScan>
