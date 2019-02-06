@@ -45,7 +45,6 @@
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.pbRef = new System.Windows.Forms.PictureBox();
             this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.pbAnalysis = new System.Windows.Forms.PictureBox();
             this.groupBox6 = new System.Windows.Forms.GroupBox();
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
@@ -66,6 +65,7 @@
             this.tbInformation = new System.Windows.Forms.TextBox();
             this.btnFolderSelect = new System.Windows.Forms.Button();
             this.btnFolderRefresh = new System.Windows.Forms.Button();
+            this.scottPlotUC1 = new ScottPlotDev2.ScottPlotUC();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLinescan)).BeginInit();
@@ -73,7 +73,6 @@
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRef)).BeginInit();
             this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pbAnalysis)).BeginInit();
             this.groupBox6.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).BeginInit();
             this.groupBox2.SuspendLayout();
@@ -89,7 +88,7 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 593);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 722);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(761, 22);
             this.statusStrip1.TabIndex = 0;
@@ -198,7 +197,7 @@
             this.groupBox3.Size = new System.Drawing.Size(262, 276);
             this.groupBox3.TabIndex = 6;
             this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Linescan (G/R)";
+            this.groupBox3.Text = "Linescan (G)";
             // 
             // groupBox4
             // 
@@ -222,23 +221,13 @@
             // 
             // groupBox5
             // 
-            this.groupBox5.Controls.Add(this.pbAnalysis);
+            this.groupBox5.Controls.Add(this.scottPlotUC1);
             this.groupBox5.Location = new System.Drawing.Point(217, 394);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(262, 186);
+            this.groupBox5.Size = new System.Drawing.Size(524, 321);
             this.groupBox5.TabIndex = 8;
             this.groupBox5.TabStop = false;
             this.groupBox5.Text = "Analysis (d[G/R])";
-            // 
-            // pbAnalysis
-            // 
-            this.pbAnalysis.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(64)))), ((int)(((byte)(64)))));
-            this.pbAnalysis.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.pbAnalysis.Location = new System.Drawing.Point(3, 16);
-            this.pbAnalysis.Name = "pbAnalysis";
-            this.pbAnalysis.Size = new System.Drawing.Size(256, 167);
-            this.pbAnalysis.TabIndex = 5;
-            this.pbAnalysis.TabStop = false;
             // 
             // groupBox6
             // 
@@ -443,9 +432,9 @@
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.tbInformation);
-            this.groupBox7.Location = new System.Drawing.Point(485, 394);
+            this.groupBox7.Location = new System.Drawing.Point(12, 586);
             this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(262, 186);
+            this.groupBox7.Size = new System.Drawing.Size(199, 129);
             this.groupBox7.TabIndex = 22;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Information";
@@ -460,7 +449,7 @@
             this.tbInformation.Multiline = true;
             this.tbInformation.Name = "tbInformation";
             this.tbInformation.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.tbInformation.Size = new System.Drawing.Size(256, 167);
+            this.tbInformation.Size = new System.Drawing.Size(193, 110);
             this.tbInformation.TabIndex = 0;
             this.tbInformation.WordWrap = false;
             // 
@@ -484,11 +473,20 @@
             this.btnFolderRefresh.UseVisualStyleBackColor = true;
             this.btnFolderRefresh.Click += new System.EventHandler(this.btnFolderRefresh_Click);
             // 
+            // scottPlotUC1
+            // 
+            this.scottPlotUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.scottPlotUC1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.scottPlotUC1.Location = new System.Drawing.Point(3, 16);
+            this.scottPlotUC1.Name = "scottPlotUC1";
+            this.scottPlotUC1.Size = new System.Drawing.Size(518, 302);
+            this.scottPlotUC1.TabIndex = 0;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(761, 615);
+            this.ClientSize = new System.Drawing.Size(761, 744);
             this.Controls.Add(this.btnFolderRefresh);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.btnFolderSelect);
@@ -514,7 +512,6 @@
             this.groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbRef)).EndInit();
             this.groupBox5.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.pbAnalysis)).EndInit();
             this.groupBox6.ResumeLayout(false);
             this.groupBox6.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).EndInit();
@@ -551,7 +548,6 @@
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.PictureBox pbRef;
         private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.PictureBox pbAnalysis;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.NumericUpDown numericUpDown7;
@@ -572,6 +568,7 @@
         private System.Windows.Forms.TextBox tbInformation;
         private System.Windows.Forms.Button btnFolderSelect;
         private System.Windows.Forms.Button btnFolderRefresh;
+        private ScottPlotDev2.ScottPlotUC scottPlotUC1;
     }
 }
 

@@ -88,6 +88,13 @@ namespace ScanAGator
             SetStatus($"Successfully loaded linescan folder: {folderName}");
             Text = $"Scan-A-Gator - {folderName}";
             pbRef.BackgroundImage = lsFolder.BmpReference;
+
+            // show analysis
+            pbLinescan.BackgroundImage = lsFolder.BmpG;
+            scottPlotUC1.plt.data.Clear();
+            scottPlotUC1.plt.data.AddSignal(lsFolder.dataGoR, 1);
+            scottPlotUC1.plt.settings.AxisFit(0, .1);
+            scottPlotUC1.Render();
         }
 
         public void ClearLinescan()
@@ -103,6 +110,14 @@ namespace ScanAGator
         private void Form1_Load(object sender, EventArgs e)
         {
             SelectFolder("../../../../data/linescans/");
+
+            scottPlotUC1.plt.settings.title = "";
+            scottPlotUC1.plt.settings.axisLabelY = "G/R";
+            scottPlotUC1.plt.settings.axisLabelX = "Frame Number";
+            scottPlotUC1.plt.settings.figureBgColor = SystemColors.Control;
+            //scottPlotUC1.plt.settings.SetDataPadding(40, 17, 40, 10);
+            scottPlotUC1.Render();
+
         }
 
         private void documentationToolStripMenuItem_Click(object sender, EventArgs e)

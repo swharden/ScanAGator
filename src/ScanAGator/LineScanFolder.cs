@@ -22,7 +22,6 @@ namespace ScanAGator
 
         string[] DataImagePathsR;
         string[] DataImagePathsG;
-        double[] DataRatio;
 
         string FilenameTagR = "Ch1";
         string FilenameTagG = "Ch2";
@@ -30,6 +29,7 @@ namespace ScanAGator
         public bool IsValidLinescan { get; private set; }
         public string log { get; private set; }
         public Bitmap BmpReference { get; private set; }
+        public Bitmap BmpR, BmpG;
 
         public LineScanFolder(string pathFolder)
         {
@@ -66,6 +66,7 @@ namespace ScanAGator
         {
             // scan reference images
             RefImagePaths = System.IO.Directory.GetFiles(PathFolderRefs, "*.tif");
+            Array.Sort(RefImagePaths);
             if (RefImagePaths.Length == 0)
                 Error("No reference images");
             else
@@ -74,8 +75,13 @@ namespace ScanAGator
             // identify a representative reference image and load it as a bitmap
             RefPrimaryPath = System.IO.Path.Combine(PathFolderData, RefImagePaths[0]);
             foreach (string imagePath in RefImagePaths)
+            {
                 if (imagePath.Contains("8bit"))
+                {
                     RefPrimaryPath = imagePath;
+                    break;
+                }
+            }
             BmpReference = new Bitmap(RefPrimaryPath);
             Log($"Primary refrence image: {RefPrimaryPath}");
 
@@ -117,72 +123,36 @@ namespace ScanAGator
             // TODO: XML parsing to get linescan time
         }
 
-        private int[] LoadImageTiff(string path)
-        {
-
-            // open a file stream and keep it open until we're done reading the file
-            System.IO.Stream stream = new System.IO.FileStream(path, System.IO.FileMode.Open, System.IO.FileAccess.Read, System.IO.FileShare.Read);
-
-            TiffBitmapDecoder decoder = new TiffBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-
-            // access information about the image
-            int imageFrames = decoder.Frames.Count;
-            BitmapSource bitmapSource = decoder.Frames[0];
-            int sourceImageDepth = bitmapSource.Format.BitsPerPixel;
-            int bytesPerPixel = sourceImageDepth / 8;
-            Size imageSize = new Size(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-            int pixelCount = imageSize.Width * imageSize.Height;
-
-            // fill a byte array with source data bytes from the file
-            int imageByteCount = pixelCount * bytesPerPixel;
-            byte[] bytesSource = new byte[imageByteCount];
-            bitmapSource.CopyPixels(bytesSource, imageSize.Width * bytesPerPixel, 0);
-
-            // we can now close the original file
-            stream.Dispose();
-
-            // now convert the byte array to an int array (with 1 int per pixel)
-            int[] valuesSource = new int[pixelCount];
-            for (int i = 0; i < valuesSource.Length; i++)
-            {
-                // this loop is great because it works on any number of bytes per pixel
-                int bytePosition = i * bytesPerPixel;
-                for (int byteNumber = 0; byteNumber < bytesPerPixel; byteNumber++)
-                {
-                    valuesSource[i] += bytesSource[bytePosition + byteNumber] << (byteNumber * 8);
-                }
-            }
-
-            // TODO: input bytes are padded such that stride is a multiple of 4 bytes, so trim that off
-
-            return valuesSource;
-        }
-
-        double[] CalculateGoR(int[] dataR, int[] dataG)
-        {
-            double[] dataGoR = new double[dataR.Length];
-            for (int i = 0; i < dataGoR.Length; i++)
-                dataGoR[i] = (double)dataG[i] / (double)dataR[i];
-            return dataGoR;
-        }
+        public double[] dataG;
+        public double[] dataR;
+        public double[] dataGoR;
 
         public void LoadData()
         {
             // TODO: image averaging
 
-            int[] dataR = LoadImageTiff(DataImagePathsR[0]);
-            int[] dataG = LoadImageTiff(DataImagePathsG[0]);
-            if (dataR.Length != dataG.Length)
+            ImageData imR = new ImageData(DataImagePathsR[0]);
+            ImageData imG = new ImageData(DataImagePathsG[0]);
+
+            if (imR.data.Length != imG.data.Length)
             {
                 Error("red and green images are different sizes");
                 return;
             }
-            Log($"Red channel min={dataR.Min()}, max={dataR.Max()}");
 
-            // TODO: background subtration of original images
+            imR.AutoBrightness();
+            dataR = imR.AverageHorizontally();
+            BmpR = imR.GetBitmap();
 
-            double[] dataGoR = CalculateGoR(dataR, dataG);
-            Log($"GoR min={Math.Round(dataGoR.Min(), 2)}, max={Math.Round(dataGoR.Max(), 2)}");
+            imG.AutoBrightness();
+            dataG = imG.AverageHorizontally();
+            BmpG = imG.GetBitmap();
+
+            dataGoR = new double[dataG.Length];
+            for (int i = 0; i < dataG.Length; i++)
+                dataGoR[i] = dataG[i] / dataR[i];
+
+            //Log($"GoR min={Math.Round(dataGoR.Min(), 2)}, max={Math.Round(dataGoR.Max(), 2)}");
         }
     }
 }
