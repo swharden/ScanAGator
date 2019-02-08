@@ -88,13 +88,94 @@ namespace ScanAGator
             SetStatus($"Successfully loaded linescan folder: {folderName}");
             Text = $"Scan-A-Gator - {folderName}";
             pbRef.BackgroundImage = lsFolder.BmpReference;
+            UpdateGuiFromLinescan();
+        }
 
-            // show analysis
-            pbLinescan.BackgroundImage = lsFolder.BmpG;
+
+        public Bitmap BitmapAddLineVert(Bitmap bmp, int xPixel)
+        {
+            Pen pen = new Pen(new SolidBrush(Color.Yellow));
+            Graphics gfx = Graphics.FromImage(bmp);
+            gfx.DrawLine(pen, new Point(xPixel, 0), new Point(xPixel, bmp.Height));
+            return bmp;
+        }
+
+        public Bitmap BitmapAddLineHoriz(Bitmap bmp, int yPixel)
+        {
+            Pen pen = new Pen(new SolidBrush(Color.Yellow));
+            Graphics gfx = Graphics.FromImage(bmp);
+            gfx.DrawLine(pen, new Point(0, yPixel), new Point(bmp.Width, yPixel));
+            return bmp;
+        }
+
+        public void UpdateLinescanFromGui()
+        {
+            lsFolder.baselinePixel1 = (int)nudBaseline1.Value;
+            lsFolder.baselinePixel2 = (int)nudBaseline2.Value;
+            lsFolder.baselineStructure1 = (int)nudStructure1.Value;
+            lsFolder.baselineStructure2 = (int)nudStructure2.Value;
+
+            UpdateGuiFromLinescan();
+        }
+
+        public void UpdateGuiFromLinescan()
+        {
+            if (lsFolder == null)
+                return;
+
+            // TODO: use XY not signal
+            double sampleRate = 1;
+
+            // update ScottPlot
             scottPlotUC1.plt.data.Clear();
-            scottPlotUC1.plt.data.AddSignal(lsFolder.dataGoR, 1);
+            Bitmap bmpData = null;
+            if (calcDeltaGoR.Checked)
+            {
+                scottPlotUC1.plt.data.AddSignal(lsFolder.dataDeltaGoR, sampleRate);
+                scottPlotUC1.plt.data.AddHorizLine(0, 2, Color.Black);
+                scottPlotUC1.plt.settings.axisLabelY = "Delta G/R (%)";
+                bmpData = new Bitmap(lsFolder.bmpDataG);
+                gbLinescan.Text = "Green Image (brightness-adjusted)";
+            }
+            else if (calcGoR.Checked)
+            {
+                scottPlotUC1.plt.data.AddSignal(lsFolder.dataGoR, sampleRate);
+                scottPlotUC1.plt.settings.axisLabelY = "Raw G/R (%)";
+                bmpData = new Bitmap(lsFolder.bmpDataG);
+                gbLinescan.Text = "Green Image (brightness-adjusted)";
+            }
+            else if (calcG.Checked)
+            {
+                scottPlotUC1.plt.data.AddSignal(lsFolder.dataG, sampleRate, lineColor: Color.Green);
+                scottPlotUC1.plt.settings.axisLabelY = "Green (AFU)";
+                bmpData = new Bitmap(lsFolder.bmpDataG);
+                gbLinescan.Text = "Green Image (brightness-adjusted)";
+            }
+            else if (calcR.Checked)
+            {
+                scottPlotUC1.plt.data.AddSignal(lsFolder.dataR, sampleRate, lineColor: Color.Red);
+                scottPlotUC1.plt.settings.axisLabelY = "Red (AFU)";
+                bmpData = new Bitmap(lsFolder.bmpDataR);
+                gbLinescan.Text = "Red Image (brightness-adjusted)";
+            }
+            else if (calcGR.Checked)
+            {
+                scottPlotUC1.plt.data.AddSignal(lsFolder.dataR, sampleRate, lineColor: Color.Red);
+                scottPlotUC1.plt.data.AddSignal(lsFolder.dataG, sampleRate, lineColor: Color.Green);
+                scottPlotUC1.plt.settings.axisLabelY = "Red and Green (AFU)";
+                bmpData = bmpData = new Bitmap(lsFolder.bmpDataG);
+                gbLinescan.Text = "Red Image (brightness-adjusted)";
+            }
             scottPlotUC1.plt.settings.AxisFit(0, .1);
             scottPlotUC1.Render();
+
+            // add baseline and structure lines
+            bmpData = BitmapAddLineHoriz(bmpData, lsFolder.baselinePixel1);
+            bmpData = BitmapAddLineHoriz(bmpData, lsFolder.baselinePixel2);
+            bmpData = BitmapAddLineVert(bmpData, lsFolder.baselineStructure1);
+            bmpData = BitmapAddLineVert(bmpData, lsFolder.baselineStructure2);
+            pbLinescan.BackgroundImage = bmpData;
+
         }
 
         public void ClearLinescan()
@@ -112,7 +193,7 @@ namespace ScanAGator
             SelectFolder("../../../../data/linescans/");
 
             scottPlotUC1.plt.settings.title = "";
-            scottPlotUC1.plt.settings.axisLabelY = "G/R";
+            scottPlotUC1.plt.settings.axisLabelY = "";
             scottPlotUC1.plt.settings.axisLabelX = "Frame Number";
             scottPlotUC1.plt.settings.figureBgColor = SystemColors.Control;
             //scottPlotUC1.plt.settings.SetDataPadding(40, 17, 40, 10);
@@ -160,6 +241,51 @@ namespace ScanAGator
                 return;
             string pathLinescan = System.IO.Path.Combine(PathFolder, lbFolders.SelectedItem.ToString());
             System.Diagnostics.Process.Start("explorer.exe", pathLinescan);
+        }
+
+        private void calcDeltaGoR_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateGuiFromLinescan();
+        }
+
+        private void calcG_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateGuiFromLinescan();
+        }
+
+        private void calcGoR_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateGuiFromLinescan();
+        }
+
+        private void calcR_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateGuiFromLinescan();
+        }
+
+        private void calcGR_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateGuiFromLinescan();
+        }
+
+        private void nudBaseline1_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateLinescanFromGui();
+        }
+
+        private void nudBaseline2_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateLinescanFromGui();
+        }
+
+        private void nudStructure1_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateLinescanFromGui();
+        }
+
+        private void nudStructure2_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateLinescanFromGui();
         }
     }
 }

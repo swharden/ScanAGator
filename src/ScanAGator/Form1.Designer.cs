@@ -41,56 +41,55 @@
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lbFolders = new System.Windows.Forms.ListBox();
             this.pbLinescan = new System.Windows.Forms.PictureBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.gbLinescan = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.pbRef = new System.Windows.Forms.PictureBox();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.numericUpDown7 = new System.Windows.Forms.NumericUpDown();
-            this.label4 = new System.Windows.Forms.Label();
+            this.scottPlotUC1 = new ScottPlotDev2.ScottPlotUC();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
+            this.nudStructure2 = new System.Windows.Forms.NumericUpDown();
+            this.nudStructure1 = new System.Windows.Forms.NumericUpDown();
             this.label2 = new System.Windows.Forms.Label();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
+            this.nudBaseline2 = new System.Windows.Forms.NumericUpDown();
             this.label1 = new System.Windows.Forms.Label();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.nudBaseline1 = new System.Windows.Forms.NumericUpDown();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
             this.tbInformation = new System.Windows.Forms.TextBox();
             this.btnFolderSelect = new System.Windows.Forms.Button();
             this.btnFolderRefresh = new System.Windows.Forms.Button();
-            this.scottPlotUC1 = new ScottPlotDev2.ScottPlotUC();
+            this.groupBox8 = new System.Windows.Forms.GroupBox();
+            this.calcDeltaGoR = new System.Windows.Forms.RadioButton();
+            this.calcGoR = new System.Windows.Forms.RadioButton();
+            this.calcG = new System.Windows.Forms.RadioButton();
+            this.calcR = new System.Windows.Forms.RadioButton();
+            this.calcGR = new System.Windows.Forms.RadioButton();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLinescan)).BeginInit();
-            this.groupBox3.SuspendLayout();
+            this.gbLinescan.SuspendLayout();
             this.groupBox4.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbRef)).BeginInit();
-            this.groupBox5.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStructure2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStructure1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBaseline2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).BeginInit();
             this.groupBox7.SuspendLayout();
+            this.groupBox8.SuspendLayout();
             this.SuspendLayout();
             // 
             // statusStrip1
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 722);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 672);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(761, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1042, 22);
             this.statusStrip1.TabIndex = 0;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -107,7 +106,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(761, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1042, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -174,7 +173,7 @@
             this.lbFolders.FormattingEnabled = true;
             this.lbFolders.Location = new System.Drawing.Point(12, 27);
             this.lbFolders.Name = "lbFolders";
-            this.lbFolders.Size = new System.Drawing.Size(199, 524);
+            this.lbFolders.Size = new System.Drawing.Size(199, 472);
             this.lbFolders.TabIndex = 3;
             this.lbFolders.SelectedIndexChanged += new System.EventHandler(this.lbFolders_SelectedIndexChanged);
             this.lbFolders.DoubleClick += new System.EventHandler(this.lbFolders_DoubleClick);
@@ -189,20 +188,20 @@
             this.pbLinescan.TabIndex = 5;
             this.pbLinescan.TabStop = false;
             // 
-            // groupBox3
+            // gbLinescan
             // 
-            this.groupBox3.Controls.Add(this.pbLinescan);
-            this.groupBox3.Location = new System.Drawing.Point(485, 112);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(262, 276);
-            this.groupBox3.TabIndex = 6;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Linescan (G)";
+            this.gbLinescan.Controls.Add(this.pbLinescan);
+            this.gbLinescan.Location = new System.Drawing.Point(485, 27);
+            this.gbLinescan.Name = "gbLinescan";
+            this.gbLinescan.Size = new System.Drawing.Size(262, 276);
+            this.gbLinescan.TabIndex = 6;
+            this.gbLinescan.TabStop = false;
+            this.gbLinescan.Text = "Linescan (G)";
             // 
             // groupBox4
             // 
             this.groupBox4.Controls.Add(this.pbRef);
-            this.groupBox4.Location = new System.Drawing.Point(217, 112);
+            this.groupBox4.Location = new System.Drawing.Point(217, 27);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(262, 276);
             this.groupBox4.TabIndex = 7;
@@ -219,65 +218,13 @@
             this.pbRef.TabIndex = 5;
             this.pbRef.TabStop = false;
             // 
-            // groupBox5
+            // scottPlotUC1
             // 
-            this.groupBox5.Controls.Add(this.scottPlotUC1);
-            this.groupBox5.Location = new System.Drawing.Point(217, 394);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(524, 321);
-            this.groupBox5.TabIndex = 8;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Analysis (d[G/R])";
-            // 
-            // groupBox6
-            // 
-            this.groupBox6.Controls.Add(this.checkBox1);
-            this.groupBox6.Controls.Add(this.numericUpDown7);
-            this.groupBox6.Controls.Add(this.label4);
-            this.groupBox6.Location = new System.Drawing.Point(217, 27);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(129, 79);
-            this.groupBox6.TabIndex = 21;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Series";
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Checked = true;
-            this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox1.Location = new System.Drawing.Point(12, 45);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(78, 17);
-            this.checkBox1.TabIndex = 16;
-            this.checkBox1.Text = "average all";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            // 
-            // numericUpDown7
-            // 
-            this.numericUpDown7.Location = new System.Drawing.Point(54, 19);
-            this.numericUpDown7.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.numericUpDown7.Name = "numericUpDown7";
-            this.numericUpDown7.Size = new System.Drawing.Size(60, 20);
-            this.numericUpDown7.TabIndex = 14;
-            this.numericUpDown7.Value = new decimal(new int[] {
-            123,
-            0,
-            0,
-            0});
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(9, 21);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(39, 13);
-            this.label4.TabIndex = 15;
-            this.label4.Text = "Image:";
+            this.scottPlotUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.scottPlotUC1.Location = new System.Drawing.Point(217, 309);
+            this.scottPlotUC1.Name = "scottPlotUC1";
+            this.scottPlotUC1.Size = new System.Drawing.Size(530, 350);
+            this.scottPlotUC1.TabIndex = 0;
             // 
             // groupBox2
             // 
@@ -285,7 +232,7 @@
             this.groupBox2.Controls.Add(this.button3);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.button1);
-            this.groupBox2.Location = new System.Drawing.Point(581, 27);
+            this.groupBox2.Location = new System.Drawing.Point(753, 276);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(166, 79);
             this.groupBox2.TabIndex = 20;
@@ -330,52 +277,54 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.numericUpDown3);
-            this.groupBox1.Controls.Add(this.numericUpDown4);
+            this.groupBox1.Controls.Add(this.nudStructure2);
+            this.groupBox1.Controls.Add(this.nudStructure1);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.numericUpDown2);
+            this.groupBox1.Controls.Add(this.nudBaseline2);
             this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.numericUpDown1);
-            this.groupBox1.Location = new System.Drawing.Point(352, 27);
+            this.groupBox1.Controls.Add(this.nudBaseline1);
+            this.groupBox1.Location = new System.Drawing.Point(753, 112);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(223, 79);
+            this.groupBox1.Size = new System.Drawing.Size(224, 79);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
             // 
-            // numericUpDown3
+            // nudStructure2
             // 
-            this.numericUpDown3.Location = new System.Drawing.Point(151, 45);
-            this.numericUpDown3.Maximum = new decimal(new int[] {
+            this.nudStructure2.Location = new System.Drawing.Point(151, 45);
+            this.nudStructure2.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(60, 20);
-            this.numericUpDown3.TabIndex = 18;
-            this.numericUpDown3.Value = new decimal(new int[] {
-            123,
+            this.nudStructure2.Name = "nudStructure2";
+            this.nudStructure2.Size = new System.Drawing.Size(60, 20);
+            this.nudStructure2.TabIndex = 18;
+            this.nudStructure2.Value = new decimal(new int[] {
+            60,
             0,
             0,
             0});
+            this.nudStructure2.ValueChanged += new System.EventHandler(this.nudStructure2_ValueChanged);
             // 
-            // numericUpDown4
+            // nudStructure1
             // 
-            this.numericUpDown4.Location = new System.Drawing.Point(85, 45);
-            this.numericUpDown4.Maximum = new decimal(new int[] {
+            this.nudStructure1.Location = new System.Drawing.Point(85, 45);
+            this.nudStructure1.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
-            this.numericUpDown4.Name = "numericUpDown4";
-            this.numericUpDown4.Size = new System.Drawing.Size(60, 20);
-            this.numericUpDown4.TabIndex = 17;
-            this.numericUpDown4.Value = new decimal(new int[] {
-            123,
+            this.nudStructure1.Name = "nudStructure1";
+            this.nudStructure1.Size = new System.Drawing.Size(60, 20);
+            this.nudStructure1.TabIndex = 17;
+            this.nudStructure1.Value = new decimal(new int[] {
+            50,
             0,
             0,
             0});
+            this.nudStructure1.ValueChanged += new System.EventHandler(this.nudStructure1_ValueChanged);
             // 
             // label2
             // 
@@ -386,22 +335,23 @@
             this.label2.TabIndex = 16;
             this.label2.Text = "Structure (px):";
             // 
-            // numericUpDown2
+            // nudBaseline2
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(151, 19);
-            this.numericUpDown2.Maximum = new decimal(new int[] {
+            this.nudBaseline2.Location = new System.Drawing.Point(151, 19);
+            this.nudBaseline2.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(60, 20);
-            this.numericUpDown2.TabIndex = 14;
-            this.numericUpDown2.Value = new decimal(new int[] {
-            123,
+            this.nudBaseline2.Name = "nudBaseline2";
+            this.nudBaseline2.Size = new System.Drawing.Size(60, 20);
+            this.nudBaseline2.TabIndex = 14;
+            this.nudBaseline2.Value = new decimal(new int[] {
+            20,
             0,
             0,
             0});
+            this.nudBaseline2.ValueChanged += new System.EventHandler(this.nudBaseline2_ValueChanged);
             // 
             // label1
             // 
@@ -412,27 +362,28 @@
             this.label1.TabIndex = 15;
             this.label1.Text = "Baseline (px):";
             // 
-            // numericUpDown1
+            // nudBaseline1
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(85, 19);
-            this.numericUpDown1.Maximum = new decimal(new int[] {
+            this.nudBaseline1.Location = new System.Drawing.Point(85, 19);
+            this.nudBaseline1.Maximum = new decimal(new int[] {
             10000,
             0,
             0,
             0});
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(60, 20);
-            this.numericUpDown1.TabIndex = 13;
-            this.numericUpDown1.Value = new decimal(new int[] {
-            123,
+            this.nudBaseline1.Name = "nudBaseline1";
+            this.nudBaseline1.Size = new System.Drawing.Size(60, 20);
+            this.nudBaseline1.TabIndex = 13;
+            this.nudBaseline1.Value = new decimal(new int[] {
+            10,
             0,
             0,
             0});
+            this.nudBaseline1.ValueChanged += new System.EventHandler(this.nudBaseline1_ValueChanged);
             // 
             // groupBox7
             // 
             this.groupBox7.Controls.Add(this.tbInformation);
-            this.groupBox7.Location = new System.Drawing.Point(12, 586);
+            this.groupBox7.Location = new System.Drawing.Point(12, 530);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(199, 129);
             this.groupBox7.TabIndex = 22;
@@ -455,7 +406,7 @@
             // 
             // btnFolderSelect
             // 
-            this.btnFolderSelect.Location = new System.Drawing.Point(12, 557);
+            this.btnFolderSelect.Location = new System.Drawing.Point(12, 501);
             this.btnFolderSelect.Name = "btnFolderSelect";
             this.btnFolderSelect.Size = new System.Drawing.Size(100, 23);
             this.btnFolderSelect.TabIndex = 23;
@@ -465,7 +416,7 @@
             // 
             // btnFolderRefresh
             // 
-            this.btnFolderRefresh.Location = new System.Drawing.Point(118, 557);
+            this.btnFolderRefresh.Location = new System.Drawing.Point(118, 501);
             this.btnFolderRefresh.Name = "btnFolderRefresh";
             this.btnFolderRefresh.Size = new System.Drawing.Size(93, 23);
             this.btnFolderRefresh.TabIndex = 24;
@@ -473,29 +424,92 @@
             this.btnFolderRefresh.UseVisualStyleBackColor = true;
             this.btnFolderRefresh.Click += new System.EventHandler(this.btnFolderRefresh_Click);
             // 
-            // scottPlotUC1
+            // groupBox8
             // 
-            this.scottPlotUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.scottPlotUC1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.scottPlotUC1.Location = new System.Drawing.Point(3, 16);
-            this.scottPlotUC1.Name = "scottPlotUC1";
-            this.scottPlotUC1.Size = new System.Drawing.Size(518, 302);
-            this.scottPlotUC1.TabIndex = 0;
+            this.groupBox8.Controls.Add(this.calcGR);
+            this.groupBox8.Controls.Add(this.calcR);
+            this.groupBox8.Controls.Add(this.calcG);
+            this.groupBox8.Controls.Add(this.calcGoR);
+            this.groupBox8.Controls.Add(this.calcDeltaGoR);
+            this.groupBox8.Location = new System.Drawing.Point(753, 197);
+            this.groupBox8.Name = "groupBox8";
+            this.groupBox8.Size = new System.Drawing.Size(195, 73);
+            this.groupBox8.TabIndex = 25;
+            this.groupBox8.TabStop = false;
+            this.groupBox8.Text = "Calculation";
+            // 
+            // calcDeltaGoR
+            // 
+            this.calcDeltaGoR.AutoSize = true;
+            this.calcDeltaGoR.Checked = true;
+            this.calcDeltaGoR.Location = new System.Drawing.Point(15, 23);
+            this.calcDeltaGoR.Name = "calcDeltaGoR";
+            this.calcDeltaGoR.Size = new System.Drawing.Size(58, 17);
+            this.calcDeltaGoR.TabIndex = 0;
+            this.calcDeltaGoR.TabStop = true;
+            this.calcDeltaGoR.Text = "d[G/R]";
+            this.calcDeltaGoR.UseVisualStyleBackColor = true;
+            this.calcDeltaGoR.CheckedChanged += new System.EventHandler(this.calcDeltaGoR_CheckedChanged);
+            // 
+            // calcGoR
+            // 
+            this.calcGoR.AutoSize = true;
+            this.calcGoR.Location = new System.Drawing.Point(15, 46);
+            this.calcGoR.Name = "calcGoR";
+            this.calcGoR.Size = new System.Drawing.Size(46, 17);
+            this.calcGoR.TabIndex = 1;
+            this.calcGoR.Text = "G/R";
+            this.calcGoR.UseVisualStyleBackColor = true;
+            this.calcGoR.CheckedChanged += new System.EventHandler(this.calcGoR_CheckedChanged);
+            // 
+            // calcG
+            // 
+            this.calcG.AutoSize = true;
+            this.calcG.Location = new System.Drawing.Point(79, 23);
+            this.calcG.Name = "calcG";
+            this.calcG.Size = new System.Drawing.Size(33, 17);
+            this.calcG.TabIndex = 2;
+            this.calcG.Text = "G";
+            this.calcG.UseVisualStyleBackColor = true;
+            this.calcG.CheckedChanged += new System.EventHandler(this.calcG_CheckedChanged);
+            // 
+            // calcR
+            // 
+            this.calcR.AutoSize = true;
+            this.calcR.Location = new System.Drawing.Point(79, 46);
+            this.calcR.Name = "calcR";
+            this.calcR.Size = new System.Drawing.Size(33, 17);
+            this.calcR.TabIndex = 3;
+            this.calcR.Text = "R";
+            this.calcR.UseVisualStyleBackColor = true;
+            this.calcR.CheckedChanged += new System.EventHandler(this.calcR_CheckedChanged);
+            // 
+            // calcGR
+            // 
+            this.calcGR.AutoSize = true;
+            this.calcGR.Location = new System.Drawing.Point(118, 23);
+            this.calcGR.Name = "calcGR";
+            this.calcGR.Size = new System.Drawing.Size(65, 17);
+            this.calcGR.TabIndex = 4;
+            this.calcGR.TabStop = true;
+            this.calcGR.Text = "G and R";
+            this.calcGR.UseVisualStyleBackColor = true;
+            this.calcGR.CheckedChanged += new System.EventHandler(this.calcGR_CheckedChanged);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(761, 744);
+            this.ClientSize = new System.Drawing.Size(1042, 694);
+            this.Controls.Add(this.scottPlotUC1);
+            this.Controls.Add(this.groupBox8);
             this.Controls.Add(this.btnFolderRefresh);
-            this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.btnFolderSelect);
             this.Controls.Add(this.groupBox7);
-            this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.gbLinescan);
             this.Controls.Add(this.lbFolders);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
@@ -508,22 +522,20 @@
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLinescan)).EndInit();
-            this.groupBox3.ResumeLayout(false);
+            this.gbLinescan.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbRef)).EndInit();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown7)).EndInit();
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStructure2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStructure1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBaseline2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).EndInit();
             this.groupBox7.ResumeLayout(false);
             this.groupBox7.PerformLayout();
+            this.groupBox8.ResumeLayout(false);
+            this.groupBox8.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -544,31 +556,32 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ListBox lbFolders;
         private System.Windows.Forms.PictureBox pbLinescan;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox gbLinescan;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.PictureBox pbRef;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.CheckBox checkBox1;
-        private System.Windows.Forms.NumericUpDown numericUpDown7;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button button3;
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.NumericUpDown numericUpDown3;
-        private System.Windows.Forms.NumericUpDown numericUpDown4;
+        private System.Windows.Forms.NumericUpDown nudStructure2;
+        private System.Windows.Forms.NumericUpDown nudStructure1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
+        private System.Windows.Forms.NumericUpDown nudBaseline2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown nudBaseline1;
         private System.Windows.Forms.Button button4;
         private System.Windows.Forms.GroupBox groupBox7;
         private System.Windows.Forms.TextBox tbInformation;
         private System.Windows.Forms.Button btnFolderSelect;
         private System.Windows.Forms.Button btnFolderRefresh;
         private ScottPlotDev2.ScottPlotUC scottPlotUC1;
+        private System.Windows.Forms.GroupBox groupBox8;
+        private System.Windows.Forms.RadioButton calcDeltaGoR;
+        private System.Windows.Forms.RadioButton calcR;
+        private System.Windows.Forms.RadioButton calcG;
+        private System.Windows.Forms.RadioButton calcGoR;
+        private System.Windows.Forms.RadioButton calcGR;
     }
 }
 

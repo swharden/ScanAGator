@@ -34,10 +34,10 @@ namespace ScanAGator
             // Return an array with length the same as the image height.
 
             double[] avgByRow = new double[height];
-            for (int row = 0; row<height; row++)
+            for (int row = 0; row < height; row++)
             {
                 double rowSum = 0;
-                for (int col = 0; col<width; col++)
+                for (int col = 0; col < width; col++)
                 {
                     rowSum += data[row * width + col];
                 }
@@ -134,7 +134,18 @@ namespace ScanAGator
                 data[i] = data[i] - baselineValue;
         }
 
-        public Bitmap GetBitmap()
+        public Bitmap GetBitmapRGB()
+        {
+            Bitmap bmpSource = GetBitmapIndexed();
+            var format = System.Drawing.Imaging.PixelFormat.Format32bppRgb;
+            Bitmap bmp = new Bitmap(bmpSource.Width, bmpSource.Height, format);
+            Graphics gr = Graphics.FromImage(bmp);
+            gr.DrawImage(bmpSource, 0, 0);
+            gr.Dispose();
+            return bmp;
+        }
+
+        public Bitmap GetBitmapIndexed()
         {
             // create and fill a pixel array for the 8-bit final image
             byte[] pixelsOutput = new byte[pixelCount];

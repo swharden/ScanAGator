@@ -15,7 +15,6 @@ namespace ScanAGator
         string PathFolderRefs;
         string FolderName { get { return System.IO.Path.GetFileName(PathFolderData); } }
 
-
         string[] RefImagePaths;
         string RefPrimaryPath;
         string[] DataImagePaths;
@@ -29,7 +28,6 @@ namespace ScanAGator
         public bool IsValidLinescan { get; private set; }
         public string log { get; private set; }
         public Bitmap BmpReference { get; private set; }
-        public Bitmap BmpR, BmpG;
 
         public LineScanFolder(string pathFolder)
         {
@@ -46,7 +44,7 @@ namespace ScanAGator
 
             if (IsValidLinescan) ScanFiles();
             if (IsValidLinescan) ReadXML();
-            if (IsValidLinescan) LoadData();
+            if (IsValidLinescan) CalculateCurve();
         }
 
         public void Log(string message)
@@ -126,13 +124,21 @@ namespace ScanAGator
         public double[] dataG;
         public double[] dataR;
         public double[] dataGoR;
+        public double[] dataDeltaGoR;
+        public Bitmap bmpDataR;
+        public Bitmap bmpDataG;
+        public int baselinePixel1 = 20;
+        public int baselinePixel2 = 120;
+        public int baselineStructure1 = 5;
+        public int baselineStructure2 = 10;
 
-        public void LoadData()
+        public void CalculateCurve()
         {
-            // TODO: image averaging
 
-            ImageData imR = new ImageData(DataImagePathsR[0]);
-            ImageData imG = new ImageData(DataImagePathsG[0]);
+            // TODO: put image averaging here
+            int imageFrameNumber = 0;
+            ImageData imR = new ImageData(DataImagePathsR[imageFrameNumber]);
+            ImageData imG = new ImageData(DataImagePathsG[imageFrameNumber]);
 
             if (imR.data.Length != imG.data.Length)
             {
@@ -140,19 +146,31 @@ namespace ScanAGator
                 return;
             }
 
-            imR.AutoBrightness();
+            // todo: add pixel restriction
             dataR = imR.AverageHorizontally();
-            BmpR = imR.GetBitmap();
-
-            imG.AutoBrightness();
             dataG = imG.AverageHorizontally();
-            BmpG = imG.GetBitmap();
 
+            // calculate GoR
             dataGoR = new double[dataG.Length];
             for (int i = 0; i < dataG.Length; i++)
-                dataGoR[i] = dataG[i] / dataR[i];
+                dataGoR[i] = dataG[i] / dataR[i] * 100.0;
 
-            //Log($"GoR min={Math.Round(dataGoR.Min(), 2)}, max={Math.Round(dataGoR.Max(), 2)}");
+            // calculate baseline GoR (%)
+            double baselineValue = 0;
+            for (int i = baselinePixel1; i < baselinePixel2; i++)
+                baselineValue += dataGoR[i];
+            baselineValue = baselineValue / (baselinePixel2 - baselinePixel1);
+
+            // calculate dGoR
+            dataDeltaGoR = new double[dataG.Length];
+            for (int i = 0; i < dataG.Length; i++)
+                dataDeltaGoR[i] = dataGoR[i] - baselineValue;
+
+            // calculate preview images (can be destructive to originals now)
+            imR.AutoBrightness();
+            bmpDataR = imR.GetBitmapRGB();
+            imG.AutoBrightness();
+            bmpDataG = imG.GetBitmapRGB();
         }
     }
 }
