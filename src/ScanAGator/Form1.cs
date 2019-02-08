@@ -84,6 +84,28 @@ namespace ScanAGator
                 return;
             }
 
+            // use image dimensions to set limits
+            tbStructure1.Maximum = lsFolder.bmpDataG.Width-1;
+            tbStructure2.Maximum = lsFolder.bmpDataG.Width-1;
+            nudStructure1.Maximum = lsFolder.bmpDataG.Width-1;
+            nudStructure2.Maximum = lsFolder.bmpDataG.Width-1;
+
+            tbBaseline1.Maximum = lsFolder.bmpDataG.Height - 1;
+            tbBaseline2.Maximum = lsFolder.bmpDataG.Height - 1;
+            nudBaseline1.Maximum = lsFolder.bmpDataG.Height - 1;
+            nudBaseline2.Maximum = lsFolder.bmpDataG.Height - 1;
+
+            // load default values
+            tbBaseline1.Value = lsFolder.baseline1;
+            tbBaseline2.Value = lsFolder.baseline2;
+            nudBaseline1.Value = lsFolder.baseline1;
+            nudBaseline2.Value = lsFolder.baseline2;
+
+            tbStructure1.Value = lsFolder.structure1;
+            tbStructure2.Value = lsFolder.structure2;
+            nudStructure1.Value = lsFolder.structure1;
+            nudStructure2.Value = lsFolder.structure2;
+
             // by this point everything is valid, so just populate the GUI based on it.
             SetStatus($"Successfully loaded linescan folder: {folderName}");
             Text = $"Scan-A-Gator - {folderName}";
@@ -110,11 +132,15 @@ namespace ScanAGator
 
         public void UpdateLinescanFromGui()
         {
-            lsFolder.baselinePixel1 = (int)nudBaseline1.Value;
-            lsFolder.baselinePixel2 = (int)nudBaseline2.Value;
-            lsFolder.baselineStructure1 = (int)nudStructure1.Value;
-            lsFolder.baselineStructure2 = (int)nudStructure2.Value;
+            if (lsFolder == null)
+                return;
 
+            lsFolder.baseline1 = Math.Min((int)nudBaseline1.Value, (int)nudBaseline2.Value);
+            lsFolder.baseline2 = Math.Max((int)nudBaseline1.Value, (int)nudBaseline2.Value);
+            lsFolder.structure1 = Math.Min((int)nudStructure1.Value, (int)nudStructure2.Value);
+            lsFolder.structure2 = Math.Max((int)nudStructure1.Value, (int)nudStructure2.Value);
+
+            lsFolder.CalculateCurve();
             UpdateGuiFromLinescan();
         }
 
@@ -144,20 +170,6 @@ namespace ScanAGator
                 bmpData = new Bitmap(lsFolder.bmpDataG);
                 gbLinescan.Text = "Green Image (brightness-adjusted)";
             }
-            else if (calcG.Checked)
-            {
-                scottPlotUC1.plt.data.AddSignal(lsFolder.dataG, sampleRate, lineColor: Color.Green);
-                scottPlotUC1.plt.settings.axisLabelY = "Green (AFU)";
-                bmpData = new Bitmap(lsFolder.bmpDataG);
-                gbLinescan.Text = "Green Image (brightness-adjusted)";
-            }
-            else if (calcR.Checked)
-            {
-                scottPlotUC1.plt.data.AddSignal(lsFolder.dataR, sampleRate, lineColor: Color.Red);
-                scottPlotUC1.plt.settings.axisLabelY = "Red (AFU)";
-                bmpData = new Bitmap(lsFolder.bmpDataR);
-                gbLinescan.Text = "Red Image (brightness-adjusted)";
-            }
             else if (calcGR.Checked)
             {
                 scottPlotUC1.plt.data.AddSignal(lsFolder.dataR, sampleRate, lineColor: Color.Red);
@@ -170,10 +182,10 @@ namespace ScanAGator
             scottPlotUC1.Render();
 
             // add baseline and structure lines
-            bmpData = BitmapAddLineHoriz(bmpData, lsFolder.baselinePixel1);
-            bmpData = BitmapAddLineHoriz(bmpData, lsFolder.baselinePixel2);
-            bmpData = BitmapAddLineVert(bmpData, lsFolder.baselineStructure1);
-            bmpData = BitmapAddLineVert(bmpData, lsFolder.baselineStructure2);
+            bmpData = BitmapAddLineHoriz(bmpData, lsFolder.baseline1);
+            bmpData = BitmapAddLineHoriz(bmpData, lsFolder.baseline2);
+            bmpData = BitmapAddLineVert(bmpData, lsFolder.structure1);
+            bmpData = BitmapAddLineVert(bmpData, lsFolder.structure2);
             pbLinescan.BackgroundImage = bmpData;
 
         }
@@ -286,6 +298,26 @@ namespace ScanAGator
         private void nudStructure2_ValueChanged(object sender, EventArgs e)
         {
             UpdateLinescanFromGui();
+        }
+
+        private void tbStructure1_Scroll(object sender, EventArgs e)
+        {
+            nudStructure1.Value = tbStructure1.Value;
+        }
+
+        private void tbStructure2_Scroll(object sender, EventArgs e)
+        {
+            nudStructure2.Value = tbStructure2.Value;
+        }
+
+        private void tbBaseline1_Scroll(object sender, EventArgs e)
+        {
+            nudBaseline1.Value = tbBaseline1.Value;
+        }
+
+        private void tbBaseline2_Scroll(object sender, EventArgs e)
+        {
+            nudBaseline2.Value = tbBaseline2.Value;
         }
     }
 }

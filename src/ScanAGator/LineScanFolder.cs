@@ -44,7 +44,7 @@ namespace ScanAGator
 
             if (IsValidLinescan) ScanFiles();
             if (IsValidLinescan) ReadXML();
-            if (IsValidLinescan) CalculateCurve();
+            if (IsValidLinescan) LoadImages();
         }
 
         public void Log(string message)
@@ -127,28 +127,36 @@ namespace ScanAGator
         public double[] dataDeltaGoR;
         public Bitmap bmpDataR;
         public Bitmap bmpDataG;
-        public int baselinePixel1 = 20;
-        public int baselinePixel2 = 120;
-        public int baselineStructure1 = 5;
-        public int baselineStructure2 = 10;
+        public int baseline1 = 1;
+        public int baseline2 = 2;
+        public int structure1 = 1;
+        public int structure2 = 2;
 
         public void CalculateCurve()
         {
-
-            // TODO: put image averaging here
-            int imageFrameNumber = 0;
-            ImageData imR = new ImageData(DataImagePathsR[imageFrameNumber]);
-            ImageData imG = new ImageData(DataImagePathsG[imageFrameNumber]);
-
-            if (imR.data.Length != imG.data.Length)
+            // invert if opposite
+            if (baseline1 > baseline2)
             {
-                Error("red and green images are different sizes");
-                return;
+                int orig = baseline1;
+                baseline1 = baseline2;
+                baseline2 = orig;
+            }
+            if (structure1 > structure2)
+            {
+                int orig = structure1;
+                structure1 = structure2;
+                structure2 = orig;
             }
 
-            // todo: add pixel restriction
-            dataR = imR.AverageHorizontally();
-            dataG = imG.AverageHorizontally();
+            // correct if same
+            if (baseline1 == baseline2)
+                baseline2 += 1;
+            if (structure1 == structure2)
+                structure2 += 1;
+
+            // create data trace
+            dataR = imR.AverageHorizontally(structure1, structure2);
+            dataG = imG.AverageHorizontally(structure1, structure2);
 
             // calculate GoR
             dataGoR = new double[dataG.Length];
@@ -157,20 +165,39 @@ namespace ScanAGator
 
             // calculate baseline GoR (%)
             double baselineValue = 0;
-            for (int i = baselinePixel1; i < baselinePixel2; i++)
+            for (int i = baseline1; i < baseline2; i++)
                 baselineValue += dataGoR[i];
-            baselineValue = baselineValue / (baselinePixel2 - baselinePixel1);
+            baselineValue = baselineValue / (baseline2 - baseline1);
 
             // calculate dGoR
             dataDeltaGoR = new double[dataG.Length];
             for (int i = 0; i < dataG.Length; i++)
                 dataDeltaGoR[i] = dataGoR[i] - baselineValue;
+        }
 
-            // calculate preview images (can be destructive to originals now)
+        ImageData imR;
+        ImageData imG;
+        public void LoadImages()
+        {
+
+            // TODO: put image averaging here
+            int imageFrameNumber = 0;
+            imR = new ImageData(DataImagePathsR[imageFrameNumber]);
+            imG = new ImageData(DataImagePathsG[imageFrameNumber]);
+
+            if (imR.data.Length != imG.data.Length)
+            {
+                Error("red and green images are different sizes");
+                return;
+            }
+
+            // TODO: this is destructive
             imR.AutoBrightness();
             bmpDataR = imR.GetBitmapRGB();
             imG.AutoBrightness();
             bmpDataG = imG.GetBitmapRGB();
+
+            CalculateCurve();
         }
     }
 }

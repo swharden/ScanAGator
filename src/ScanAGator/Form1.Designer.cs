@@ -44,7 +44,6 @@
             this.gbLinescan = new System.Windows.Forms.GroupBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.pbRef = new System.Windows.Forms.PictureBox();
-            this.scottPlotUC1 = new ScottPlotDev2.ScottPlotUC();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.button4 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -62,11 +61,15 @@
             this.btnFolderSelect = new System.Windows.Forms.Button();
             this.btnFolderRefresh = new System.Windows.Forms.Button();
             this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.calcDeltaGoR = new System.Windows.Forms.RadioButton();
-            this.calcGoR = new System.Windows.Forms.RadioButton();
-            this.calcG = new System.Windows.Forms.RadioButton();
-            this.calcR = new System.Windows.Forms.RadioButton();
             this.calcGR = new System.Windows.Forms.RadioButton();
+            this.calcGoR = new System.Windows.Forms.RadioButton();
+            this.calcDeltaGoR = new System.Windows.Forms.RadioButton();
+            this.tbStructure2 = new System.Windows.Forms.TrackBar();
+            this.tbStructure1 = new System.Windows.Forms.TrackBar();
+            this.scottPlotUC1 = new ScottPlotDev2.ScottPlotUC();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.tbBaseline1 = new System.Windows.Forms.TrackBar();
+            this.tbBaseline2 = new System.Windows.Forms.TrackBar();
             this.statusStrip1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLinescan)).BeginInit();
@@ -81,6 +84,11 @@
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).BeginInit();
             this.groupBox7.SuspendLayout();
             this.groupBox8.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbStructure2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbStructure1)).BeginInit();
+            this.groupBox3.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBaseline1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBaseline2)).BeginInit();
             this.SuspendLayout();
             // 
             // statusStrip1
@@ -218,21 +226,13 @@
             this.pbRef.TabIndex = 5;
             this.pbRef.TabStop = false;
             // 
-            // scottPlotUC1
-            // 
-            this.scottPlotUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.scottPlotUC1.Location = new System.Drawing.Point(217, 309);
-            this.scottPlotUC1.Name = "scottPlotUC1";
-            this.scottPlotUC1.Size = new System.Drawing.Size(530, 350);
-            this.scottPlotUC1.TabIndex = 0;
-            // 
             // groupBox2
             // 
             this.groupBox2.Controls.Add(this.button4);
             this.groupBox2.Controls.Add(this.button3);
             this.groupBox2.Controls.Add(this.button2);
             this.groupBox2.Controls.Add(this.button1);
-            this.groupBox2.Location = new System.Drawing.Point(753, 276);
+            this.groupBox2.Location = new System.Drawing.Point(753, 456);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(166, 79);
             this.groupBox2.TabIndex = 20;
@@ -277,22 +277,21 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.nudStructure2);
-            this.groupBox1.Controls.Add(this.nudStructure1);
-            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.tbBaseline2);
+            this.groupBox1.Controls.Add(this.tbBaseline1);
             this.groupBox1.Controls.Add(this.nudBaseline2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.nudBaseline1);
-            this.groupBox1.Location = new System.Drawing.Point(753, 112);
+            this.groupBox1.Location = new System.Drawing.Point(753, 180);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(224, 79);
+            this.groupBox1.Size = new System.Drawing.Size(262, 149);
             this.groupBox1.TabIndex = 19;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Settings";
+            this.groupBox1.Text = "Baseline";
             // 
             // nudStructure2
             // 
-            this.nudStructure2.Location = new System.Drawing.Point(151, 45);
+            this.nudStructure2.Location = new System.Drawing.Point(196, 121);
             this.nudStructure2.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -310,7 +309,7 @@
             // 
             // nudStructure1
             // 
-            this.nudStructure1.Location = new System.Drawing.Point(85, 45);
+            this.nudStructure1.Location = new System.Drawing.Point(130, 121);
             this.nudStructure1.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -329,7 +328,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 47);
+            this.label2.Location = new System.Drawing.Point(51, 123);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 13);
             this.label2.TabIndex = 16;
@@ -337,7 +336,7 @@
             // 
             // nudBaseline2
             // 
-            this.nudBaseline2.Location = new System.Drawing.Point(151, 19);
+            this.nudBaseline2.Location = new System.Drawing.Point(196, 121);
             this.nudBaseline2.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -356,7 +355,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(9, 21);
+            this.label1.Location = new System.Drawing.Point(42, 123);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(70, 13);
             this.label1.TabIndex = 15;
@@ -364,7 +363,7 @@
             // 
             // nudBaseline1
             // 
-            this.nudBaseline1.Location = new System.Drawing.Point(85, 19);
+            this.nudBaseline1.Location = new System.Drawing.Point(125, 121);
             this.nudBaseline1.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -427,22 +426,43 @@
             // groupBox8
             // 
             this.groupBox8.Controls.Add(this.calcGR);
-            this.groupBox8.Controls.Add(this.calcR);
-            this.groupBox8.Controls.Add(this.calcG);
             this.groupBox8.Controls.Add(this.calcGoR);
             this.groupBox8.Controls.Add(this.calcDeltaGoR);
-            this.groupBox8.Location = new System.Drawing.Point(753, 197);
+            this.groupBox8.Location = new System.Drawing.Point(753, 335);
             this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(195, 73);
+            this.groupBox8.Size = new System.Drawing.Size(176, 50);
             this.groupBox8.TabIndex = 25;
             this.groupBox8.TabStop = false;
             this.groupBox8.Text = "Calculation";
+            // 
+            // calcGR
+            // 
+            this.calcGR.AutoSize = true;
+            this.calcGR.Location = new System.Drawing.Point(122, 19);
+            this.calcGR.Name = "calcGR";
+            this.calcGR.Size = new System.Drawing.Size(48, 17);
+            this.calcGR.TabIndex = 4;
+            this.calcGR.TabStop = true;
+            this.calcGR.Text = "PMT";
+            this.calcGR.UseVisualStyleBackColor = true;
+            this.calcGR.CheckedChanged += new System.EventHandler(this.calcGR_CheckedChanged);
+            // 
+            // calcGoR
+            // 
+            this.calcGoR.AutoSize = true;
+            this.calcGoR.Location = new System.Drawing.Point(70, 19);
+            this.calcGoR.Name = "calcGoR";
+            this.calcGoR.Size = new System.Drawing.Size(46, 17);
+            this.calcGoR.TabIndex = 1;
+            this.calcGoR.Text = "G/R";
+            this.calcGoR.UseVisualStyleBackColor = true;
+            this.calcGoR.CheckedChanged += new System.EventHandler(this.calcGoR_CheckedChanged);
             // 
             // calcDeltaGoR
             // 
             this.calcDeltaGoR.AutoSize = true;
             this.calcDeltaGoR.Checked = true;
-            this.calcDeltaGoR.Location = new System.Drawing.Point(15, 23);
+            this.calcDeltaGoR.Location = new System.Drawing.Point(6, 19);
             this.calcDeltaGoR.Name = "calcDeltaGoR";
             this.calcDeltaGoR.Size = new System.Drawing.Size(58, 17);
             this.calcDeltaGoR.TabIndex = 0;
@@ -451,56 +471,74 @@
             this.calcDeltaGoR.UseVisualStyleBackColor = true;
             this.calcDeltaGoR.CheckedChanged += new System.EventHandler(this.calcDeltaGoR_CheckedChanged);
             // 
-            // calcGoR
+            // tbStructure2
             // 
-            this.calcGoR.AutoSize = true;
-            this.calcGoR.Location = new System.Drawing.Point(15, 46);
-            this.calcGoR.Name = "calcGoR";
-            this.calcGoR.Size = new System.Drawing.Size(46, 17);
-            this.calcGoR.TabIndex = 1;
-            this.calcGoR.Text = "G/R";
-            this.calcGoR.UseVisualStyleBackColor = true;
-            this.calcGoR.CheckedChanged += new System.EventHandler(this.calcGoR_CheckedChanged);
+            this.tbStructure2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbStructure2.Location = new System.Drawing.Point(6, 70);
+            this.tbStructure2.Name = "tbStructure2";
+            this.tbStructure2.Size = new System.Drawing.Size(250, 45);
+            this.tbStructure2.TabIndex = 26;
+            this.tbStructure2.Scroll += new System.EventHandler(this.tbStructure2_Scroll);
             // 
-            // calcG
+            // tbStructure1
             // 
-            this.calcG.AutoSize = true;
-            this.calcG.Location = new System.Drawing.Point(79, 23);
-            this.calcG.Name = "calcG";
-            this.calcG.Size = new System.Drawing.Size(33, 17);
-            this.calcG.TabIndex = 2;
-            this.calcG.Text = "G";
-            this.calcG.UseVisualStyleBackColor = true;
-            this.calcG.CheckedChanged += new System.EventHandler(this.calcG_CheckedChanged);
+            this.tbStructure1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbStructure1.Location = new System.Drawing.Point(6, 19);
+            this.tbStructure1.Name = "tbStructure1";
+            this.tbStructure1.Size = new System.Drawing.Size(250, 45);
+            this.tbStructure1.TabIndex = 27;
+            this.tbStructure1.Scroll += new System.EventHandler(this.tbStructure1_Scroll);
             // 
-            // calcR
+            // scottPlotUC1
             // 
-            this.calcR.AutoSize = true;
-            this.calcR.Location = new System.Drawing.Point(79, 46);
-            this.calcR.Name = "calcR";
-            this.calcR.Size = new System.Drawing.Size(33, 17);
-            this.calcR.TabIndex = 3;
-            this.calcR.Text = "R";
-            this.calcR.UseVisualStyleBackColor = true;
-            this.calcR.CheckedChanged += new System.EventHandler(this.calcR_CheckedChanged);
+            this.scottPlotUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.scottPlotUC1.Location = new System.Drawing.Point(217, 309);
+            this.scottPlotUC1.Name = "scottPlotUC1";
+            this.scottPlotUC1.Size = new System.Drawing.Size(530, 350);
+            this.scottPlotUC1.TabIndex = 0;
             // 
-            // calcGR
+            // groupBox3
             // 
-            this.calcGR.AutoSize = true;
-            this.calcGR.Location = new System.Drawing.Point(118, 23);
-            this.calcGR.Name = "calcGR";
-            this.calcGR.Size = new System.Drawing.Size(65, 17);
-            this.calcGR.TabIndex = 4;
-            this.calcGR.TabStop = true;
-            this.calcGR.Text = "G and R";
-            this.calcGR.UseVisualStyleBackColor = true;
-            this.calcGR.CheckedChanged += new System.EventHandler(this.calcGR_CheckedChanged);
+            this.groupBox3.Controls.Add(this.label2);
+            this.groupBox3.Controls.Add(this.nudStructure2);
+            this.groupBox3.Controls.Add(this.tbStructure1);
+            this.groupBox3.Controls.Add(this.nudStructure1);
+            this.groupBox3.Controls.Add(this.tbStructure2);
+            this.groupBox3.Location = new System.Drawing.Point(753, 27);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(262, 147);
+            this.groupBox3.TabIndex = 28;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Structure";
+            // 
+            // tbBaseline1
+            // 
+            this.tbBaseline1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbBaseline1.Location = new System.Drawing.Point(6, 19);
+            this.tbBaseline1.Name = "tbBaseline1";
+            this.tbBaseline1.Size = new System.Drawing.Size(250, 45);
+            this.tbBaseline1.TabIndex = 28;
+            this.tbBaseline1.Scroll += new System.EventHandler(this.tbBaseline1_Scroll);
+            // 
+            // tbBaseline2
+            // 
+            this.tbBaseline2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbBaseline2.Location = new System.Drawing.Point(6, 70);
+            this.tbBaseline2.Name = "tbBaseline2";
+            this.tbBaseline2.Size = new System.Drawing.Size(250, 45);
+            this.tbBaseline2.TabIndex = 29;
+            this.tbBaseline2.Scroll += new System.EventHandler(this.tbBaseline2_Scroll);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1042, 694);
+            this.Controls.Add(this.groupBox3);
             this.Controls.Add(this.scottPlotUC1);
             this.Controls.Add(this.groupBox8);
             this.Controls.Add(this.btnFolderRefresh);
@@ -536,6 +574,12 @@
             this.groupBox7.PerformLayout();
             this.groupBox8.ResumeLayout(false);
             this.groupBox8.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbStructure2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbStructure1)).EndInit();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBaseline1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBaseline2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -578,10 +622,13 @@
         private ScottPlotDev2.ScottPlotUC scottPlotUC1;
         private System.Windows.Forms.GroupBox groupBox8;
         private System.Windows.Forms.RadioButton calcDeltaGoR;
-        private System.Windows.Forms.RadioButton calcR;
-        private System.Windows.Forms.RadioButton calcG;
         private System.Windows.Forms.RadioButton calcGoR;
         private System.Windows.Forms.RadioButton calcGR;
+        private System.Windows.Forms.TrackBar tbStructure2;
+        private System.Windows.Forms.TrackBar tbStructure1;
+        private System.Windows.Forms.TrackBar tbBaseline2;
+        private System.Windows.Forms.TrackBar tbBaseline1;
+        private System.Windows.Forms.GroupBox groupBox3;
     }
 }
 

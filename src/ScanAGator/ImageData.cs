@@ -28,20 +28,25 @@ namespace ScanAGator
             this.height = height;
         }
 
-        public double[] AverageHorizontally()
+        public double[] AverageHorizontally(int leftPx=-1, int rightPx=-1)
         {
             // collapse the width. 
             // Return an array with length the same as the image height.
+
+            if (leftPx < 0)
+                leftPx = 0;
+            if (rightPx < 0)
+                rightPx = width;
 
             double[] avgByRow = new double[height];
             for (int row = 0; row < height; row++)
             {
                 double rowSum = 0;
-                for (int col = 0; col < width; col++)
+                for (int col = leftPx; col < rightPx; col++)
                 {
                     rowSum += data[row * width + col];
                 }
-                avgByRow[row] = rowSum / width;
+                avgByRow[row] = rowSum / (rightPx - leftPx);
             }
             return avgByRow;
         }
