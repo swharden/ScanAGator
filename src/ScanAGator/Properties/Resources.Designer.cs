@@ -61,11 +61,11 @@ namespace ScanAGator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 0.1.
+        ///   Looks up a localized string similar to 0.2.
         /// </summary>
-        internal static string VERSION {
+        internal static string version {
             get {
-                return ResourceManager.GetString("VERSION", resourceCulture);
+                return ResourceManager.GetString("version", resourceCulture);
             }
         }
     }

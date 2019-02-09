@@ -34,6 +34,21 @@ namespace ScanAGator
         }
 
         #region actions
+
+        private void SaveNeeded(bool needed = false)
+        {
+            if (needed)
+            {
+                btnSave.BackColor = Color.Red;
+                btnSave.ForeColor = Color.White;
+            }
+            else
+            {
+                btnSave.UseVisualStyleBackColor = true;
+                btnSave.ForeColor = Color.Black;
+            }                
+        }
+
         private void LoadLinescanFolder(string path)
         {
             if (treeView1.SelectedNode == null)
@@ -43,6 +58,11 @@ namespace ScanAGator
             pbRef.BackgroundImage = (linescan.validLinescanFolder) ? linescan.GetBmpReference() : null;
             UpdateGuiFromLinescan();
             AnalyzeData();
+
+            if (linescan.validLinescanFolder && !System.IO.File.Exists(linescan.pathIniFile))
+                SaveNeeded(true);
+            else
+                SaveNeeded(false);
         }
 
         private void UpdateLinescanFromGui()
@@ -51,7 +71,10 @@ namespace ScanAGator
             linescan.baseline2 = tbBaseline2.Value;
             linescan.structure1 = tbStructure1.Value;
             linescan.structure2 = tbStructure2.Value;
-            linescan.filterPoints = (int)nudFilter.Value;
+            linescan.filterPx = (int)nudFilter.Value;
+            linescan.frame = (int)nudFrame.Value - 1;
+            SaveNeeded(true);
+
             UpdateGuiFromLinescan(); // to update labels
         }
 
@@ -71,8 +94,17 @@ namespace ScanAGator
             tbStructure2.Value = linescan.structure2;
 
             nudFilter.Maximum = linescan.dataImage.Height / 5;
-            nudFilter.Value = linescan.filterPoints;
+            nudFilter.Value = linescan.filterPx;
             lblFilterMs.Text = string.Format("{0:0.00} ms", linescan.filterMillisec);
+
+            nudFrame.Maximum = linescan.pathsDataG.Length;
+            nudFrame.Minimum = 1;
+            nudFrame.Value = linescan.frame + 1;
+            gbFrame.Text = $"Frame (of {nudFrame.Maximum})";
+            if (linescan.pathsDataG.Length == 1)
+                gbFrame.Enabled = false;
+            else
+                gbFrame.Enabled = true;
 
             gbBaseline.Text = $"Baseline ({tbBaseline1.Value} px to {tbBaseline2.Value} px)";
             gbStructure.Text = $"Structure ({tbStructure1.Value} px to {tbStructure2.Value} px)";
@@ -89,7 +121,7 @@ namespace ScanAGator
             }
         }
 
-        private void AnalyzeData()
+        private void AnalyzeData(bool loadNewFrame = false)
         {
 
             if (!linescan.validLinescanFolder)
@@ -100,6 +132,9 @@ namespace ScanAGator
                 scottPlotUC1.Render();
                 return;
             }
+
+            if (loadNewFrame)
+                linescan.LoadFrame();
 
             linescan.Analyze();
             
@@ -327,6 +362,33 @@ namespace ScanAGator
         private void radioImageR_CheckedChanged(object sender, EventArgs e)
         {
             AnalyzeData();
+        }
+
+        private void nudFrame_ValueChanged(object sender, EventArgs e)
+        {
+            UpdateLinescanFromGui();
+            AnalyzeData(true);
+        }
+
+        private void cbFrameAverage_CheckedChanged(object sender, EventArgs e)
+        {
+            // TODO: support analysis from the average of all frames
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/swharden/Scan-A-Gator");
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            LoadLinescanFolder(linescan.pathLinescanFolder);
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            linescan.SaveSettingsINI();
+            SaveNeeded(false);
         }
     }
 }

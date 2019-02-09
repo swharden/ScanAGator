@@ -17,14 +17,17 @@ namespace ScanAGator
         public int baseline2 { get; set; }
         public int structure1 { get; set; }
         public int structure2 { get; set; }
-        public int filterPoints { get; set; }
-        public double filterMillisec { get { return filterPoints * scanLinePeriod * 1000.0; } }
+        public int filterPx { get; set; }
+        public int frame { get; set; }
+        public double filterMillisec { get { return filterPx * scanLinePeriod * 1000.0; } }
+        string version { get { return Properties.Resources.ResourceManager.GetString("version"); } }
 
         public string pathLinescanFolder { get; private set; }
         public bool validLinescanFolder { get; private set; }
         public string pathLinescanXML { get; private set; }
         public double scanLinePeriod { get; private set; }
-        public string pathSaveFolder { get; private set; }
+        public readonly string pathSaveFolder;
+        public readonly string pathIniFile;
         public string[] pathsRefImages { get; private set; }
         public string[] pathsDataR;
         public string[] pathsDataG;
@@ -40,7 +43,7 @@ namespace ScanAGator
         {
             get
             {
-                int skipEdgePoints = filterPoints * 2;
+                int skipEdgePoints = filterPx * 2;
                 double[] chopped = new double[dataDeltaGoRsmoothed.Length - skipEdgePoints * 2];
                 for (int i = 0; i < chopped.Length; i++)
                     chopped[i] = dataDeltaGoRsmoothed[i + skipEdgePoints];
@@ -52,7 +55,7 @@ namespace ScanAGator
         {
             get
             {
-                int skipEdgePoints = filterPoints * 2;
+                int skipEdgePoints = filterPx * 2;
                 double[] chopped = new double[dataDeltaGoRsmoothed.Length - skipEdgePoints * 2];
                 for (int i = 0; i < chopped.Length; i++)
                     chopped[i] = dataTimeMsec[i + skipEdgePoints];
@@ -68,14 +71,16 @@ namespace ScanAGator
         public PrairieLS(string path)
         {
             validLinescanFolder = true;
-
             pathLinescanFolder = System.IO.Path.GetFullPath(path);
-            Log($"Loading linescan folder: {this.pathLinescanFolder}");
+            pathSaveFolder = System.IO.Path.Combine(pathLinescanFolder, "ScanAGator");
+            pathIniFile = System.IO.Path.Combine(pathSaveFolder, "LineScanSettings.ini");
 
+            Log($"Loading linescan folder: {this.pathLinescanFolder}");
             ScanFolder();
             CreateSaveFolder();
-            LimitAuto();
-            LoadFrame(0);
+            LoadDefaultSettings();
+            LoadSettingsINI();
+            LoadFrame();
             Analyze();
         }
 
@@ -89,6 +94,16 @@ namespace ScanAGator
             if (!System.IO.Directory.Exists(pathLinescanFolder))
             {
                 Error("Linescan folder not found.");
+                return;
+            }
+
+            try
+            {
+                System.IO.Directory.GetFiles(pathLinescanFolder, "*.*");
+            }
+            catch (UnauthorizedAccessException)
+            {
+                Error("Unauthorized folder");
                 return;
             }
 
@@ -216,9 +231,12 @@ namespace ScanAGator
 
         #region analysis and calculations
 
-        public void LimitAuto()
+        public void LoadDefaultSettings()
         {
             // default limits
+
+            if (!validLinescanFolder)
+                return;
 
             // determine baseline as first 5-15%
             baseline1 = (int)(.05 * dataImage.Height);
@@ -234,8 +252,12 @@ namespace ScanAGator
             Log($"Structure defaulted to {structure1}px to {structure2}px");
 
             // filtering
-            filterPoints = 5;
-            Log($"Default gaussian filter size: {filterPoints} px ({filterPoints} ms)");
+            filterPx = 5;
+            Log($"Default gaussian filter size: {filterPx} px ({filterPx} ms)");
+
+            // filtering
+            frame = 0;
+            Log($"Default frame: {frame + 1} (of {pathsDataG.Length})");
         }
 
         public void FixLimits()
@@ -334,7 +356,7 @@ namespace ScanAGator
 
         private ImageData imR;
         private ImageData imG;
-        public void LoadFrame(int frame = 0)
+        public void LoadFrame()
         {
             if (!validLinescanFolder)
                 return;
@@ -344,7 +366,7 @@ namespace ScanAGator
             imG = new ImageData(pathsDataG[frame]);
         }
 
-        public void Analyze(int frame = 0)
+        public void Analyze()
         {
             if (!validLinescanFolder)
                 return;
@@ -378,8 +400,8 @@ namespace ScanAGator
                 dataDeltaGoR[i] = dataGoR[i] - baselineValue;
 
             // create the smoothed version
-            Log($"applying gaussian filter size: {filterPoints} px ({filterPoints} ms)");
-            dataDeltaGoRsmoothed = GaussianFilter1d(dataDeltaGoR, filterPoints);
+            Log($"applying gaussian filter size: {filterPx} px ({filterPx} ms)");
+            dataDeltaGoRsmoothed = GaussianFilter1d(dataDeltaGoR, filterPx);
             dataDeltaGoRsmoothedPeak = dataDeltaGoRsmoothed.Max();
 
             Log($"peak smoothed d[G/R]: {Math.Round(dataDeltaGoRsmoothedPeak, 2)}%");
@@ -392,7 +414,7 @@ namespace ScanAGator
         public Bitmap GetBmpReference(int imageNumber = 0)
         {
             string refPath = pathsRefImages[imageNumber];
-            foreach(string altRef in pathsRefImages)
+            foreach (string altRef in pathsRefImages)
             {
                 if (altRef.Contains("8bit"))
                 {
@@ -427,12 +449,12 @@ namespace ScanAGator
             return bmp;
         }
 
-        public Bitmap GetBmpMarkedG(int frame = 0)
+        public Bitmap GetBmpMarkedG()
         {
             return GetBmpMarked(pathsDataG[frame]);
         }
 
-        public Bitmap GetBmpMarkedR(int frame = 0)
+        public Bitmap GetBmpMarkedR()
         {
             return GetBmpMarked(pathsDataR[frame]);
         }
@@ -445,7 +467,6 @@ namespace ScanAGator
         {
             if (!validLinescanFolder)
                 return;
-            pathSaveFolder = System.IO.Path.Combine(pathLinescanFolder, "ScanAGator");
             if (!System.IO.Directory.Exists(pathSaveFolder))
             {
                 System.IO.Directory.CreateDirectory(pathSaveFolder);
@@ -453,14 +474,58 @@ namespace ScanAGator
             }
         }
 
-        public void SaveCSV(string saveFilePath)
+        public void LoadSettingsINI()
         {
+            if (!validLinescanFolder)
+                return;
 
+            if (!System.IO.File.Exists(pathIniFile))
+            {
+                Log("INI file not found.");
+                return;
+            }
+
+            Log("Loading data from INI file...");
+            foreach (string rawLine in System.IO.File.ReadAllLines(pathIniFile))
+            {
+                string line = rawLine.Trim();
+                if (line.StartsWith(";"))
+                    continue;
+                if (!line.Contains("="))
+                    continue;
+                string[] lineParts = line.Split('=');
+                string var = lineParts[0];
+                string valStr = lineParts[1];
+
+                if (var == "version" && valStr != version)
+                    Log($"WARNING! INI version ({valStr}) does not match this software version ({version})");
+                else if (var == "baseline1")
+                    baseline1 = int.Parse(valStr);
+                else if (var == "baseline2")
+                    baseline2 = int.Parse(valStr);
+                else if (var == "structure1")
+                    structure1 = int.Parse(valStr);
+                else if (var == "structure2")
+                    structure2 = int.Parse(valStr);
+                else if (var == "filterPx")
+                    filterPx = int.Parse(valStr);
+            }
         }
 
-        public void SaveSettings()
+        public void SaveSettingsINI()
         {
-
+            if (!validLinescanFolder)
+                return;
+            string text = "; Scan-A-Gator Linescan Settings\n";
+            text += $"version={version}\n";
+            text += $"baseline1={baseline1}\n";
+            text += $"baseline2={baseline2}\n";
+            text += $"structure1={structure1}\n";
+            text += $"structure2={structure2}\n";
+            text += $"filterPx={filterPx}\n";
+            text = text.Replace("\n", "\r\n").Trim();
+            System.IO.File.WriteAllText(pathIniFile, text);
+            Log($"Saved settings in: {pathIniFile}");
         }
 
         #endregion
