@@ -150,14 +150,21 @@ namespace ScanAGator
                 return;
 
             // TODO: use XY not signal
-            double sampleRate = 1;
+            double[] timeSec = new double[lsFolder.dataG.Length];
+            for (int i=0; i<timeSec.Length; i++)
+            {
+                // TODO: look-up line period from XML
+                timeSec[i] = i * .001;
+            }
 
             // update ScottPlot
             scottPlotUC1.plt.data.Clear();
             Bitmap bmpData = null;
+            int markerSize = 2;
+            int lineWidth = 0;
             if (calcDeltaGoR.Checked)
             {
-                scottPlotUC1.plt.data.AddSignal(lsFolder.dataDeltaGoR, sampleRate);
+                scottPlotUC1.plt.data.AddScatter(timeSec, lsFolder.dataDeltaGoR, markerSize: markerSize, lineWidth: lineWidth);
                 scottPlotUC1.plt.data.AddHorizLine(0, 2, Color.Black);
                 scottPlotUC1.plt.settings.axisLabelY = "Delta G/R (%)";
                 bmpData = new Bitmap(lsFolder.bmpDataG);
@@ -165,15 +172,15 @@ namespace ScanAGator
             }
             else if (calcGoR.Checked)
             {
-                scottPlotUC1.plt.data.AddSignal(lsFolder.dataGoR, sampleRate);
+                scottPlotUC1.plt.data.AddScatter(timeSec, lsFolder.dataGoR, markerSize: markerSize, lineWidth: lineWidth);
                 scottPlotUC1.plt.settings.axisLabelY = "Raw G/R (%)";
                 bmpData = new Bitmap(lsFolder.bmpDataG);
                 gbLinescan.Text = "Green Image (brightness-adjusted)";
             }
             else if (calcGR.Checked)
             {
-                scottPlotUC1.plt.data.AddSignal(lsFolder.dataR, sampleRate, lineColor: Color.Red);
-                scottPlotUC1.plt.data.AddSignal(lsFolder.dataG, sampleRate, lineColor: Color.Green);
+                scottPlotUC1.plt.data.AddScatter(timeSec, lsFolder.dataR, markerSize: markerSize, lineWidth: lineWidth, markerColor: Color.Red);
+                scottPlotUC1.plt.data.AddScatter(timeSec, lsFolder.dataG, markerSize: markerSize, lineWidth: lineWidth, markerColor: Color.Green);
                 scottPlotUC1.plt.settings.axisLabelY = "Red and Green (AFU)";
                 bmpData = bmpData = new Bitmap(lsFolder.bmpDataG);
                 gbLinescan.Text = "Red Image (brightness-adjusted)";
@@ -206,7 +213,7 @@ namespace ScanAGator
 
             scottPlotUC1.plt.settings.title = "";
             scottPlotUC1.plt.settings.axisLabelY = "";
-            scottPlotUC1.plt.settings.axisLabelX = "Frame Number";
+            scottPlotUC1.plt.settings.axisLabelX = "Time (milliseconds)";
             scottPlotUC1.plt.settings.figureBgColor = SystemColors.Control;
             //scottPlotUC1.plt.settings.SetDataPadding(40, 17, 40, 10);
             scottPlotUC1.Render();
