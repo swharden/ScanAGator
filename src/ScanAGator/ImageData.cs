@@ -96,7 +96,7 @@ namespace ScanAGator
                     data[i] += bytesSource[i * bytesPerPixel + byteNumber] << (byteNumber * 8);
         }
 
-        public void AutoContrast(double maxVal = 255)
+        public void AutoContrast(double maxVal = 254)
         {
             double valMin = data.Min();
             double valMax = data.Max();
@@ -120,7 +120,7 @@ namespace ScanAGator
             }
         }
 
-        public void AutoBrightness(double maxVal = 255)
+        public void AutoBrightness(double maxVal = 254)
         {
             double valMax = data.Max();
             for (int i = 0; i < data.Length; i++)

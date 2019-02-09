@@ -18,11 +18,13 @@ namespace ScanAGator
         public int structure1 { get; set; }
         public int structure2 { get; set; }
         public int filterPoints { get; set; }
+        public double filterMillisec { get { return filterPoints * scanLinePeriod * 1000.0; } }
 
         public string pathLinescanFolder { get; private set; }
         public bool validLinescanFolder { get; private set; }
         public string pathLinescanXML { get; private set; }
         public double scanLinePeriod { get; private set; }
+        public string pathSaveFolder { get; private set; }
         public string[] pathsRefImages { get; private set; }
         public string[] pathsDataR;
         public string[] pathsDataG;
@@ -30,7 +32,35 @@ namespace ScanAGator
         public double[] dataG { get; private set; }
         public double[] dataR { get; private set; }
         public double[] dataGoR { get; private set; }
+        public double[] dataTimeMsec { get; private set; }
         public double[] dataDeltaGoR { get; private set; }
+        public double[] dataDeltaGoRsmoothed { get; private set; }
+
+        public double[] dataDeltaGoRsmoothedChoppedYs
+        {
+            get
+            {
+                int skipEdgePoints = filterPoints * 2;
+                double[] chopped = new double[dataDeltaGoRsmoothed.Length - skipEdgePoints * 2];
+                for (int i = 0; i < chopped.Length; i++)
+                    chopped[i] = dataDeltaGoRsmoothed[i + skipEdgePoints];
+                return chopped;
+            }
+        }
+
+        public double[] dataDeltaGoRsmoothedChoppedXs
+        {
+            get
+            {
+                int skipEdgePoints = filterPoints * 2;
+                double[] chopped = new double[dataDeltaGoRsmoothed.Length - skipEdgePoints * 2];
+                for (int i = 0; i < chopped.Length; i++)
+                    chopped[i] = dataTimeMsec[i + skipEdgePoints];
+                return chopped;
+            }
+        }
+
+        public double dataDeltaGoRsmoothedPeak { get; private set; }
         public Size dataImage { get; private set; }
 
         #region loading of linescan files and data
@@ -43,7 +73,10 @@ namespace ScanAGator
             Log($"Loading linescan folder: {this.pathLinescanFolder}");
 
             ScanFolder();
+            CreateSaveFolder();
             LimitAuto();
+            LoadFrame(0);
+            Analyze();
         }
 
         /// <summary>
@@ -115,7 +148,17 @@ namespace ScanAGator
             {
                 Bitmap bmp = new Bitmap(pathsDataR[0]);
                 dataImage = new Size(bmp.Width, bmp.Height);
-                Console.WriteLine($"data image dimensions: {dataImage.Width}px (position) by {dataImage.Height}px (time)");
+                Log($"data image dimensions: {dataImage.Width}px (position) by {dataImage.Height}px (time)");
+            }
+
+            // create an array to hold data times based on scane line period
+            dataTimeMsec = new double[dataImage.Height];
+            for (int i = 0; i < dataTimeMsec.Length; i++)
+            {
+                if (scanLinePeriod < 0)
+                    dataTimeMsec[i] = i;
+                else
+                    dataTimeMsec[i] = i * scanLinePeriod * 1000.0;
             }
         }
 
@@ -189,14 +232,17 @@ namespace ScanAGator
             structure1 = center - stripWidth;
             structure2 = center + stripWidth;
             Log($"Structure defaulted to {structure1}px to {structure2}px");
+
+            // filtering
+            filterPoints = 5;
+            Log($"Default gaussian filter size: {filterPoints} px ({filterPoints} ms)");
         }
 
-        public void LimitErrorChecking()
+        public void FixLimits()
         {
-            // fix things like inverted or out-of-bounds structures and baselines
 
+            // swap order if necessary
             int original1;
-
             if (baseline2 < baseline1)
             {
                 original1 = baseline1;
@@ -211,59 +257,201 @@ namespace ScanAGator
                 structure2 = original1;
             }
 
-            baseline1 = (baseline1 < 0) ? 0 : baseline1;
-            baseline2 = (baseline2 < 0) ? 0 : baseline2;
-            structure1 = (structure1 < 0) ? 0 : structure1;
-            structure2 = (structure2 < 0) ? 0 : structure2;
+            // ensure things are at least 1px wide
+            if (structure1 == structure2)
+            {
+                if (structure1 > 0)
+                    structure1 -= 1;
+                else
+                    structure2 += 1;
+            }
 
-            baseline1 = (baseline1 > dataImage.Height - 1) ? 0 : dataImage.Height - 1;
-            baseline2 = (baseline2 > dataImage.Height) ? 0 : dataImage.Height;
-            structure1 = (structure1 > dataImage.Width - 1) ? 0 : dataImage.Width - 1;
-            structure2 = (structure2 > dataImage.Width) ? 0 : dataImage.Width;
+            if (baseline1 == baseline2)
+            {
+                if (baseline1 > 0)
+                    baseline1 -= 1;
+                else
+                    baseline2 += 1;
+            }
+        }
 
+        /// <summary>
+        /// Return a filtered version of the input array (with the same number of points)
+        /// </summary>
+        public double[] GaussianFilter1d(double[] data, int degree = 5)
+        {
+            if (degree < 2)
+                return data;
+
+            double[] smooth = new double[data.Length];
+
+            // create a gaussian windowing function
+            int windowSize = degree * 2 - 1;
+            double[] kernel = new double[windowSize];
+            for (int i = 0; i < windowSize; i++)
+            {
+                int pos = i - degree + 1;
+                double frac = i / (double)windowSize;
+                double gauss = 1.0 / Math.Exp(Math.Pow(4 * frac, 2)); // TODO: why 4?
+                kernel[i] = gauss * windowSize;
+            }
+
+            // normalize the kernel (so area is 1)
+            double weightSum = kernel.Sum();
+            for (int i = 0; i < windowSize; i++)
+                kernel[i] = kernel[i] / weightSum;
+
+            // apply the window
+            for (int i = 0; i < smooth.Length; i++)
+            {
+                if (i > kernel.Length && i < smooth.Length - kernel.Length)
+                {
+                    double smoothedValue = 0;
+                    for (int j = 0; j < kernel.Length; j++)
+                    {
+                        smoothedValue += kernel[j] * data[i + j];
+                    }
+                    smooth[i] = smoothedValue;
+                }
+                else
+                {
+                    smooth[i] = data[i];
+                }
+            }
+
+            // blank-out values outside the smoothing range
+            int firstValidPoint = kernel.Length;
+            int lastValidPoint = smooth.Length - kernel.Length;
+
+            for (int i = 0; i < firstValidPoint; i++)
+                smooth[i] = smooth[firstValidPoint];
+
+            for (int i = lastValidPoint; i < smooth.Length; i++)
+                smooth[i] = smooth[lastValidPoint];
+
+            return smooth;
+        }
+
+        private ImageData imR;
+        private ImageData imG;
+        public void LoadFrame(int frame = 0)
+        {
+            if (!validLinescanFolder)
+                return;
+
+            // load the G and R images and hold them as BMPs
+            imR = new ImageData(pathsDataR[frame]);
+            imG = new ImageData(pathsDataG[frame]);
         }
 
         public void Analyze(int frame = 0)
         {
-            LimitErrorChecking();
+            if (!validLinescanFolder)
+                return;
 
-            // load the G and R images and hold them as BMPs
+            FixLimits();
 
-            // load G and R based on limits
+            // load G and R data based on structure limits
+            dataR = imR.AverageHorizontally(structure1, structure2);
+            dataG = imG.AverageHorizontally(structure1, structure2);
 
-            // apply lowpass filter if necessary
+            // TODO: lowpass filter (on original data?)
+            //dataR = GaussianFilter1d(dataR, filterPoints);
+            //dataG = GaussianFilter1d(dataG, filterPoints);
 
-            // calculate the GoR and dGoR arrays
+            // calculate GoR
+            dataGoR = new double[dataG.Length];
+            for (int i = 0; i < dataG.Length; i++)
+                dataGoR[i] = dataG[i] / dataR[i] * 100.0;
+            Log($"peak G/R: {Math.Round(dataGoR.Max(), 2)}%");
+
+            // calculate baseline GoR (%)
+            double baselineValue = 0;
+            for (int i = baseline1; i < baseline2; i++)
+                baselineValue += dataGoR[i];
+            baselineValue = baselineValue / (baseline2 - baseline1);
+            Log($"baseline G/R: {Math.Round(baselineValue, 2)}%");
+
+            // calculate dGoR
+            dataDeltaGoR = new double[dataG.Length];
+            for (int i = 0; i < dataG.Length; i++)
+                dataDeltaGoR[i] = dataGoR[i] - baselineValue;
+
+            // create the smoothed version
+            Log($"applying gaussian filter size: {filterPoints} px ({filterPoints} ms)");
+            dataDeltaGoRsmoothed = GaussianFilter1d(dataDeltaGoR, filterPoints);
+            dataDeltaGoRsmoothedPeak = dataDeltaGoRsmoothed.Max();
+
+            Log($"peak smoothed d[G/R]: {Math.Round(dataDeltaGoRsmoothedPeak, 2)}%");
         }
 
         #endregion
 
         #region bitmap handling
 
-        private Bitmap GetBmpReference(int imageNumber = 0)
+        public Bitmap GetBmpReference(int imageNumber = 0)
         {
-            return new Bitmap(1, 1);
+            string refPath = pathsRefImages[imageNumber];
+            foreach(string altRef in pathsRefImages)
+            {
+                if (altRef.Contains("8bit"))
+                {
+                    refPath = altRef;
+                    break;
+                }
+            }
+            ImageData imRef = new ImageData(refPath);
+            imRef.AutoContrast();
+            return imRef.GetBitmapRGB();
         }
 
-        private Bitmap MarkLimits(Bitmap bmp)
+        private Bitmap GetBmpMarked(string imagePath)
         {
-            // draw the lines
+            ImageData img = new ImageData(imagePath);
+            img.AutoContrast();
+            Bitmap bmp = img.GetBitmapRGB();
+
+            Pen pen = new Pen(new SolidBrush(Color.Yellow));
+            Graphics gfx = Graphics.FromImage(bmp);
+
+            Log($"BASELINES TO DRAW: {baseline1} {baseline2}");
+            gfx.DrawLine(pen, new Point(0, baseline1), new Point(bmp.Width, baseline1));
+            gfx.DrawLine(pen, new Point(0, baseline2), new Point(bmp.Width, baseline2));
+
+            Log($"STRUCTURES TO DRAW: {structure1} {structure2}");
+            gfx.DrawLine(pen, new Point(structure1, 0), new Point(structure1, bmp.Height));
+            gfx.DrawLine(pen, new Point(structure2, 0), new Point(structure2, bmp.Height));
+
+            gfx.Dispose();
+
             return bmp;
         }
 
-        private Bitmap GetBmpG(bool markLimits = true)
+        public Bitmap GetBmpMarkedG(int frame = 0)
         {
-            return new Bitmap(1, 1);
+            return GetBmpMarked(pathsDataG[frame]);
         }
 
-        private Bitmap GetBmpR(bool markLimits = true)
+        public Bitmap GetBmpMarkedR(int frame = 0)
         {
-            return new Bitmap(1, 1);
+            return GetBmpMarked(pathsDataR[frame]);
         }
 
         #endregion
 
         #region saving and loading
+
+        public void CreateSaveFolder()
+        {
+            if (!validLinescanFolder)
+                return;
+            pathSaveFolder = System.IO.Path.Combine(pathLinescanFolder, "ScanAGator");
+            if (!System.IO.Directory.Exists(pathSaveFolder))
+            {
+                System.IO.Directory.CreateDirectory(pathSaveFolder);
+                Log("created folder: " + pathSaveFolder);
+            }
+        }
 
         public void SaveCSV(string saveFilePath)
         {
@@ -272,7 +460,7 @@ namespace ScanAGator
 
         public void SaveSettings()
         {
-            // save current settings (frame, structure, baseline) as XML.
+
         }
 
         #endregion
