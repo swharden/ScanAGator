@@ -24,6 +24,7 @@ namespace ScanAGator
         public double filterMillisec { get { return filterPx * scanLinePeriod * 1000.0; } }
         string version { get { return Properties.Resources.ResourceManager.GetString("version"); } }
         public string pathLinescanFolder { get; private set; }
+        public string folderName { get { return new System.IO.DirectoryInfo(pathLinescanFolder).Name; } }
         public bool validLinescanFolder { get; private set; }
         public string pathLinescanXML { get; private set; }
         public double scanLinePeriod { get; private set; }
@@ -257,7 +258,7 @@ namespace ScanAGator
             Log($"Baseline defaulted to {baseline1}px to {baseline2}px");
 
             // set the structure positions
-            StructureAutoDetect();            
+            StructureAutoDetect();
         }
 
         public void StructureAutoDetect()
@@ -480,7 +481,7 @@ namespace ScanAGator
         #endregion
 
         #region saving and loading
-        
+
         public void LoadSettingsINI()
         {
             if (!validLinescanFolder)
@@ -548,24 +549,29 @@ namespace ScanAGator
 
         public string GetCsvCurve()
         {
-            string csv = "dG/R\n";
-            for (int i = 0; i < dataDeltaGoRsmoothed.Length; i++)
-                csv += dataDeltaGoRsmoothed[i].ToString() + "\n";
+            string csv = "";
+            for (int i = (filterPx * 2 + 1); i < (dataDeltaGoRsmoothed.Length - filterPx * 2 - 1); i++)
+                csv += Math.Round(dataDeltaGoRsmoothed[i], 3).ToString() + "\n";
             return csv;
         }
 
         public string GetCsvAllData(string delimiter = "\t")
         {
-            string csv = "Time (ms), R (PMT), G (PMT), G/R (%), dG/R (%), filtered dG/R (%)\n";
+            string csv = "Time, R, G, G/R, dG/R, dG/R\n"; // long names
+            csv += "ms, AFU, AFU, %, %, %\n"; // units
+            csv += $"{folderName}, , , , , filtered\n"; // comments
             csv = csv.Replace(", ", delimiter);
             for (int i = 0; i < dataDeltaGoRsmoothed.Length; i++)
             {
-                csv += dataTimeMsec[i].ToString() + delimiter;
-                csv += dataR[i].ToString() + delimiter;
-                csv += dataG[i].ToString() + delimiter;
-                csv += dataGoR[i].ToString() + delimiter;
-                csv += dataDeltaGoR[i].ToString() + delimiter;
-                csv += dataDeltaGoRsmoothed[i].ToString() + delimiter;
+                csv += Math.Round(dataTimeMsec[i], 3).ToString() + delimiter;
+                csv += Math.Round(dataR[i], 3).ToString() + delimiter;
+                csv += Math.Round(dataG[i], 3).ToString() + delimiter;
+                csv += Math.Round(dataGoR[i], 3).ToString() + delimiter;
+                csv += Math.Round(dataDeltaGoR[i], 3).ToString() + delimiter;
+                if (i < (filterPx * 2 + 1) || i > (dataDeltaGoRsmoothed.Length - filterPx * 2 - 2))
+                    csv += delimiter; // NaN
+                else
+                    csv += Math.Round(dataDeltaGoRsmoothed[i], 3).ToString() + delimiter;
                 csv += "\n";
             }
 

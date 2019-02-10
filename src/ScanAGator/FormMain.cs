@@ -83,7 +83,7 @@ namespace ScanAGator
                 SaveNeeded(false);
 
             if (linescan.validLinescanFolder)
-                SetStatus($"Loaded PrairieView Linescan: {linescan.pathLinescanFolder}");
+                SetStatus($"Loaded PrairieView Linescan: {linescan.folderName}");
             else
                 SetStatus($"Selected folder is not a valid PrairieView Linescan", true);
 
