@@ -13,6 +13,8 @@ namespace ScanAGator
     public class PrairieLS
     {
 
+        #region class variables and properties
+
         public int baseline1 { get; set; }
         public int baseline2 { get; set; }
         public int structure1 { get; set; }
@@ -21,7 +23,6 @@ namespace ScanAGator
         public int frame { get; set; }
         public double filterMillisec { get { return filterPx * scanLinePeriod * 1000.0; } }
         string version { get { return Properties.Resources.ResourceManager.GetString("version"); } }
-
         public string pathLinescanFolder { get; private set; }
         public bool validLinescanFolder { get; private set; }
         public string pathLinescanXML { get; private set; }
@@ -31,18 +32,19 @@ namespace ScanAGator
         public string[] pathsRefImages { get; private set; }
         public string[] pathsDataR;
         public string[] pathsDataG;
-
+        public Size dataImage { get; private set; }
         public double[] dataG { get; private set; }
         public double[] dataR { get; private set; }
         public double[] dataGoR { get; private set; }
         public double[] dataTimeMsec { get; private set; }
         public double[] dataDeltaGoR { get; private set; }
         public double[] dataDeltaGoRsmoothed { get; private set; }
-
+        public double dataDeltaGoRsmoothedPeak { get; private set; }
         public double[] dataDeltaGoRsmoothedChoppedYs
         {
             get
             {
+                // return just the valid smoothed data values (not edges with incomplete smoothing)
                 int skipEdgePoints = filterPx * 2;
                 double[] chopped = new double[dataDeltaGoRsmoothed.Length - skipEdgePoints * 2];
                 for (int i = 0; i < chopped.Length; i++)
@@ -50,11 +52,11 @@ namespace ScanAGator
                 return chopped;
             }
         }
-
         public double[] dataDeltaGoRsmoothedChoppedXs
         {
             get
             {
+                // return just the valid smoothed data value times
                 int skipEdgePoints = filterPx * 2;
                 double[] chopped = new double[dataDeltaGoRsmoothed.Length - skipEdgePoints * 2];
                 for (int i = 0; i < chopped.Length; i++)
@@ -63,8 +65,7 @@ namespace ScanAGator
             }
         }
 
-        public double dataDeltaGoRsmoothedPeak { get; private set; }
-        public Size dataImage { get; private set; }
+        #endregion
 
         #region loading of linescan files and data
 
@@ -82,12 +83,12 @@ namespace ScanAGator
             LoadSettingsINI();
             LoadFrame();
             Analyze();
-            keepLogging = false;
+            keepLogging = false; // stop logging after instantiation
         }
 
         /// <summary>
         /// Call this once to load all information about the linescan into this class.
-        /// This function does everything short of loading TIFF data.
+        /// This function does everything short of pulling values out of TIFF data.
         /// </summary>
         private void ScanFolder()
         {
@@ -104,7 +105,7 @@ namespace ScanAGator
             }
             catch (UnauthorizedAccessException)
             {
-                Error("Unauthorized folder");
+                Error("You do not have permissions to access this folder.");
                 return;
             }
 
@@ -136,8 +137,6 @@ namespace ScanAGator
             }
             pathsDataR = filePathsR.ToArray();
             pathsDataG = filePathsG.ToArray();
-
-            // error check data image counts
             Log($"Found {pathsDataR.Length} red and {pathsDataG.Length} green data images");
             if (pathsDataR.Length == 0)
                 Error("No data images found!");
@@ -206,8 +205,10 @@ namespace ScanAGator
         #endregion
 
         #region logging
+
         private bool keepLogging = true;
         private List<string> log;
+
         private void Log(string message)
         {
             if (keepLogging == false)
@@ -235,16 +236,17 @@ namespace ScanAGator
 
         #region analysis and calculations
 
+        /// <summary>
+        /// Determine sane staring values for baseline, structure, and filter
+        /// </summary>
         public void LoadDefaultSettings()
         {
-            // default limits
-
             if (!validLinescanFolder)
                 return;
 
-            // determine baseline as first 5-15%
+            // set baseline to first 5-10%
             baseline1 = (int)(.05 * dataImage.Height);
-            baseline2 = (int)(.15 * dataImage.Height);
+            baseline2 = (int)(.10 * dataImage.Height);
             Log($"Baseline defaulted to {baseline1}px to {baseline2}px");
 
             // determine center then go a few pixels on each side
@@ -253,17 +255,20 @@ namespace ScanAGator
             int stripWidth = 5;
             structure1 = center - stripWidth;
             structure2 = center + stripWidth;
-            Log($"Structure defaulted to {structure1}px to {structure2}px");
+            Log($"Structure defaulted to {structure1} px to {structure2} px");
 
             // filtering
             filterPx = 5;
             Log($"Default gaussian filter size: {filterPx} px ({filterPx} ms)");
 
-            // filtering
+            // image selection
             frame = 0;
             Log($"Default frame: {frame + 1} (of {pathsDataG.Length})");
         }
 
+        /// <summary>
+        /// Fix potential errors with the baseline or structure values
+        /// </summary>
         public void FixLimits()
         {
 
@@ -302,7 +307,7 @@ namespace ScanAGator
         }
 
         /// <summary>
-        /// Return a filtered version of the input array (with the same number of points)
+        /// Return a filtered version of the input array (with the same number of points).
         /// </summary>
         public double[] GaussianFilter1d(double[] data, int degree = 5)
         {
@@ -345,13 +350,12 @@ namespace ScanAGator
                 }
             }
 
-            // blank-out values outside the smoothing range
+            // The edges are only partially smoothed, so they should be "NaN", but extending
+            // the first and last point out seems to be good enough.
             int firstValidPoint = kernel.Length;
             int lastValidPoint = smooth.Length - kernel.Length;
-
             for (int i = 0; i < firstValidPoint; i++)
                 smooth[i] = smooth[firstValidPoint];
-
             for (int i = lastValidPoint; i < smooth.Length; i++)
                 smooth[i] = smooth[lastValidPoint];
 
@@ -360,33 +364,28 @@ namespace ScanAGator
 
         private ImageData imR;
         private ImageData imG;
+
+        /// <summary>
+        /// Read data values from the red and green TIF of the class-level frame
+        /// </summary>
         public void LoadFrame()
         {
             if (!validLinescanFolder)
                 return;
-
-            // load the G and R images and hold them as BMPs
             imR = new ImageData(pathsDataR[frame]);
             imG = new ImageData(pathsDataG[frame]);
         }
 
-        public double analysisTimeMsec { get; private set; }
         public void Analyze()
         {
             if (!validLinescanFolder)
                 return;
-
-            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             FixLimits();
 
             // load G and R data based on structure limits
             dataR = imR.AverageHorizontally(structure1, structure2);
             dataG = imG.AverageHorizontally(structure1, structure2);
-
-            // TODO: lowpass filter (on original data?)
-            //dataR = GaussianFilter1d(dataR, filterPoints);
-            //dataG = GaussianFilter1d(dataG, filterPoints);
 
             // calculate GoR
             dataGoR = new double[dataG.Length];
@@ -410,16 +409,16 @@ namespace ScanAGator
             Log($"applying gaussian filter size: {filterPx} px ({filterPx} ms)");
             dataDeltaGoRsmoothed = GaussianFilter1d(dataDeltaGoR, filterPx);
             dataDeltaGoRsmoothedPeak = dataDeltaGoRsmoothed.Max();
-
             Log($"peak smoothed d[G/R]: {Math.Round(dataDeltaGoRsmoothedPeak, 2)}%");
-
-            analysisTimeMsec = stopwatch.ElapsedTicks * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
         }
 
         #endregion
 
         #region bitmap handling
 
+        /// <summary>
+        /// Return a brightness/contrast-enhanced TIF as a RGB bitmap
+        /// </summary>
         public Bitmap GetBmpReference(int imageNumber = 0)
         {
             string refPath = pathsRefImages[imageNumber];
@@ -436,25 +435,21 @@ namespace ScanAGator
             return imRef.GetBitmapRGB();
         }
 
+        /// <summary>
+        /// Return a data TIF, brightness/contrast-enhanced, with baseline and structures drawn on it
+        /// </summary>
         private Bitmap GetBmpMarked(string imagePath)
         {
             ImageData img = new ImageData(imagePath);
             img.AutoContrast();
             Bitmap bmp = img.GetBitmapRGB();
-
             Pen pen = new Pen(new SolidBrush(Color.Yellow));
             Graphics gfx = Graphics.FromImage(bmp);
-
-            Log($"BASELINES TO DRAW: {baseline1} {baseline2}");
             gfx.DrawLine(pen, new Point(0, baseline1), new Point(bmp.Width, baseline1));
             gfx.DrawLine(pen, new Point(0, baseline2), new Point(bmp.Width, baseline2));
-
-            Log($"STRUCTURES TO DRAW: {structure1} {structure2}");
             gfx.DrawLine(pen, new Point(structure1, 0), new Point(structure1, bmp.Height));
             gfx.DrawLine(pen, new Point(structure2, 0), new Point(structure2, bmp.Height));
-
             gfx.Dispose();
-
             return bmp;
         }
 
@@ -539,6 +534,8 @@ namespace ScanAGator
 
         #endregion
 
+        #region data export
+
         public string GetCsvCurve()
         {
             string csv = "dG/R\n";
@@ -564,5 +561,8 @@ namespace ScanAGator
                 
             return csv;
         }
+
+        #endregion
+
     }
 }
