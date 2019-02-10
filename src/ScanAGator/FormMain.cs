@@ -486,6 +486,13 @@ namespace ScanAGator
             frm.ShowDialog();
         }
 
+        private void autoselectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            linescan.StructureAutoDetect();
+            UpdateGuiFromLinescan();
+            AnalyzeData();
+        }
+
         #endregion
 
     }

@@ -243,11 +243,6 @@ namespace ScanAGator
             if (!validLinescanFolder)
                 return;
 
-            // set baseline to first 5-10%
-            baseline1 = (int)(.05 * dataImage.Height);
-            baseline2 = (int)(.10 * dataImage.Height);
-            Log($"Baseline defaulted to {baseline1}px to {baseline2}px");
-
             // filtering
             filterPx = 20;
             Log($"Default gaussian filter size: {filterPx} px ({filterPx} ms)");
@@ -257,6 +252,17 @@ namespace ScanAGator
             Log($"Default frame: {frame + 1} (of {pathsDataG.Length})");
             LoadFrame();
 
+            // set baseline to first 5-10%
+            baseline1 = (int)(.05 * dataImage.Height);
+            baseline2 = (int)(.10 * dataImage.Height);
+            Log($"Baseline defaulted to {baseline1}px to {baseline2}px");
+
+            // set the structure positions
+            StructureAutoDetect();            
+        }
+
+        public void StructureAutoDetect()
+        {
             // determine the brightest point and select a few pixels on each side of it
             double[] brightness = imG.AverageVertically();
             double brightestValue = 0;
@@ -273,7 +279,6 @@ namespace ScanAGator
             structure1 = brightestIndex - structureWidthFromCenter;
             structure2 = brightestIndex + structureWidthFromCenter;
             Log($"Selected {structureWidthFromCenter} px on each side of the brightest structure (at {brightestIndex} px)");
-
         }
 
         /// <summary>
