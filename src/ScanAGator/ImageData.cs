@@ -28,7 +28,7 @@ namespace ScanAGator
             this.height = height;
         }
 
-        public double[] AverageHorizontally(int leftPx=-1, int rightPx=-1)
+        public double[] AverageHorizontally(int leftPx = -1, int rightPx = -1)
         {
             // collapse the width. 
             // Return an array with length the same as the image height.
@@ -49,6 +49,23 @@ namespace ScanAGator
                 avgByRow[row] = rowSum / (rightPx - leftPx);
             }
             return avgByRow;
+        }
+
+        public double[] AverageVertically()
+        {
+            // collapse the height.
+            // Return an array with length the same as image width.
+            double[] avgByCol = new double[width];
+            for (int col = 0; col < width; col++)
+            {
+                double colSum = 0;
+                for (int row = 0; row < height; row++)
+                {
+                    colSum += data[row * width + col];
+                }
+                avgByCol[col] = colSum / height;
+            }
+            return avgByCol;
         }
 
         private void LoadDataFromFile(string filePath, int frameNumber = 0)

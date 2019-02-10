@@ -81,7 +81,6 @@ namespace ScanAGator
             CreateSaveFolder();
             LoadDefaultSettings();
             LoadSettingsINI();
-            LoadFrame();
             Analyze();
             keepLogging = false; // stop logging after instantiation
         }
@@ -249,21 +248,32 @@ namespace ScanAGator
             baseline2 = (int)(.10 * dataImage.Height);
             Log($"Baseline defaulted to {baseline1}px to {baseline2}px");
 
-            // determine center then go a few pixels on each side
-            // todo: replace this with an auto-detected structure centered on brightest point
-            int center = dataImage.Width / 2;
-            int stripWidth = 5;
-            structure1 = center - stripWidth;
-            structure2 = center + stripWidth;
-            Log($"Structure defaulted to {structure1} px to {structure2} px");
-
             // filtering
-            filterPx = 5;
+            filterPx = 20;
             Log($"Default gaussian filter size: {filterPx} px ({filterPx} ms)");
 
             // image selection
             frame = 0;
             Log($"Default frame: {frame + 1} (of {pathsDataG.Length})");
+            LoadFrame();
+
+            // determine the brightest point and select a few pixels on each side of it
+            double[] brightness = imG.AverageVertically();
+            double brightestValue = 0;
+            int brightestIndex = 0;
+            for (int i = 0; i < brightness.Length; i++)
+            {
+                if (brightness[i] > brightestValue)
+                {
+                    brightestValue = brightness[i];
+                    brightestIndex = i;
+                }
+            }
+            int structureWidthFromCenter = 3;
+            structure1 = brightestIndex - structureWidthFromCenter;
+            structure2 = brightestIndex + structureWidthFromCenter;
+            Log($"Selected {structureWidthFromCenter} px on each side of the brightest structure (at {brightestIndex} px)");
+
         }
 
         /// <summary>
@@ -558,7 +568,7 @@ namespace ScanAGator
                 csv += dataDeltaGoRsmoothed[i].ToString() + delimiter;
                 csv += "\n";
             }
-                
+
             return csv;
         }
 
