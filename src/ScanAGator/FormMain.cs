@@ -23,7 +23,6 @@ namespace ScanAGator
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-
             // prepare the tree browser
             TreeBrowserLoad();
 
@@ -36,8 +35,6 @@ namespace ScanAGator
             scottPlotUC1.plt.settings.figureBgColor = SystemColors.Control;
             scottPlotUC1.plt.settings.axisLabelX = "time (milliseconds)";
             scottPlotUC1.Render();
-
-
         }
 
         #region actions
@@ -217,7 +214,13 @@ namespace ScanAGator
         {
             path = System.IO.Path.GetFullPath(path);
             List<string> folderNames = new List<string>(path.Split(System.IO.Path.DirectorySeparatorChar));
-            TreeBrowserExpandChildren(treeView1.Nodes[0], folderNames);
+            foreach (TreeNode driveNode in treeView1.Nodes)
+            {
+                if (folderNames.Count() == 0)
+                    return;
+                if (driveNode.Text + ":" == folderNames[0])
+                    TreeBrowserExpandChildren(driveNode, folderNames);
+            }
         }
 
         private void TreeBrowserExpandChildren(TreeNode node, List<string> children)
@@ -462,6 +465,7 @@ namespace ScanAGator
             treeView1.Nodes.Clear();
             TreeBrowserLoad();
             LoadLinescanFolder(lastSelectedFolder);
+            Console.WriteLine("SELECTING: " + lastSelectedFolder);
             SetStatus("Refreshed folder list");
         }
 
