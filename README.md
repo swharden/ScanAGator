@@ -15,3 +15,6 @@ https://github.com/swharden/Scan-A-Gator/releases/latest
 * Analysis parameters for linescans can be saved/recalled as ini files
 * Analytical process is fully documented and easy to review in code
 * Prairie View version 4 and version 4 XML files are both supported
+* Designed to integrate with scientific analysis software (e.g., Matlab and OriginLab)
+
+![](doc/graphics/Graph1making.png)
