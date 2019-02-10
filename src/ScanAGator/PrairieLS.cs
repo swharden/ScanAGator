@@ -252,8 +252,8 @@ namespace ScanAGator
             Log($"Default frame: {frame + 1} (of {pathsDataG.Length})");
             LoadFrame();
 
-            // set baseline to first 5-10%
-            baseline1 = (int)(.05 * dataImage.Height);
+            // set baseline to first 10%
+            baseline1 = (int)(.00 * dataImage.Height);
             baseline2 = (int)(.10 * dataImage.Height);
             Log($"Baseline defaulted to {baseline1}px to {baseline2}px");
 

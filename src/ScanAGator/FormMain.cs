@@ -64,7 +64,7 @@ namespace ScanAGator
             {
                 btnSave.UseVisualStyleBackColor = true;
                 btnSave.ForeColor = Color.Black;
-            }                
+            }
         }
 
         private void LoadLinescanFolder(string path)
@@ -83,9 +83,9 @@ namespace ScanAGator
                 SaveNeeded(false);
 
             if (linescan.validLinescanFolder)
-                SetStatus($"Successfully loaded linescan folder: {System.IO.Path.GetFileName(linescan.pathLinescanFolder)}");
+                SetStatus($"Loaded PrairieView Linescan: {linescan.pathLinescanFolder}");
             else
-                SetStatus($"invalid linescan folder", true);
+                SetStatus($"Selected folder is not a valid PrairieView Linescan", true);
 
         }
 
@@ -163,7 +163,7 @@ namespace ScanAGator
                 linescan.LoadFrame();
 
             linescan.Analyze();
-            
+
             if (radioImageG.Checked)
                 pbData.BackgroundImage = linescan.GetBmpMarkedG();
             else
@@ -173,35 +173,36 @@ namespace ScanAGator
 
             scottPlotUC1.plt.data.Clear();
 
+
             if (radioDeltaGoR.Checked)
             {
-                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataDeltaGoR, markerColor: Color.LightBlue, lineWidth: 0);
-                scottPlotUC1.plt.data.AddScatter(linescan.dataDeltaGoRsmoothedChoppedXs, linescan.dataDeltaGoRsmoothedChoppedYs, markerSize: 0, lineColor: Color.Blue);
-                scottPlotUC1.plt.data.AddHorizLine(0, 2, Color.Black);
-                scottPlotUC1.plt.data.AddHorizLine(linescan.dataDeltaGoRsmoothedPeak, 2, Color.Red);
+                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataDeltaGoR, markerColor: System.Drawing.ColorTranslator.FromHtml("#a2d1f2"), lineWidth: 0, markerSize: 2);
+                scottPlotUC1.plt.data.AddScatter(linescan.dataDeltaGoRsmoothedChoppedXs, linescan.dataDeltaGoRsmoothedChoppedYs, markerSize: 0, lineColor: System.Drawing.ColorTranslator.FromHtml("#1f77b4"), lineWidth: 2);
+                scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline1], 2, System.Drawing.ColorTranslator.FromHtml("#969696"));
+                scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline2], 2, System.Drawing.ColorTranslator.FromHtml("#969696"));
+                scottPlotUC1.plt.data.AddHorizLine(0, 2, System.Drawing.ColorTranslator.FromHtml("#000000"), ScottPlot.Style.LineStyle.dashed);
+                scottPlotUC1.plt.data.AddHorizLine(linescan.dataDeltaGoRsmoothedPeak, 2, System.Drawing.ColorTranslator.FromHtml("#d62728"), ScottPlot.Style.LineStyle.dashed);
                 scottPlotUC1.plt.settings.AxisFit(0, .1);
                 scottPlotUC1.plt.settings.title = "Delta G/R";
                 scottPlotUC1.plt.settings.axisLabelY = "Delta G/R (%)";
             }
             else if (radioGoR.Checked)
             {
-                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataGoR, markerColor: Color.Blue, lineWidth: 0);
+                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataGoR, lineColor: System.Drawing.ColorTranslator.FromHtml("#1f77b4"), markerSize: 0);
                 scottPlotUC1.plt.settings.AxisFit(0, .1);
                 scottPlotUC1.plt.settings.title = "Raw G/R";
                 scottPlotUC1.plt.settings.axisLabelY = "G/R (%)";
             }
             else if (radioPMT.Checked)
             {
-                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataR, lineColor: Color.Red, markerSize: 0);
-                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataG, lineColor: Color.Green, markerSize: 0);
+                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataR, lineColor: System.Drawing.ColorTranslator.FromHtml("#d62728"), markerSize: 0);
+                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataG, lineColor: System.Drawing.ColorTranslator.FromHtml("#2ca02c"), markerSize: 0);
                 scottPlotUC1.plt.settings.AxisFit(0, .1);
                 scottPlotUC1.plt.settings.axisY.Set(0, null);
                 scottPlotUC1.plt.settings.title = "Raw G and R";
                 scottPlotUC1.plt.settings.axisLabelY = "PMT Value (AFU)";
             }
 
-            scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline1], 2, Color.Gray);
-            scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline2], 2, Color.Gray);
 
             scottPlotUC1.Render();
 
@@ -492,6 +493,7 @@ namespace ScanAGator
         {
             linescan.StructureAutoDetect();
             UpdateGuiFromLinescan();
+            SaveNeeded(true);
             AnalyzeData();
         }
 
