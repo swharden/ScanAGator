@@ -4,7 +4,7 @@
 ![](src/ScanAGator/screenshot.png)
 
 ## Download
-A click-to-run Scan-A-Gator (zipped EXE) is available with each release:
+A click-to-run Scan-A-Gator (zipped EXE) is available with each release:\
 https://github.com/swharden/Scan-A-Gator/releases/latest
 
 ## Features
