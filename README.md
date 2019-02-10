@@ -10,17 +10,16 @@ https://github.com/swharden/Scan-A-Gator/releases/latest
 ## Features
 * Can analyze TIFs with data of arbitrary bit depths (e.g., 12-bit data in a 16-bit TIF)
 * Semi-automated analysis facilitated by configurable default settings
+* Save/Load linescan configurations (storing baseline, structure, filter settings, etc)
 * Graphs are fully interactive
-* Linescan data can be copied to clipboard (TSV) or saved (CSV)
-* Analysis parameters for linescans can be saved/recalled as ini files
-* Analytical process is fully documented and easy to review in code
-* Prairie View version 4 and version 4 XML files are both supported
+* Linescan data can be copied to clipboard or saved as CSV
+* Analytical procedures are documented (below) and easy to review in code
+* Prairie View version 4 and version 5 XML files are both supported
 * Designed to integrate with scientific analysis software (e.g., Matlab and OriginLab)
 
 ![](doc/graphics/Graph1making.png)
 
 ## Theory
-
 
 A calcium-sensitive fluorophore will increase fluorescence intensity as calcium binds to it. However, raw intensity (**G**) is not always useful because larger structures have more fluorophore (not necessarily a higher concentration of calcium). To normalize to structure size, structures can be filled with a calcium-insensitive fluorophore (**R**), and **G/R** provides a relative (but not absolute) indication of calcium concentration. Note that **G** and **R** are scaled in AFU (arbitrary fluorescence units) which are not particularly useful or comparable across laboratories.
 
