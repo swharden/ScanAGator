@@ -13,6 +13,8 @@ namespace ScanAGator
     public partial class FormMain : Form
     {
         private PrairieLS linescan;
+        public string devConsoleText = "nothing yet";
+        public static Form frmDev;
 
         public FormMain()
         {
@@ -24,16 +26,30 @@ namespace ScanAGator
 
             // prepare the tree browser
             TreeBrowserLoad();
-            string path = @"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans\LineScan-09212014-1554-750";
-            LoadLinescanFolder(path);
 
-            // configure scottPlot settings
+            // load sample data (if running in the git repo)
+            string sampleDataPath = @"../../../../data/linescans/LineScan-09212014-1554-750";
+            if (System.IO.Directory.Exists(sampleDataPath))
+                LoadLinescanFolder(sampleDataPath);
+
+            // configure scottPlot style settings
             scottPlotUC1.plt.settings.figureBgColor = SystemColors.Control;
             scottPlotUC1.plt.settings.axisLabelX = "time (milliseconds)";
             scottPlotUC1.Render();
+
+
         }
 
         #region actions
+
+        public void SetStatus(string message, bool error = false)
+        {
+            lblStatus.Text = message;
+            if (error)
+                lblStatus.BackColor = Color.Red;
+            else
+                lblStatus.BackColor = SystemColors.Control;
+        }
 
         private void SaveNeeded(bool needed = false)
         {
@@ -63,6 +79,12 @@ namespace ScanAGator
                 SaveNeeded(true);
             else
                 SaveNeeded(false);
+
+            if (linescan.validLinescanFolder)
+                SetStatus($"Successfully loaded linescan folder: {System.IO.Path.GetFileName(linescan.pathLinescanFolder)}");
+            else
+                SetStatus($"invalid linescan folder", true);
+
         }
 
         private void UpdateLinescanFromGui()
@@ -108,6 +130,8 @@ namespace ScanAGator
 
             gbBaseline.Text = $"Baseline ({tbBaseline1.Value} px to {tbBaseline2.Value} px)";
             gbStructure.Text = $"Structure ({tbStructure1.Value} px to {tbStructure2.Value} px)";
+
+            //SetStatus($"linescan analysis completed in {Math.Round(linescan.analysisTimeMsec, 3)} ms");
         }
 
         private void UpdateImages()
@@ -178,6 +202,8 @@ namespace ScanAGator
             scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline2], 2, Color.Gray);
 
             scottPlotUC1.Render();
+
+            Application.DoEvents();
         }
 
         #endregion
@@ -287,6 +313,7 @@ namespace ScanAGator
             }
         }
 
+        string lastSelectedFolder = "C:";
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
             string path = "";
@@ -297,12 +324,13 @@ namespace ScanAGator
                 mynode = mynode.Parent;
             }
             path = path.Insert(1, ":");
-            path = System.IO.Path.GetFullPath(path);
-            LoadLinescanFolder(path);
+            lastSelectedFolder = System.IO.Path.GetFullPath(path);
+            LoadLinescanFolder(lastSelectedFolder);
         }
 
         #endregion
 
+        #region GUI bindings
 
         private void tbBaseline1_Scroll(object sender, EventArgs e)
         {
@@ -377,18 +405,88 @@ namespace ScanAGator
 
         private void button4_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/swharden/Scan-A-Gator");
+            if (linescan.validLinescanFolder)
+            {
+                SaveFileDialog savefile = new SaveFileDialog();
+                savefile.FileName = System.IO.Path.GetFileName(linescan.pathLinescanFolder);
+                savefile.Filter = "CSV Files (*.csv)|*.csv|All files (*.*)|*.*";
+                if (savefile.ShowDialog() == DialogResult.OK)
+                {
+                    System.IO.File.WriteAllText(savefile.FileName, linescan.GetCsvAllData(","));
+                    SetStatus($"Saved data as: {savefile.FileName}");
+                }
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
             LoadLinescanFolder(linescan.pathLinescanFolder);
+            SetStatus($"Re-loaded data from: {System.IO.Path.GetFileName(linescan.pathIniFile)}");
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
             linescan.SaveSettingsINI();
             SaveNeeded(false);
+            SetStatus($"Saved settings as: {linescan.pathIniFile}");
         }
+
+        private void btnCopyPeak_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText($"{Math.Round(linescan.dataDeltaGoRsmoothedPeak, 2)}");
+            SetStatus("copied peak dG/R value to the clipboard");
+        }
+
+        private void btnCopyCurve_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(linescan.GetCsvCurve());
+            SetStatus("copied the filtered dG/R curve to the clipboard");
+        }
+
+        private void btnCopyCurves_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(linescan.GetCsvAllData());
+            SetStatus("copied all data to the clipboard");
+        }
+
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void refreshFoldersToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            treeView1.Nodes.Clear();
+            TreeBrowserLoad();
+            LoadLinescanFolder(lastSelectedFolder);
+            SetStatus("Refreshed folder list");
+        }
+
+        private void setFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var diag = new FolderBrowserDialog();
+            if (diag.ShowDialog() == DialogResult.OK)
+                LoadLinescanFolder(diag.SelectedPath);
+        }
+
+        private void showLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form frm = new FormLog(linescan.GetLogForTextbox());
+            frm.ShowDialog();
+        }
+
+        private void documentationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start("https://github.com/swharden/Scan-A-Gator");
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Form frm = new FormAbout();
+            frm.ShowDialog();
+        }
+
+        #endregion
+
     }
 }

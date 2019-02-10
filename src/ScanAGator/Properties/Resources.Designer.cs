@@ -61,7 +61,7 @@ namespace ScanAGator.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 0.2.
+        ///   Looks up a localized string similar to 1.2.
         /// </summary>
         internal static string version {
             get {

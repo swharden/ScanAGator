@@ -59,10 +59,23 @@
             this.cbFrameAverage = new System.Windows.Forms.CheckBox();
             this.nudFrame = new System.Windows.Forms.NumericUpDown();
             this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.button3 = new System.Windows.Forms.Button();
-            this.button7 = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
+            this.btnCopyCurves = new System.Windows.Forms.Button();
+            this.btnCopyCurve = new System.Windows.Forms.Button();
+            this.btnCopyPeak = new System.Windows.Forms.Button();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.lblStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshFoldersToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.documentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pbRef)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbBaseline1)).BeginInit();
@@ -80,12 +93,14 @@
             this.gbFrame.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFrame)).BeginInit();
             this.groupBox7.SuspendLayout();
+            this.statusStrip1.SuspendLayout();
+            this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // treeView1
             // 
             this.treeView1.HideSelection = false;
-            this.treeView1.Location = new System.Drawing.Point(12, 12);
+            this.treeView1.Location = new System.Drawing.Point(12, 27);
             this.treeView1.Name = "treeView1";
             this.treeView1.Size = new System.Drawing.Size(474, 250);
             this.treeView1.TabIndex = 0;
@@ -96,7 +111,7 @@
             // 
             this.pbRef.BackColor = System.Drawing.SystemColors.ControlDark;
             this.pbRef.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pbRef.Location = new System.Drawing.Point(492, 12);
+            this.pbRef.Location = new System.Drawing.Point(492, 27);
             this.pbRef.Name = "pbRef";
             this.pbRef.Size = new System.Drawing.Size(250, 250);
             this.pbRef.TabIndex = 2;
@@ -106,7 +121,7 @@
             // 
             this.pbData.BackColor = System.Drawing.SystemColors.ControlDark;
             this.pbData.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pbData.Location = new System.Drawing.Point(748, 12);
+            this.pbData.Location = new System.Drawing.Point(748, 27);
             this.pbData.Name = "pbData";
             this.pbData.Size = new System.Drawing.Size(250, 250);
             this.pbData.TabIndex = 3;
@@ -126,7 +141,7 @@
             // 
             this.gbBaseline.Controls.Add(this.tbBaseline2);
             this.gbBaseline.Controls.Add(this.tbBaseline1);
-            this.gbBaseline.Location = new System.Drawing.Point(773, 389);
+            this.gbBaseline.Location = new System.Drawing.Point(773, 404);
             this.gbBaseline.Name = "gbBaseline";
             this.gbBaseline.Size = new System.Drawing.Size(231, 118);
             this.gbBaseline.TabIndex = 7;
@@ -147,7 +162,7 @@
             // 
             this.gbStructure.Controls.Add(this.tbStructure2);
             this.gbStructure.Controls.Add(this.tbStructure1);
-            this.gbStructure.Location = new System.Drawing.Point(773, 268);
+            this.gbStructure.Location = new System.Drawing.Point(773, 283);
             this.gbStructure.Name = "gbStructure";
             this.gbStructure.Size = new System.Drawing.Size(225, 115);
             this.gbStructure.TabIndex = 8;
@@ -177,7 +192,7 @@
             // scottPlotUC1
             // 
             this.scottPlotUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.scottPlotUC1.Location = new System.Drawing.Point(12, 265);
+            this.scottPlotUC1.Location = new System.Drawing.Point(12, 280);
             this.scottPlotUC1.Name = "scottPlotUC1";
             this.scottPlotUC1.Size = new System.Drawing.Size(474, 239);
             this.scottPlotUC1.TabIndex = 4;
@@ -187,7 +202,7 @@
             this.groupBox1.Controls.Add(this.radioPMT);
             this.groupBox1.Controls.Add(this.radioGoR);
             this.groupBox1.Controls.Add(this.radioDeltaGoR);
-            this.groupBox1.Location = new System.Drawing.Point(492, 340);
+            this.groupBox1.Location = new System.Drawing.Point(492, 355);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(64, 107);
             this.groupBox1.TabIndex = 9;
@@ -233,7 +248,7 @@
             // 
             this.groupBox2.Controls.Add(this.lblFilterMs);
             this.groupBox2.Controls.Add(this.nudFilter);
-            this.groupBox2.Location = new System.Drawing.Point(680, 381);
+            this.groupBox2.Location = new System.Drawing.Point(680, 396);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(87, 66);
             this.groupBox2.TabIndex = 10;
@@ -260,7 +275,7 @@
             // groupBox3
             // 
             this.groupBox3.Controls.Add(this.lblPeak);
-            this.groupBox3.Location = new System.Drawing.Point(492, 268);
+            this.groupBox3.Location = new System.Drawing.Point(492, 283);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(182, 66);
             this.groupBox3.TabIndex = 11;
@@ -284,7 +299,7 @@
             this.groupBox4.Controls.Add(this.button5);
             this.groupBox4.Controls.Add(this.button2);
             this.groupBox4.Controls.Add(this.btnSave);
-            this.groupBox4.Location = new System.Drawing.Point(492, 453);
+            this.groupBox4.Location = new System.Drawing.Point(492, 468);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(275, 54);
             this.groupBox4.TabIndex = 12;
@@ -297,7 +312,7 @@
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(88, 23);
             this.button4.TabIndex = 5;
-            this.button4.Text = "Documentation";
+            this.button4.Text = "Save CSV";
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.button4_Click);
             // 
@@ -335,7 +350,7 @@
             // 
             this.groupBox5.Controls.Add(this.radioImageG);
             this.groupBox5.Controls.Add(this.radioImageR);
-            this.groupBox5.Location = new System.Drawing.Point(680, 268);
+            this.groupBox5.Location = new System.Drawing.Point(680, 283);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(87, 36);
             this.groupBox5.TabIndex = 13;
@@ -370,7 +385,7 @@
             // 
             this.gbFrame.Controls.Add(this.cbFrameAverage);
             this.gbFrame.Controls.Add(this.nudFrame);
-            this.gbFrame.Location = new System.Drawing.Point(680, 308);
+            this.gbFrame.Location = new System.Drawing.Point(680, 323);
             this.gbFrame.Name = "gbFrame";
             this.gbFrame.Size = new System.Drawing.Size(87, 69);
             this.gbFrame.TabIndex = 14;
@@ -399,63 +414,168 @@
             // 
             // groupBox7
             // 
-            this.groupBox7.Controls.Add(this.button3);
-            this.groupBox7.Controls.Add(this.button7);
-            this.groupBox7.Controls.Add(this.button8);
-            this.groupBox7.Location = new System.Drawing.Point(562, 340);
+            this.groupBox7.Controls.Add(this.btnCopyCurves);
+            this.groupBox7.Controls.Add(this.btnCopyCurve);
+            this.groupBox7.Controls.Add(this.btnCopyPeak);
+            this.groupBox7.Location = new System.Drawing.Point(562, 355);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(112, 107);
             this.groupBox7.TabIndex = 15;
             this.groupBox7.TabStop = false;
             this.groupBox7.Text = "Copy";
             // 
-            // button3
+            // btnCopyCurves
             // 
-            this.button3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnCopyCurves.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button3.Location = new System.Drawing.Point(6, 77);
-            this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(100, 23);
-            this.button3.TabIndex = 4;
-            this.button3.Text = "All Curves";
-            this.button3.UseVisualStyleBackColor = true;
+            this.btnCopyCurves.Location = new System.Drawing.Point(6, 77);
+            this.btnCopyCurves.Name = "btnCopyCurves";
+            this.btnCopyCurves.Size = new System.Drawing.Size(100, 23);
+            this.btnCopyCurves.TabIndex = 4;
+            this.btnCopyCurves.Text = "All Curves";
+            this.btnCopyCurves.UseVisualStyleBackColor = true;
+            this.btnCopyCurves.Click += new System.EventHandler(this.btnCopyCurves_Click);
             // 
-            // button7
+            // btnCopyCurve
             // 
-            this.button7.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnCopyCurve.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button7.Location = new System.Drawing.Point(6, 48);
-            this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(100, 23);
-            this.button7.TabIndex = 3;
-            this.button7.Text = "dG/R Curve";
-            this.button7.UseVisualStyleBackColor = true;
+            this.btnCopyCurve.Location = new System.Drawing.Point(6, 48);
+            this.btnCopyCurve.Name = "btnCopyCurve";
+            this.btnCopyCurve.Size = new System.Drawing.Size(100, 23);
+            this.btnCopyCurve.TabIndex = 3;
+            this.btnCopyCurve.Text = "dG/R Curve";
+            this.btnCopyCurve.UseVisualStyleBackColor = true;
+            this.btnCopyCurve.Click += new System.EventHandler(this.btnCopyCurve_Click);
             // 
-            // button8
+            // btnCopyPeak
             // 
-            this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnCopyPeak.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button8.Location = new System.Drawing.Point(6, 19);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(100, 23);
-            this.button8.TabIndex = 2;
-            this.button8.Text = "dG/R Peak";
-            this.button8.UseVisualStyleBackColor = true;
+            this.btnCopyPeak.Location = new System.Drawing.Point(6, 19);
+            this.btnCopyPeak.Name = "btnCopyPeak";
+            this.btnCopyPeak.Size = new System.Drawing.Size(100, 23);
+            this.btnCopyPeak.TabIndex = 2;
+            this.btnCopyPeak.Text = "dG/R Peak";
+            this.btnCopyPeak.UseVisualStyleBackColor = true;
+            this.btnCopyPeak.Click += new System.EventHandler(this.btnCopyPeak_Click);
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 513);
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lblStatus});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 529);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(1010, 22);
             this.statusStrip1.TabIndex = 16;
             this.statusStrip1.Text = "statusStrip1";
             // 
+            // lblStatus
+            // 
+            this.lblStatus.Name = "lblStatus";
+            this.lblStatus.Size = new System.Drawing.Size(118, 17);
+            this.lblStatus.Text = "toolStripStatusLabel1";
+            // 
+            // menuStrip1
+            // 
+            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fileToolStripMenuItem,
+            this.settingsToolStripMenuItem,
+            this.helpToolStripMenuItem});
+            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip1.Name = "menuStrip1";
+            this.menuStrip1.Size = new System.Drawing.Size(1010, 24);
+            this.menuStrip1.TabIndex = 17;
+            this.menuStrip1.Text = "menuStrip1";
+            // 
+            // fileToolStripMenuItem
+            // 
+            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.setFolderToolStripMenuItem,
+            this.refreshFoldersToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.exitToolStripMenuItem});
+            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
+            this.fileToolStripMenuItem.Text = "File";
+            // 
+            // setFolderToolStripMenuItem
+            // 
+            this.setFolderToolStripMenuItem.Name = "setFolderToolStripMenuItem";
+            this.setFolderToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.setFolderToolStripMenuItem.Text = "Set Folder";
+            this.setFolderToolStripMenuItem.Click += new System.EventHandler(this.setFolderToolStripMenuItem_Click);
+            // 
+            // refreshFoldersToolStripMenuItem
+            // 
+            this.refreshFoldersToolStripMenuItem.Name = "refreshFoldersToolStripMenuItem";
+            this.refreshFoldersToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.refreshFoldersToolStripMenuItem.Text = "Refresh Folders";
+            this.refreshFoldersToolStripMenuItem.Click += new System.EventHandler(this.refreshFoldersToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(151, 6);
+            // 
+            // exitToolStripMenuItem
+            // 
+            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(154, 22);
+            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
+            // 
+            // settingsToolStripMenuItem
+            // 
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.showLogToolStripMenuItem});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            // 
+            // helpToolStripMenuItem
+            // 
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.documentationToolStripMenuItem,
+            this.toolStripSeparator1,
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
+            // 
+            // documentationToolStripMenuItem
+            // 
+            this.documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
+            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.documentationToolStripMenuItem.Text = "Documentation";
+            this.documentationToolStripMenuItem.Click += new System.EventHandler(this.documentationToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(154, 6);
+            // 
+            // aboutToolStripMenuItem
+            // 
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
+            // 
+            // showLogToolStripMenuItem
+            // 
+            this.showLogToolStripMenuItem.Name = "showLogToolStripMenuItem";
+            this.showLogToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.showLogToolStripMenuItem.Text = "Show Log";
+            this.showLogToolStripMenuItem.Click += new System.EventHandler(this.showLogToolStripMenuItem_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1010, 535);
+            this.ClientSize = new System.Drawing.Size(1010, 551);
             this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.menuStrip1);
             this.Controls.Add(this.groupBox7);
             this.Controls.Add(this.gbFrame);
             this.Controls.Add(this.groupBox5);
@@ -469,6 +589,7 @@
             this.Controls.Add(this.pbData);
             this.Controls.Add(this.pbRef);
             this.Controls.Add(this.treeView1);
+            this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
             this.Text = "Scan-A-Gator";
             this.Load += new System.EventHandler(this.FormMain_Load);
@@ -495,6 +616,10 @@
             this.gbFrame.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFrame)).EndInit();
             this.groupBox7.ResumeLayout(false);
+            this.statusStrip1.ResumeLayout(false);
+            this.statusStrip1.PerformLayout();
+            this.menuStrip1.ResumeLayout(false);
+            this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -532,10 +657,23 @@
         private System.Windows.Forms.GroupBox gbFrame;
         private System.Windows.Forms.NumericUpDown nudFrame;
         private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.Button button3;
-        private System.Windows.Forms.Button button7;
-        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.Button btnCopyCurves;
+        private System.Windows.Forms.Button btnCopyCurve;
+        private System.Windows.Forms.Button btnCopyPeak;
         private System.Windows.Forms.StatusStrip statusStrip1;
         private System.Windows.Forms.CheckBox cbFrameAverage;
+        private System.Windows.Forms.ToolStripStatusLabel lblStatus;
+        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem setFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem refreshFoldersToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem documentationToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showLogToolStripMenuItem;
     }
 }

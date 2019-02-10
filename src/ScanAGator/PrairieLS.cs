@@ -82,6 +82,7 @@ namespace ScanAGator
             LoadSettingsINI();
             LoadFrame();
             Analyze();
+            keepLogging = false;
         }
 
         /// <summary>
@@ -205,9 +206,12 @@ namespace ScanAGator
         #endregion
 
         #region logging
+        private bool keepLogging = true;
         private List<string> log;
         private void Log(string message)
         {
+            if (keepLogging == false)
+                return;
             if (log == null)
                 log = new List<string>();
             log.Add(message);
@@ -366,10 +370,13 @@ namespace ScanAGator
             imG = new ImageData(pathsDataG[frame]);
         }
 
+        public double analysisTimeMsec { get; private set; }
         public void Analyze()
         {
             if (!validLinescanFolder)
                 return;
+
+            System.Diagnostics.Stopwatch stopwatch = System.Diagnostics.Stopwatch.StartNew();
 
             FixLimits();
 
@@ -405,6 +412,8 @@ namespace ScanAGator
             dataDeltaGoRsmoothedPeak = dataDeltaGoRsmoothed.Max();
 
             Log($"peak smoothed d[G/R]: {Math.Round(dataDeltaGoRsmoothedPeak, 2)}%");
+
+            analysisTimeMsec = stopwatch.ElapsedTicks * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
         }
 
         #endregion
@@ -529,5 +538,31 @@ namespace ScanAGator
         }
 
         #endregion
+
+        public string GetCsvCurve()
+        {
+            string csv = "dG/R\n";
+            for (int i = 0; i < dataDeltaGoRsmoothed.Length; i++)
+                csv += dataDeltaGoRsmoothed[i].ToString() + "\n";
+            return csv;
+        }
+
+        public string GetCsvAllData(string delimiter = "\t")
+        {
+            string csv = "Time (ms), R (PMT), G (PMT), G/R (%), dG/R (%), filtered dG/R (%)\n";
+            csv = csv.Replace(", ", delimiter);
+            for (int i = 0; i < dataDeltaGoRsmoothed.Length; i++)
+            {
+                csv += dataTimeMsec[i].ToString() + delimiter;
+                csv += dataR[i].ToString() + delimiter;
+                csv += dataG[i].ToString() + delimiter;
+                csv += dataGoR[i].ToString() + delimiter;
+                csv += dataDeltaGoR[i].ToString() + delimiter;
+                csv += dataDeltaGoRsmoothed[i].ToString() + delimiter;
+                csv += "\n";
+            }
+                
+            return csv;
+        }
     }
 }
