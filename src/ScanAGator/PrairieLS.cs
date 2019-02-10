@@ -78,7 +78,6 @@ namespace ScanAGator
 
             Log($"Loading linescan folder: {this.pathLinescanFolder}");
             ScanFolder();
-            CreateSaveFolder();
             LoadDefaultSettings();
             LoadSettingsINI();
             Analyze();
@@ -481,18 +480,7 @@ namespace ScanAGator
         #endregion
 
         #region saving and loading
-
-        public void CreateSaveFolder()
-        {
-            if (!validLinescanFolder)
-                return;
-            if (!System.IO.Directory.Exists(pathSaveFolder))
-            {
-                System.IO.Directory.CreateDirectory(pathSaveFolder);
-                Log("created folder: " + pathSaveFolder);
-            }
-        }
-
+        
         public void LoadSettingsINI()
         {
             if (!validLinescanFolder)
@@ -535,6 +523,13 @@ namespace ScanAGator
         {
             if (!validLinescanFolder)
                 return;
+
+            if (!System.IO.Directory.Exists(pathSaveFolder))
+            {
+                System.IO.Directory.CreateDirectory(pathSaveFolder);
+                Log("created folder: " + pathSaveFolder);
+            }
+
             string text = "; Scan-A-Gator Linescan Settings\n";
             text += $"version={version}\n";
             text += $"baseline1={baseline1}\n";
