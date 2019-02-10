@@ -436,16 +436,13 @@ namespace ScanAGator
         /// </summary>
         public Bitmap GetBmpReference(int imageNumber = 0)
         {
-            string refPath = pathsRefImages[imageNumber];
+            // try to find a simple 8-bit RGB image to display
             foreach (string altRef in pathsRefImages)
-            {
                 if (altRef.Contains("8bit"))
-                {
-                    refPath = altRef;
-                    break;
-                }
-            }
-            ImageData imRef = new ImageData(refPath);
+                    return new Bitmap(altRef);
+
+            // it's probably single-channel 16-bit, so get fancy
+            ImageData imRef = new ImageData(pathsRefImages[0]);
             imRef.AutoContrast();
             return imRef.GetBitmapRGB();
         }

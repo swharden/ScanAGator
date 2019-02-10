@@ -70,6 +70,8 @@ namespace ScanAGator
 
         private void LoadDataFromFile(string filePath, int frameNumber = 0)
         {
+            // WARNING: fails with RGB images at present...
+            // WARNING: brightest pixel value in 16-bit TIF fails too...
 
             // open a file stream and keep it open until we're done reading the file
             System.IO.Stream stream = new System.IO.FileStream(filePath, System.IO.FileMode.Open,
