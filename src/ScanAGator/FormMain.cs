@@ -45,10 +45,12 @@ namespace ScanAGator
         public void SetStatus(string message, bool error = false)
         {
             lblStatus.Text = message;
+            /*
             if (error)
                 lblStatus.BackColor = Color.Red;
             else
                 lblStatus.BackColor = SystemColors.Control;
+            */
         }
 
         private void SaveNeeded(bool needed = false)
