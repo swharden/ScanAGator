@@ -1,5 +1,5 @@
 # Scan-A-Gator
-**Scan-A-Gator** is a Windows application to facilitate analysis of calcium levels from ratiometric line scan images. It was created to rapidly browse and analyze folders created by Prairie View software, but can be easily adapted for other applications. This application makes use of [SciTIF](https://github.com/swharden/SciTIF) and [ScottPlot](https://github.com/swharden/ScottPlot) libraries.
+**ScanAGator** is a Windows application to facilitate analysis of calcium levels from ratiometric line scan images. It was created to rapidly browse and analyze folders created by Prairie View software, but can be easily adapted for other applications. This application makes use of [SciTIF](https://github.com/swharden/SciTIF) and [ScottPlot](https://github.com/swharden/ScottPlot) libraries.
 
 ![](src/ScanAGator/screenshot.png)
 
