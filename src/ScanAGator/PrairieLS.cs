@@ -7,6 +7,46 @@ using System.Threading.Tasks;
 
 namespace ScanAGator
 {
+    public static class PrairieLStools
+    {
+        /// <summary>
+        /// For each linescan folder in the given path, return the peak filtered dG/R
+        /// </summary>
+        public static string GetPeakByLinescan(string path)
+        {
+            string csv = "folder name, peak filtered dG/R (%)\n\n";
+            int validScans = 0;
+            foreach (string pathDir in System.IO.Directory.GetDirectories(path))
+            {
+                string folderName = System.IO.Path.GetFileName(pathDir);
+                string pathPeakFile = System.IO.Path.Combine(pathDir, "ScanAGator/filteredPeak.txt");
+                if (System.IO.File.Exists(pathPeakFile))
+                {
+                    string peakStr = System.IO.File.ReadAllText(pathPeakFile).Replace("%","");
+                    csv += $"{folderName}, {double.Parse(peakStr)}\n";
+                    validScans += 1;
+                }
+                else
+                {
+                    csv += $"{folderName}, --\n";
+                }
+            }
+
+            if (validScans == 0)
+            {
+                string msg = "";
+                msg += "No LineScan folders were found inside selected folder.\n\n";
+                msg += "Reports can only be generated when an upper-level folder is\n";
+                msg += "selected which contains multiple LineScan folders.";
+                System.Windows.MessageBox.Show(msg, "ERROR");
+                csv = "";
+            }
+
+            csv = csv.Replace("\n", "\r\n");
+            return csv;
+        }
+    }
+
     /// <summary>
     /// Represents a PrarieView linescan experiment (a single folder)
     /// </summary>
@@ -31,6 +71,7 @@ namespace ScanAGator
         public readonly string pathSaveFolder;
         public readonly string pathIniFile;
         public readonly string pathCsvFile;
+        public readonly string pathPeakFile;
         public string[] pathsRefImages { get; private set; }
         public string[] pathsDataR;
         public string[] pathsDataG;
@@ -78,6 +119,7 @@ namespace ScanAGator
             pathSaveFolder = System.IO.Path.Combine(pathLinescanFolder, "ScanAGator");
             pathIniFile = System.IO.Path.Combine(pathSaveFolder, "LineScanSettings.ini");
             pathCsvFile = System.IO.Path.Combine(pathSaveFolder, "LineScanAnalysis.csv");
+            pathPeakFile = System.IO.Path.Combine(pathSaveFolder, "filteredPeak.txt");
 
             Log($"Loading linescan folder: {this.pathLinescanFolder}");
             ScanFolder();

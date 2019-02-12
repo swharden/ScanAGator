@@ -12,10 +12,11 @@ namespace ScanAGator
 {
     public partial class FormLog : Form
     {
-        public FormLog(string text)
+        public FormLog(string title, string message)
         {
             InitializeComponent();
-            textBox1.Text = text;
+            Text = title;
+            textBox1.Text = message;
             textBox1.Select(0, 0);
         }
     }

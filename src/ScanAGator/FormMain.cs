@@ -432,15 +432,15 @@ namespace ScanAGator
 
         private void button1_Click(object sender, EventArgs e)
         {
-
             if (linescan.validLinescanFolder)
             {
                 linescan.SaveSettingsINI();
                 System.IO.File.WriteAllText(linescan.pathCsvFile, linescan.GetCsvAllData(","));
+                string peakStr = string.Format("{0:0.00}%", Math.Round(linescan.dataDeltaGoRsmoothedPeak, 2));
+                System.IO.File.WriteAllText(linescan.pathPeakFile, peakStr);
                 SaveNeeded(false);
                 SetStatus($"Saved settings (INI) and all linescan data (CSV) in: {linescan.pathSaveFolder}");
             }
-
         }
 
         private void btnCopyPeak_Click(object sender, EventArgs e)
@@ -484,7 +484,7 @@ namespace ScanAGator
 
         private void showLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form frm = new FormLog(linescan.GetLogForTextbox());
+            Form frm = new FormLog("ScanAGator Log", linescan.GetLogForTextbox());
             frm.ShowDialog();
         }
 
@@ -509,5 +509,18 @@ namespace ScanAGator
 
         #endregion
 
+        #region reports
+
+        private void multilinescanSummaryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            string csv = PrairieLStools.GetPeakByLinescan(lastSelectedFolder);
+            if (csv != "")
+            {
+                Form frm = new FormLog("Multi-Linescan Report", csv);
+                frm.ShowDialog();
+            }
+        }
+
+        #endregion
     }
 }

@@ -53,7 +53,7 @@
             this.Font = new System.Drawing.Font("Consolas", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FormLog";
-            this.Text = "Log Window";
+            this.Text = "TITLE NOT SET";
             this.ResumeLayout(false);
             this.PerformLayout();
 
