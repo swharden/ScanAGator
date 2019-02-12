@@ -19,6 +19,12 @@ https://github.com/swharden/Scan-A-Gator/releases/latest
 
 ![](doc/graphics/Graph1making.png)
 
+## Programming Notes
+
+ScanAGator was written in C# using [Visual Studio Community 2017](https://visualstudio.microsoft.com/downloads/) (.NET Framework 4.7)
+
+Source code is fully available and modifications are intended to be simple to make. Only the standard libraries are used, except for [ScottPlot](https://github.com/swharden/ScottPlot) which must be downloaded separately (and a reference added to the ScanAGator project). If compile errors occur in the future, it may be because a large change was made to the ScottPlot API. If this is the case, download a copy of ScottPlot repository which was public at the time of a ScanAGator release.
+
 ## Theory
 
 A calcium-sensitive fluorophore will increase fluorescence intensity as calcium binds to it. However, raw intensity (**G**) is not always useful because larger structures have more fluorophore (not necessarily a higher concentration of calcium). To normalize to structure size, structures can be filled with a calcium-insensitive fluorophore (**R**), and **G/R** provides a relative (but not absolute) indication of calcium concentration. Note that **G** and **R** are scaled in AFU (arbitrary fluorescence units) which are not particularly useful or comparable across laboratories.
