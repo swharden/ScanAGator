@@ -432,9 +432,15 @@ namespace ScanAGator
 
         private void button1_Click(object sender, EventArgs e)
         {
-            linescan.SaveSettingsINI();
-            SaveNeeded(false);
-            SetStatus($"Saved settings as: {linescan.pathIniFile}");
+
+            if (linescan.validLinescanFolder)
+            {
+                linescan.SaveSettingsINI();
+                System.IO.File.WriteAllText(linescan.pathCsvFile, linescan.GetCsvAllData(","));
+                SaveNeeded(false);
+                SetStatus($"Saved settings (INI) and all linescan data (CSV) in: {linescan.pathSaveFolder}");
+            }
+
         }
 
         private void btnCopyPeak_Click(object sender, EventArgs e)

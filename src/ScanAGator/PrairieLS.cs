@@ -30,6 +30,7 @@ namespace ScanAGator
         public double scanLinePeriod { get; private set; }
         public readonly string pathSaveFolder;
         public readonly string pathIniFile;
+        public readonly string pathCsvFile;
         public string[] pathsRefImages { get; private set; }
         public string[] pathsDataR;
         public string[] pathsDataG;
@@ -76,6 +77,7 @@ namespace ScanAGator
             pathLinescanFolder = System.IO.Path.GetFullPath(path);
             pathSaveFolder = System.IO.Path.Combine(pathLinescanFolder, "ScanAGator");
             pathIniFile = System.IO.Path.Combine(pathSaveFolder, "LineScanSettings.ini");
+            pathCsvFile = System.IO.Path.Combine(pathSaveFolder, "LineScanAnalysis.csv");
 
             Log($"Loading linescan folder: {this.pathLinescanFolder}");
             ScanFolder();
