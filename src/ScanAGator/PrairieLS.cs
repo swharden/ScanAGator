@@ -22,7 +22,7 @@ namespace ScanAGator
                 string pathPeakFile = System.IO.Path.Combine(pathDir, "ScanAGator/filteredPeak.txt");
                 if (System.IO.File.Exists(pathPeakFile))
                 {
-                    string peakStr = System.IO.File.ReadAllText(pathPeakFile).Replace("%","");
+                    string peakStr = System.IO.File.ReadAllText(pathPeakFile).Replace("%", "");
                     csv += $"{folderName}, {double.Parse(peakStr)}\n";
                     validScans += 1;
                 }
@@ -62,6 +62,7 @@ namespace ScanAGator
         public int filterPx { get; set; }
         public int frame { get; set; }
         public double filterMillisec { get { return filterPx * scanLinePeriod * 1000.0; } }
+        public string analysisTitle { get; private set; }
         string version { get { return Properties.Resources.ResourceManager.GetString("version"); } }
         public string pathLinescanFolder { get; private set; }
         public string folderName { get { return new System.IO.DirectoryInfo(pathLinescanFolder).Name; } }
@@ -181,6 +182,14 @@ namespace ScanAGator
             pathsDataR = filePathsR.ToArray();
             pathsDataG = filePathsG.ToArray();
             Log($"Found {pathsDataR.Length} red and {pathsDataG.Length} green data images");
+
+            // hack-in support for Ch2-only linescans
+            if (pathsDataG.Length > 0 && pathsDataR.Length == 0)
+            {
+                Log("Single channel linescan (Ch2 only)");
+                pathsDataR = pathsDataG;
+            }
+
             if (pathsDataR.Length == 0)
                 Error("No data images found!");
             if (pathsDataR.Length != pathsDataG.Length)
@@ -445,6 +454,28 @@ namespace ScanAGator
             // load G and R data based on structure limits
             dataR = imR.AverageHorizontally(structure1, structure2);
             dataG = imG.AverageHorizontally(structure1, structure2);
+
+            // hack-in support for Ch2-only linescans
+            if (pathsDataG[0] == pathsDataR[0])
+            {
+                // calculate baseline G
+                double baselineGsum = 0;
+                for (int i = baseline1; i < baseline2; i++)
+                    baselineGsum += dataG[i];
+                double baselineG = baselineGsum / (baseline2 - baseline1);
+
+                // make all R values the G baseline
+                for (int i = 0; i < dataR.Length; i++)
+                {
+                    dataR[i] = baselineG;
+                }
+
+                analysisTitle = "Delta G";
+            }
+            else
+            {
+                analysisTitle = "Delta G/R";
+            }
 
             // calculate GoR
             dataGoR = new double[dataG.Length];

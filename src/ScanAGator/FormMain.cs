@@ -28,6 +28,7 @@ namespace ScanAGator
 
             // load sample data (if running in the git repo)
             string sampleDataPath = @"../../../../data/linescans/LineScan-09212014-1554-750";
+            sampleDataPath = @"X:\Data\OTR-Cre\GCaMP6f PFC injection patch and linescan\2019-02-13\slice1\2p\LineScan-02132019-1317-2782";
             if (System.IO.Directory.Exists(sampleDataPath))
                 LoadLinescanFolder(sampleDataPath);
 
@@ -180,8 +181,8 @@ namespace ScanAGator
                 scottPlotUC1.plt.data.AddHorizLine(0, 2, System.Drawing.ColorTranslator.FromHtml("#000000"), ScottPlot.Style.LineStyle.dashed);
                 scottPlotUC1.plt.data.AddHorizLine(linescan.dataDeltaGoRsmoothedPeak, 2, System.Drawing.ColorTranslator.FromHtml("#d62728"), ScottPlot.Style.LineStyle.dashed);
                 scottPlotUC1.plt.settings.AxisFit(0, .1);
-                scottPlotUC1.plt.settings.title = "Delta G/R";
-                scottPlotUC1.plt.settings.axisLabelY = "Delta G/R (%)";
+                scottPlotUC1.plt.settings.title = linescan.analysisTitle;
+                scottPlotUC1.plt.settings.axisLabelY = $"{linescan.analysisTitle} (%)";
             }
             else if (radioGoR.Checked)
             {
