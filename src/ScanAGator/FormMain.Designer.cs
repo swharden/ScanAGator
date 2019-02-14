@@ -40,13 +40,15 @@
             this.tbStructure1 = new System.Windows.Forms.TrackBar();
             this.scottPlotUC1 = new ScottPlotDev2.ScottPlotUC();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioG = new System.Windows.Forms.RadioButton();
+            this.radioDeltaG = new System.Windows.Forms.RadioButton();
             this.radioPMT = new System.Windows.Forms.RadioButton();
             this.radioGoR = new System.Windows.Forms.RadioButton();
             this.radioDeltaGoR = new System.Windows.Forms.RadioButton();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.lblFilterMs = new System.Windows.Forms.Label();
             this.nudFilter = new System.Windows.Forms.NumericUpDown();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.gbPeak = new System.Windows.Forms.GroupBox();
             this.lblPeak = new System.Windows.Forms.Label();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.button4 = new System.Windows.Forms.Button();
@@ -75,12 +77,12 @@
             this.autoselectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.summaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.multilinescanSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.documentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.summaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.multilinescanSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pbRef)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbData)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.tbBaseline1)).BeginInit();
@@ -92,7 +94,7 @@
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFilter)).BeginInit();
-            this.groupBox3.SuspendLayout();
+            this.gbPeak.SuspendLayout();
             this.groupBox4.SuspendLayout();
             this.groupBox5.SuspendLayout();
             this.gbFrame.SuspendLayout();
@@ -118,7 +120,7 @@
             this.pbRef.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pbRef.Location = new System.Drawing.Point(492, 27);
             this.pbRef.Name = "pbRef";
-            this.pbRef.Size = new System.Drawing.Size(250, 250);
+            this.pbRef.Size = new System.Drawing.Size(375, 375);
             this.pbRef.TabIndex = 2;
             this.pbRef.TabStop = false;
             // 
@@ -126,9 +128,9 @@
             // 
             this.pbData.BackColor = System.Drawing.SystemColors.ControlDark;
             this.pbData.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.pbData.Location = new System.Drawing.Point(748, 27);
+            this.pbData.Location = new System.Drawing.Point(873, 27);
             this.pbData.Name = "pbData";
-            this.pbData.Size = new System.Drawing.Size(250, 250);
+            this.pbData.Size = new System.Drawing.Size(375, 375);
             this.pbData.TabIndex = 3;
             this.pbData.TabStop = false;
             // 
@@ -138,7 +140,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbBaseline1.Location = new System.Drawing.Point(6, 19);
             this.tbBaseline1.Name = "tbBaseline1";
-            this.tbBaseline1.Size = new System.Drawing.Size(213, 45);
+            this.tbBaseline1.Size = new System.Drawing.Size(363, 45);
             this.tbBaseline1.TabIndex = 6;
             this.tbBaseline1.Scroll += new System.EventHandler(this.tbBaseline1_Scroll);
             // 
@@ -146,9 +148,9 @@
             // 
             this.gbBaseline.Controls.Add(this.tbBaseline2);
             this.gbBaseline.Controls.Add(this.tbBaseline1);
-            this.gbBaseline.Location = new System.Drawing.Point(773, 404);
+            this.gbBaseline.Location = new System.Drawing.Point(492, 408);
             this.gbBaseline.Name = "gbBaseline";
-            this.gbBaseline.Size = new System.Drawing.Size(225, 118);
+            this.gbBaseline.Size = new System.Drawing.Size(375, 118);
             this.gbBaseline.TabIndex = 7;
             this.gbBaseline.TabStop = false;
             this.gbBaseline.Text = "Baseline";
@@ -159,7 +161,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbBaseline2.Location = new System.Drawing.Point(6, 70);
             this.tbBaseline2.Name = "tbBaseline2";
-            this.tbBaseline2.Size = new System.Drawing.Size(213, 45);
+            this.tbBaseline2.Size = new System.Drawing.Size(363, 45);
             this.tbBaseline2.TabIndex = 7;
             this.tbBaseline2.Scroll += new System.EventHandler(this.tbBaseline2_Scroll);
             // 
@@ -167,9 +169,9 @@
             // 
             this.gbStructure.Controls.Add(this.tbStructure2);
             this.gbStructure.Controls.Add(this.tbStructure1);
-            this.gbStructure.Location = new System.Drawing.Point(773, 283);
+            this.gbStructure.Location = new System.Drawing.Point(873, 408);
             this.gbStructure.Name = "gbStructure";
-            this.gbStructure.Size = new System.Drawing.Size(225, 115);
+            this.gbStructure.Size = new System.Drawing.Size(375, 118);
             this.gbStructure.TabIndex = 8;
             this.gbStructure.TabStop = false;
             this.gbStructure.Text = "Structure";
@@ -180,7 +182,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbStructure2.Location = new System.Drawing.Point(6, 64);
             this.tbStructure2.Name = "tbStructure2";
-            this.tbStructure2.Size = new System.Drawing.Size(213, 45);
+            this.tbStructure2.Size = new System.Drawing.Size(363, 45);
             this.tbStructure2.TabIndex = 7;
             this.tbStructure2.Scroll += new System.EventHandler(this.tbStructure2_Scroll);
             // 
@@ -190,7 +192,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbStructure1.Location = new System.Drawing.Point(6, 19);
             this.tbStructure1.Name = "tbStructure1";
-            this.tbStructure1.Size = new System.Drawing.Size(213, 45);
+            this.tbStructure1.Size = new System.Drawing.Size(363, 45);
             this.tbStructure1.TabIndex = 6;
             this.tbStructure1.Scroll += new System.EventHandler(this.tbStructure1_Scroll);
             // 
@@ -199,29 +201,53 @@
             this.scottPlotUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.scottPlotUC1.Location = new System.Drawing.Point(12, 280);
             this.scottPlotUC1.Name = "scottPlotUC1";
-            this.scottPlotUC1.Size = new System.Drawing.Size(474, 239);
+            this.scottPlotUC1.Size = new System.Drawing.Size(474, 243);
             this.scottPlotUC1.TabIndex = 4;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.radioG);
+            this.groupBox1.Controls.Add(this.radioDeltaG);
             this.groupBox1.Controls.Add(this.radioPMT);
             this.groupBox1.Controls.Add(this.radioGoR);
             this.groupBox1.Controls.Add(this.radioDeltaGoR);
-            this.groupBox1.Location = new System.Drawing.Point(492, 355);
+            this.groupBox1.Location = new System.Drawing.Point(12, 529);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(64, 107);
+            this.groupBox1.Size = new System.Drawing.Size(114, 107);
             this.groupBox1.TabIndex = 9;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Graph";
+            // 
+            // radioG
+            // 
+            this.radioG.AutoSize = true;
+            this.radioG.Location = new System.Drawing.Point(65, 51);
+            this.radioG.Name = "radioG";
+            this.radioG.Size = new System.Drawing.Size(33, 17);
+            this.radioG.TabIndex = 4;
+            this.radioG.Text = "G";
+            this.radioG.UseVisualStyleBackColor = true;
+            this.radioG.CheckedChanged += new System.EventHandler(this.radioG_CheckedChanged);
+            // 
+            // radioDeltaG
+            // 
+            this.radioDeltaG.AutoSize = true;
+            this.radioDeltaG.Location = new System.Drawing.Point(65, 23);
+            this.radioDeltaG.Name = "radioDeltaG";
+            this.radioDeltaG.Size = new System.Drawing.Size(39, 17);
+            this.radioDeltaG.TabIndex = 3;
+            this.radioDeltaG.Text = "dG";
+            this.radioDeltaG.UseVisualStyleBackColor = true;
+            this.radioDeltaG.CheckedChanged += new System.EventHandler(this.radioDeltaG_CheckedChanged);
             // 
             // radioPMT
             // 
             this.radioPMT.AutoSize = true;
             this.radioPMT.Location = new System.Drawing.Point(7, 79);
             this.radioPMT.Name = "radioPMT";
-            this.radioPMT.Size = new System.Drawing.Size(48, 17);
+            this.radioPMT.Size = new System.Drawing.Size(41, 17);
             this.radioPMT.TabIndex = 2;
-            this.radioPMT.Text = "PMT";
+            this.radioPMT.Text = "GR";
             this.radioPMT.UseVisualStyleBackColor = true;
             this.radioPMT.CheckedChanged += new System.EventHandler(this.radioPMT_CheckedChanged);
             // 
@@ -244,7 +270,6 @@
             this.radioDeltaGoR.Name = "radioDeltaGoR";
             this.radioDeltaGoR.Size = new System.Drawing.Size(52, 17);
             this.radioDeltaGoR.TabIndex = 0;
-            this.radioDeltaGoR.TabStop = true;
             this.radioDeltaGoR.Text = "dG/R";
             this.radioDeltaGoR.UseVisualStyleBackColor = true;
             this.radioDeltaGoR.CheckedChanged += new System.EventHandler(this.radioDeltaGoR_CheckedChanged);
@@ -253,7 +278,7 @@
             // 
             this.groupBox2.Controls.Add(this.lblFilterMs);
             this.groupBox2.Controls.Add(this.nudFilter);
-            this.groupBox2.Location = new System.Drawing.Point(680, 396);
+            this.groupBox2.Location = new System.Drawing.Point(966, 538);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(87, 66);
             this.groupBox2.TabIndex = 10;
@@ -277,15 +302,15 @@
             this.nudFilter.TabIndex = 0;
             this.nudFilter.ValueChanged += new System.EventHandler(this.nudFilter_ValueChanged);
             // 
-            // groupBox3
+            // gbPeak
             // 
-            this.groupBox3.Controls.Add(this.lblPeak);
-            this.groupBox3.Location = new System.Drawing.Point(492, 283);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(182, 66);
-            this.groupBox3.TabIndex = 11;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Peak dG/R";
+            this.gbPeak.Controls.Add(this.lblPeak);
+            this.gbPeak.Location = new System.Drawing.Point(132, 529);
+            this.gbPeak.Name = "gbPeak";
+            this.gbPeak.Size = new System.Drawing.Size(182, 66);
+            this.gbPeak.TabIndex = 11;
+            this.gbPeak.TabStop = false;
+            this.gbPeak.Text = "Peak Value";
             // 
             // lblPeak
             // 
@@ -304,7 +329,7 @@
             this.groupBox4.Controls.Add(this.button5);
             this.groupBox4.Controls.Add(this.button2);
             this.groupBox4.Controls.Add(this.btnSave);
-            this.groupBox4.Location = new System.Drawing.Point(492, 468);
+            this.groupBox4.Location = new System.Drawing.Point(492, 532);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(275, 54);
             this.groupBox4.TabIndex = 12;
@@ -355,23 +380,23 @@
             // 
             this.groupBox5.Controls.Add(this.radioImageG);
             this.groupBox5.Controls.Add(this.radioImageR);
-            this.groupBox5.Location = new System.Drawing.Point(680, 283);
+            this.groupBox5.Location = new System.Drawing.Point(1059, 535);
             this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(87, 36);
+            this.groupBox5.Size = new System.Drawing.Size(79, 69);
             this.groupBox5.TabIndex = 13;
             this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Image";
+            this.groupBox5.Text = "Display";
             // 
             // radioImageG
             // 
             this.radioImageG.AutoSize = true;
             this.radioImageG.Checked = true;
-            this.radioImageG.Location = new System.Drawing.Point(45, 15);
+            this.radioImageG.Location = new System.Drawing.Point(6, 43);
             this.radioImageG.Name = "radioImageG";
-            this.radioImageG.Size = new System.Drawing.Size(33, 17);
+            this.radioImageG.Size = new System.Drawing.Size(61, 17);
             this.radioImageG.TabIndex = 3;
             this.radioImageG.TabStop = true;
-            this.radioImageG.Text = "G";
+            this.radioImageG.Text = "G (Ch2)";
             this.radioImageG.UseVisualStyleBackColor = true;
             this.radioImageG.CheckedChanged += new System.EventHandler(this.radioImageG_CheckedChanged);
             // 
@@ -380,9 +405,9 @@
             this.radioImageR.AutoSize = true;
             this.radioImageR.Location = new System.Drawing.Point(6, 15);
             this.radioImageR.Name = "radioImageR";
-            this.radioImageR.Size = new System.Drawing.Size(33, 17);
+            this.radioImageR.Size = new System.Drawing.Size(61, 17);
             this.radioImageR.TabIndex = 2;
-            this.radioImageR.Text = "R";
+            this.radioImageR.Text = "R (Ch1)";
             this.radioImageR.UseVisualStyleBackColor = true;
             this.radioImageR.CheckedChanged += new System.EventHandler(this.radioImageR_CheckedChanged);
             // 
@@ -390,7 +415,7 @@
             // 
             this.gbFrame.Controls.Add(this.cbFrameAverage);
             this.gbFrame.Controls.Add(this.nudFrame);
-            this.gbFrame.Location = new System.Drawing.Point(680, 323);
+            this.gbFrame.Location = new System.Drawing.Point(873, 535);
             this.gbFrame.Name = "gbFrame";
             this.gbFrame.Size = new System.Drawing.Size(87, 69);
             this.gbFrame.TabIndex = 14;
@@ -422,7 +447,7 @@
             this.groupBox7.Controls.Add(this.btnCopyCurves);
             this.groupBox7.Controls.Add(this.btnCopyCurve);
             this.groupBox7.Controls.Add(this.btnCopyPeak);
-            this.groupBox7.Location = new System.Drawing.Point(562, 355);
+            this.groupBox7.Location = new System.Drawing.Point(320, 529);
             this.groupBox7.Name = "groupBox7";
             this.groupBox7.Size = new System.Drawing.Size(112, 107);
             this.groupBox7.TabIndex = 15;
@@ -449,7 +474,7 @@
             this.btnCopyCurve.Name = "btnCopyCurve";
             this.btnCopyCurve.Size = new System.Drawing.Size(100, 23);
             this.btnCopyCurve.TabIndex = 3;
-            this.btnCopyCurve.Text = "dG/R Curve";
+            this.btnCopyCurve.Text = "Curve";
             this.btnCopyCurve.UseVisualStyleBackColor = true;
             this.btnCopyCurve.Click += new System.EventHandler(this.btnCopyCurve_Click);
             // 
@@ -461,7 +486,7 @@
             this.btnCopyPeak.Name = "btnCopyPeak";
             this.btnCopyPeak.Size = new System.Drawing.Size(100, 23);
             this.btnCopyPeak.TabIndex = 2;
-            this.btnCopyPeak.Text = "dG/R Peak";
+            this.btnCopyPeak.Text = "Peak";
             this.btnCopyPeak.UseVisualStyleBackColor = true;
             this.btnCopyPeak.Click += new System.EventHandler(this.btnCopyPeak_Click);
             // 
@@ -469,9 +494,9 @@
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.lblStatus});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 529);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 648);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(1008, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(1264, 22);
             this.statusStrip1.TabIndex = 16;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -491,7 +516,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1008, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1264, 24);
             this.menuStrip1.TabIndex = 17;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -562,6 +587,21 @@
             this.showLogToolStripMenuItem.Text = "Show Log";
             this.showLogToolStripMenuItem.Click += new System.EventHandler(this.showLogToolStripMenuItem_Click);
             // 
+            // summaryToolStripMenuItem
+            // 
+            this.summaryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.multilinescanSummaryToolStripMenuItem});
+            this.summaryToolStripMenuItem.Name = "summaryToolStripMenuItem";
+            this.summaryToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
+            this.summaryToolStripMenuItem.Text = "Summary";
+            // 
+            // multilinescanSummaryToolStripMenuItem
+            // 
+            this.multilinescanSummaryToolStripMenuItem.Name = "multilinescanSummaryToolStripMenuItem";
+            this.multilinescanSummaryToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
+            this.multilinescanSummaryToolStripMenuItem.Text = "multi-linescan summary";
+            this.multilinescanSummaryToolStripMenuItem.Click += new System.EventHandler(this.multilinescanSummaryToolStripMenuItem_Click);
+            // 
             // helpToolStripMenuItem
             // 
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -591,34 +631,19 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // summaryToolStripMenuItem
-            // 
-            this.summaryToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.multilinescanSummaryToolStripMenuItem});
-            this.summaryToolStripMenuItem.Name = "summaryToolStripMenuItem";
-            this.summaryToolStripMenuItem.Size = new System.Drawing.Size(70, 20);
-            this.summaryToolStripMenuItem.Text = "Summary";
-            // 
-            // multilinescanSummaryToolStripMenuItem
-            // 
-            this.multilinescanSummaryToolStripMenuItem.Name = "multilinescanSummaryToolStripMenuItem";
-            this.multilinescanSummaryToolStripMenuItem.Size = new System.Drawing.Size(203, 22);
-            this.multilinescanSummaryToolStripMenuItem.Text = "multi-linescan summary";
-            this.multilinescanSummaryToolStripMenuItem.Click += new System.EventHandler(this.multilinescanSummaryToolStripMenuItem_Click);
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1008, 551);
+            this.ClientSize = new System.Drawing.Size(1264, 670);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.menuStrip1);
+            this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox7);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.gbFrame);
             this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
+            this.Controls.Add(this.gbPeak);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.gbStructure);
             this.Controls.Add(this.gbBaseline);
@@ -646,7 +671,7 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nudFilter)).EndInit();
-            this.groupBox3.ResumeLayout(false);
+            this.gbPeak.ResumeLayout(false);
             this.groupBox4.ResumeLayout(false);
             this.groupBox5.ResumeLayout(false);
             this.groupBox5.PerformLayout();
@@ -681,7 +706,7 @@
         private System.Windows.Forms.RadioButton radioDeltaGoR;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.NumericUpDown nudFilter;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox gbPeak;
         private System.Windows.Forms.Label lblPeak;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Label lblFilterMs;
@@ -717,5 +742,7 @@
         private System.Windows.Forms.ToolStripMenuItem autoselectToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem summaryToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem multilinescanSummaryToolStripMenuItem;
+        private System.Windows.Forms.RadioButton radioG;
+        private System.Windows.Forms.RadioButton radioDeltaG;
     }
 }

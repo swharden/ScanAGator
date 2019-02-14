@@ -112,6 +112,23 @@ namespace ScanAGator
             if (!linescan.validLinescanFolder)
                 return;
 
+            if (linescan.pathsDataR.Length == 0)
+            {
+                // single-channel linescan
+                radioDeltaGoR.Enabled = false;
+                radioGoR.Enabled = false;
+                radioPMT.Enabled = false;
+                radioDeltaG.Checked = true;
+            }
+            else
+            {
+                // ratiometric linescan
+                radioDeltaGoR.Enabled = true;
+                radioGoR.Enabled = true;
+                radioPMT.Enabled = true;
+                radioDeltaGoR.Checked = true;
+            }
+
             tbBaseline1.Maximum = linescan.dataImage.Height;
             tbBaseline1.Value = linescan.baseline1;
             tbBaseline2.Maximum = linescan.dataImage.Height;
@@ -152,8 +169,11 @@ namespace ScanAGator
             }
         }
 
+        public double[] lastDataCurve;
         private void AnalyzeData(bool loadNewFrame = false)
         {
+            if (linescan == null)
+                return;
 
             if (!linescan.validLinescanFolder)
             {
@@ -174,12 +194,9 @@ namespace ScanAGator
             else
                 pbData.BackgroundImage = linescan.GetBmpMarkedR();
 
-            lblPeak.Text = string.Format("{0:0.00}%", Math.Round(linescan.dataDeltaGoRsmoothedPeak, 2));
-
             scottPlotUC1.plt.data.Clear();
 
-
-            if (radioDeltaGoR.Checked)
+            if (radioDeltaGoR.Checked & linescan.dataDeltaGoR != null)
             {
                 scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataDeltaGoR, markerColor: System.Drawing.ColorTranslator.FromHtml("#a2d1f2"), lineWidth: 0, markerSize: 2);
                 scottPlotUC1.plt.data.AddScatter(linescan.dataDeltaGoRsmoothedChoppedXs, linescan.dataDeltaGoRsmoothedChoppedYs, markerSize: 0, lineColor: System.Drawing.ColorTranslator.FromHtml("#1f77b4"), lineWidth: 2);
@@ -188,8 +205,10 @@ namespace ScanAGator
                 scottPlotUC1.plt.data.AddHorizLine(0, 2, System.Drawing.ColorTranslator.FromHtml("#000000"), ScottPlot.Style.LineStyle.dashed);
                 scottPlotUC1.plt.data.AddHorizLine(linescan.dataDeltaGoRsmoothedPeak, 2, System.Drawing.ColorTranslator.FromHtml("#d62728"), ScottPlot.Style.LineStyle.dashed);
                 scottPlotUC1.plt.settings.AxisFit(0, .1);
-                scottPlotUC1.plt.settings.title = linescan.analysisTitle;
-                scottPlotUC1.plt.settings.axisLabelY = $"{linescan.analysisTitle} (%)";
+                scottPlotUC1.plt.settings.title = "Delta G/R";
+                scottPlotUC1.plt.settings.axisLabelY = "Delta G/R (%)";
+                lblPeak.Text = string.Format("{0:0.00}%", Math.Round(linescan.dataDeltaGoRsmoothedPeak, 2));
+                lastDataCurve = linescan.dataDeltaGoRsmoothedChoppedYs;
             }
             else if (radioGoR.Checked)
             {
@@ -197,6 +216,8 @@ namespace ScanAGator
                 scottPlotUC1.plt.settings.AxisFit(0, .1);
                 scottPlotUC1.plt.settings.title = "Raw G/R";
                 scottPlotUC1.plt.settings.axisLabelY = "G/R (%)";
+                lblPeak.Text = string.Format("");
+                lastDataCurve = linescan.dataGoR;
             }
             else if (radioPMT.Checked)
             {
@@ -206,8 +227,33 @@ namespace ScanAGator
                 scottPlotUC1.plt.settings.axisY.Set(0, null);
                 scottPlotUC1.plt.settings.title = "Raw G and R";
                 scottPlotUC1.plt.settings.axisLabelY = "PMT Value (AFU)";
+                lblPeak.Text = string.Format("");
+                lastDataCurve = linescan.dataG;
             }
-
+            else if (radioDeltaG.Checked)
+            {
+                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataDeltaG, markerColor: System.Drawing.ColorTranslator.FromHtml("#98df8a"), lineWidth: 0, markerSize: 2);
+                scottPlotUC1.plt.data.AddScatter(linescan.dataDeltaGoRsmoothedChoppedXs, linescan.dataDeltaGsmoothedChoppedYs, markerSize: 0, lineColor: System.Drawing.ColorTranslator.FromHtml("#2ca02c"), lineWidth: 2);
+                scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline1], 2, System.Drawing.ColorTranslator.FromHtml("#969696"));
+                scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline2], 2, System.Drawing.ColorTranslator.FromHtml("#969696"));
+                scottPlotUC1.plt.data.AddHorizLine(0, 2, System.Drawing.ColorTranslator.FromHtml("#000000"), ScottPlot.Style.LineStyle.dashed);
+                scottPlotUC1.plt.data.AddHorizLine(linescan.dataDeltaGsmoothedPeak, 2, System.Drawing.ColorTranslator.FromHtml("#d62728"), ScottPlot.Style.LineStyle.dashed);
+                scottPlotUC1.plt.settings.AxisFit(0, .1);
+                scottPlotUC1.plt.settings.title = "Delta G";
+                scottPlotUC1.plt.settings.axisLabelY = "Delta G (%)";
+                lblPeak.Text = string.Format("{0:0.00}%", Math.Round(linescan.dataDeltaGsmoothedPeak, 2));
+                lastDataCurve = linescan.dataDeltaGsmoothedChoppedYs;
+            }
+            else if (radioG.Checked)
+            {
+                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataG, lineColor: System.Drawing.ColorTranslator.FromHtml("#2ca02c"), markerSize: 0);
+                scottPlotUC1.plt.settings.AxisFit(0, .1);
+                scottPlotUC1.plt.settings.axisY.Set(0, null);
+                scottPlotUC1.plt.settings.title = "Raw G";
+                scottPlotUC1.plt.settings.axisLabelY = "PMT Value (AFU)";
+                lblPeak.Text = string.Format("");
+                lastDataCurve = linescan.dataG;
+            }
 
             scottPlotUC1.Render();
 
@@ -453,14 +499,18 @@ namespace ScanAGator
 
         private void btnCopyPeak_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText($"{Math.Round(linescan.dataDeltaGoRsmoothedPeak, 2)}");
+            Clipboard.SetText($"{Math.Round(lastDataCurve.Max(), 2)}");
             SetStatus("copied peak dG/R value to the clipboard");
         }
 
         private void btnCopyCurve_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(linescan.GetCsvCurve());
-            SetStatus("copied the filtered dG/R curve to the clipboard");
+
+            string csv = "";
+            foreach (double val in lastDataCurve)
+                csv += Math.Round(val, 3).ToString() + "\n";
+            Clipboard.SetText(csv);
+            SetStatus("copied thecurve to the clipboard");
         }
 
         private void btnCopyCurves_Click(object sender, EventArgs e)
@@ -530,5 +580,15 @@ namespace ScanAGator
         }
 
         #endregion
+
+        private void radioDeltaG_CheckedChanged(object sender, EventArgs e)
+        {
+            AnalyzeData();
+        }
+
+        private void radioG_CheckedChanged(object sender, EventArgs e)
+        {
+            AnalyzeData();
+        }
     }
 }

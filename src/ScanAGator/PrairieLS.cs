@@ -62,7 +62,6 @@ namespace ScanAGator
         public int filterPx { get; set; }
         public int frame { get; set; }
         public double filterMillisec { get { return filterPx * scanLinePeriod * 1000.0; } }
-        public string analysisTitle { get; private set; }
         string version { get { return Properties.Resources.ResourceManager.GetString("version"); } }
         public string pathLinescanFolder { get; private set; }
         public string folderName { get { return new System.IO.DirectoryInfo(pathLinescanFolder).Name; } }
@@ -78,19 +77,35 @@ namespace ScanAGator
         public string[] pathsDataG;
         public Size dataImage { get; private set; }
         public double[] dataG { get; private set; }
+        public double[] dataDeltaG { get; private set; }
+        public double[] dataDeltaGsmoothed { get; private set; }
+        public double dataDeltaGsmoothedPeak;
         public double[] dataR { get; private set; }
         public double[] dataGoR { get; private set; }
         public double[] dataTimeMsec { get; private set; }
         public double[] dataDeltaGoR { get; private set; }
         public double[] dataDeltaGoRsmoothed { get; private set; }
-        public double dataDeltaGoRsmoothedPeak { get; private set; }
+        public double dataDeltaGoRsmoothedPeak;
+
+        public double[] dataDeltaGsmoothedChoppedYs
+        {
+            get
+            {
+                // return just the valid smoothed data values (not edges with incomplete smoothing)
+                int skipEdgePoints = filterPx * 2;
+                double[] chopped = new double[dataDeltaGsmoothed.Length - skipEdgePoints * 2];
+                for (int i = 0; i < chopped.Length; i++)
+                    chopped[i] = dataDeltaGsmoothed[i + skipEdgePoints];
+                return chopped;
+            }
+        }
         public double[] dataDeltaGoRsmoothedChoppedYs
         {
             get
             {
                 // return just the valid smoothed data values (not edges with incomplete smoothing)
                 int skipEdgePoints = filterPx * 2;
-                double[] chopped = new double[dataDeltaGoRsmoothed.Length - skipEdgePoints * 2];
+                double[] chopped = new double[dataDeltaGsmoothed.Length - skipEdgePoints * 2];
                 for (int i = 0; i < chopped.Length; i++)
                     chopped[i] = dataDeltaGoRsmoothed[i + skipEdgePoints];
                 return chopped;
@@ -102,7 +117,7 @@ namespace ScanAGator
             {
                 // return just the valid smoothed data value times
                 int skipEdgePoints = filterPx * 2;
-                double[] chopped = new double[dataDeltaGoRsmoothed.Length - skipEdgePoints * 2];
+                double[] chopped = new double[dataDeltaGsmoothed.Length - skipEdgePoints * 2];
                 for (int i = 0; i < chopped.Length; i++)
                     chopped[i] = dataTimeMsec[i + skipEdgePoints];
                 return chopped;
@@ -183,17 +198,13 @@ namespace ScanAGator
             pathsDataG = filePathsG.ToArray();
             Log($"Found {pathsDataR.Length} red and {pathsDataG.Length} green data images");
 
-            // hack-in support for Ch2-only linescans
+            // do some error checking related to the number of images found
             if (pathsDataG.Length > 0 && pathsDataR.Length == 0)
-            {
                 Log("Single channel linescan (Ch2 only)");
-                pathsDataR = pathsDataG;
-            }
-
-            if (pathsDataR.Length == 0)
+            else if (pathsDataR.Length == 0)
                 Error("No data images found!");
-            if (pathsDataR.Length != pathsDataG.Length)
-                Error("Number of red and green data images must be the same");
+            else if (pathsDataR.Length != pathsDataG.Length)
+                Error("Red and green data image count mismatch");
 
             // determine where the linescan configuration XML file is
             string[] linescanXmlFiles = System.IO.Directory.GetFiles(pathLinescanFolder, "LineScan*.xml");
@@ -211,9 +222,9 @@ namespace ScanAGator
             }
 
             // determine the dimensins of the linescan images from the first red channel
-            if (pathsDataR.Length > 0)
+            if (pathsDataG.Length > 0)
             {
-                Bitmap bmp = new Bitmap(pathsDataR[0]);
+                Bitmap bmp = new Bitmap(pathsDataG[0]);
                 dataImage = new Size(bmp.Width, bmp.Height);
                 Log($"data image dimensions: {dataImage.Width}px (position) by {dataImage.Height}px (time)");
             }
@@ -440,8 +451,10 @@ namespace ScanAGator
         {
             if (!validLinescanFolder)
                 return;
-            imR = new ImageData(pathsDataR[frame]);
-            imG = new ImageData(pathsDataG[frame]);
+            if (pathsDataR.Length > frame)
+                imR = new ImageData(pathsDataR[frame]);
+            if (pathsDataG.Length > frame)
+                imG = new ImageData(pathsDataG[frame]);
         }
 
         public void Analyze()
@@ -451,55 +464,53 @@ namespace ScanAGator
 
             FixLimits();
 
-            // load G and R data based on structure limits
-            dataR = imR.AverageHorizontally(structure1, structure2);
+            // start by calculating greed linescan data only
             dataG = imG.AverageHorizontally(structure1, structure2);
 
-            // hack-in support for Ch2-only linescans
-            if (pathsDataG[0] == pathsDataR[0])
-            {
-                // calculate baseline G
-                double baselineGsum = 0;
-                for (int i = baseline1; i < baseline2; i++)
-                    baselineGsum += dataG[i];
-                double baselineG = baselineGsum / (baseline2 - baseline1);
-
-                // make all R values the G baseline
-                for (int i = 0; i < dataR.Length; i++)
-                {
-                    dataR[i] = baselineG;
-                }
-
-                analysisTitle = "Delta G";
-            }
-            else
-            {
-                analysisTitle = "Delta G/R";
-            }
-
-            // calculate GoR
-            dataGoR = new double[dataG.Length];
-            for (int i = 0; i < dataG.Length; i++)
-                dataGoR[i] = dataG[i] / dataR[i] * 100.0;
-            Log($"peak G/R: {Math.Round(dataGoR.Max(), 2)}%");
-
-            // calculate baseline GoR (%)
-            double baselineValue = 0;
+            // calculate baseline G (not G/R) and delta G (not delta G/R)
+            double baselineGsum = 0;
             for (int i = baseline1; i < baseline2; i++)
-                baselineValue += dataGoR[i];
-            baselineValue = baselineValue / (baseline2 - baseline1);
-            Log($"baseline G/R: {Math.Round(baselineValue, 2)}%");
-
-            // calculate dGoR
-            dataDeltaGoR = new double[dataG.Length];
+                baselineGsum += dataG[i];
+            double baselineG = baselineGsum / (baseline2 - baseline1);
+            dataDeltaG = new double[dataG.Length];
             for (int i = 0; i < dataG.Length; i++)
-                dataDeltaGoR[i] = dataGoR[i] - baselineValue;
+                dataDeltaG[i] = dataG[i] - baselineG;
 
-            // create the smoothed version
-            Log($"applying gaussian filter size: {filterPx} px ({filterPx} ms)");
-            dataDeltaGoRsmoothed = GaussianFilter1d(dataDeltaGoR, filterPx);
-            dataDeltaGoRsmoothedPeak = dataDeltaGoRsmoothed.Max();
-            Log($"peak smoothed d[G/R]: {Math.Round(dataDeltaGoRsmoothedPeak, 2)}%");
+            // make the smoothed curve
+            Log($"applying gaussian filter size: {filterPx} px ({filterMillisec} ms)");
+            dataDeltaGsmoothed = GaussianFilter1d(dataDeltaG, filterPx);
+            dataDeltaGsmoothedPeak = dataDeltaGsmoothed.Max();
+            Log($"peak smoothed d[G]: {Math.Round(dataDeltaGsmoothedPeak, 2)}%");
+
+            // if red images exist, calculate the ratiometric data
+            if (pathsDataR.Length > 0)
+            {
+                dataR = imR.AverageHorizontally(structure1, structure2);
+
+                // calculate GoR
+                dataGoR = new double[dataG.Length];
+                for (int i = 0; i < dataG.Length; i++)
+                    dataGoR[i] = dataG[i] / dataR[i] * 100.0;
+                Log($"peak G/R: {Math.Round(dataGoR.Max(), 2)}%");
+
+                // calculate baseline GoR (%)
+                double baselineValue = 0;
+                for (int i = baseline1; i < baseline2; i++)
+                    baselineValue += dataGoR[i];
+                baselineValue = baselineValue / (baseline2 - baseline1);
+                Log($"baseline G/R: {Math.Round(baselineValue, 2)}%");
+
+                // calculate dGoR
+                dataDeltaGoR = new double[dataG.Length];
+                for (int i = 0; i < dataG.Length; i++)
+                    dataDeltaGoR[i] = dataGoR[i] - baselineValue;
+
+                // create the smoothed version
+                Log($"applying gaussian filter size: {filterPx} px ({filterMillisec} ms)");
+                dataDeltaGoRsmoothed = GaussianFilter1d(dataDeltaGoR, filterPx);
+                dataDeltaGoRsmoothedPeak = dataDeltaGoRsmoothed.Max();
+                Log($"peak smoothed d[G/R]: {Math.Round(dataDeltaGoRsmoothedPeak, 2)}%");
+            }
         }
 
         #endregion
@@ -619,32 +630,49 @@ namespace ScanAGator
 
         #region data export
 
-        public string GetCsvCurve()
-        {
-            string csv = "";
-            for (int i = (filterPx * 2 + 1); i < (dataDeltaGoRsmoothed.Length - filterPx * 2 - 1); i++)
-                csv += Math.Round(dataDeltaGoRsmoothed[i], 3).ToString() + "\n";
-            return csv;
-        }
-
         public string GetCsvAllData(string delimiter = "\t")
         {
-            string csv = "Time, R, G, G/R, dG/R, dG/R\n"; // long names
-            csv += "ms, AFU, AFU, %, %, %\n"; // units
-            csv += $"{folderName}, , , , , filtered\n"; // comments
-            csv = csv.Replace(", ", delimiter);
-            for (int i = 0; i < dataDeltaGoRsmoothed.Length; i++)
+            string csv;
+
+            if (pathsDataR.Length == 0)
             {
-                csv += Math.Round(dataTimeMsec[i], 3).ToString() + delimiter;
-                csv += Math.Round(dataR[i], 3).ToString() + delimiter;
-                csv += Math.Round(dataG[i], 3).ToString() + delimiter;
-                csv += Math.Round(dataGoR[i], 3).ToString() + delimiter;
-                csv += Math.Round(dataDeltaGoR[i], 3).ToString() + delimiter;
-                if (i < (filterPx * 2 + 1) || i > (dataDeltaGoRsmoothed.Length - filterPx * 2 - 2))
-                    csv += delimiter; // NaN
-                else
-                    csv += Math.Round(dataDeltaGoRsmoothed[i], 3).ToString() + delimiter;
-                csv += "\n";
+                // ratiometric channel linescan
+                csv = "Time, G, dG, dG\n"; // long names
+                csv += "ms, AFU, %, %\n"; // units
+                csv += $"{folderName}, , ,filtered\n"; // comments
+                csv = csv.Replace(", ", delimiter);
+                for (int i = 0; i < dataDeltaG.Length; i++)
+                {
+                    csv += Math.Round(dataTimeMsec[i], 3).ToString() + delimiter;
+                    csv += Math.Round(dataG[i], 3).ToString() + delimiter;
+                    csv += Math.Round(dataDeltaG[i], 3).ToString() + delimiter;
+                    if (i < (filterPx * 2 + 1) || i > (dataDeltaGsmoothed.Length - filterPx * 2 - 2))
+                        csv += delimiter; // NaN
+                    else
+                        csv += Math.Round(dataDeltaGsmoothed[i], 3).ToString() + delimiter;
+                    csv += "\n";
+                }
+            }
+            else
+            {
+                // ratiometric channel linescan
+                csv = "Time, R, G, G/R, dG/R, dG/R\n"; // long names
+                csv += "ms, AFU, AFU, %, %, %\n"; // units
+                csv += $"{folderName}, , , , , filtered\n"; // comments
+                csv = csv.Replace(", ", delimiter);
+                for (int i = 0; i < dataDeltaGoRsmoothed.Length; i++)
+                {
+                    csv += Math.Round(dataTimeMsec[i], 3).ToString() + delimiter;
+                    csv += Math.Round(dataR[i], 3).ToString() + delimiter;
+                    csv += Math.Round(dataG[i], 3).ToString() + delimiter;
+                    csv += Math.Round(dataGoR[i], 3).ToString() + delimiter;
+                    csv += Math.Round(dataDeltaGoR[i], 3).ToString() + delimiter;
+                    if (i < (filterPx * 2 + 1) || i > (dataDeltaGoRsmoothed.Length - filterPx * 2 - 2))
+                        csv += delimiter; // NaN
+                    else
+                        csv += Math.Round(dataDeltaGoRsmoothed[i], 3).ToString() + delimiter;
+                    csv += "\n";
+                }
             }
 
             return csv;
