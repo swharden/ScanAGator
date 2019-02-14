@@ -535,9 +535,16 @@ namespace ScanAGator
 
         private void setFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var diag = new FolderBrowserDialog();
-            if (diag.ShowDialog() == DialogResult.OK)
-                LoadLinescanFolder(diag.SelectedPath);
+            // use the save dialog to select the folder because it's better than the folder browser dialog
+            SaveFileDialog sf = new SaveFileDialog();
+            sf.FileName = "Load this folder";
+            if (sf.ShowDialog() == DialogResult.OK)
+            {
+                string thisFolder = System.IO.Path.GetDirectoryName(sf.FileName);
+                Console.WriteLine(">>>>>>>" + thisFolder);
+                TreeBrowserSelectPath(thisFolder);
+                LoadLinescanFolder(thisFolder);
+            }
         }
 
         private void showLogToolStripMenuItem_Click(object sender, EventArgs e)
