@@ -26,11 +26,18 @@ namespace ScanAGator
             // prepare the tree browser
             TreeBrowserLoad();
 
-            // load sample data (if running in the git repo)
-            string sampleDataPath = @"../../../../data/linescans/LineScan-09212014-1554-750";
-            sampleDataPath = @"X:\Data\OTR-Cre\GCaMP6f PFC injection patch and linescan\2019-02-13\slice1\2p\LineScan-02132019-1317-2782";
-            if (System.IO.Directory.Exists(sampleDataPath))
-                LoadLinescanFolder(sampleDataPath);
+            // define what folder to load when starting the app (most prioritized is on top)
+            List<string> sampleDataPaths = new List<string>();
+            sampleDataPaths.Add(@"X:\Data\OTR-Cre\GCaMP6f PFC injection patch and linescan\2019-02-13\slice1\2p\LineScan-02132019-1317-2782"); // work
+            sampleDataPaths.Add(@"../../../../data/linescans/LineScan-02132019-1317-2778"); // git
+            foreach (string sampleDataPath in sampleDataPaths)
+            {
+                if (System.IO.Directory.Exists(sampleDataPath))
+                {
+                    LoadLinescanFolder(sampleDataPath);
+                    break;
+                }
+            }
 
             // configure scottPlot style settings
             scottPlotUC1.plt.settings.figureBgColor = SystemColors.Control;
