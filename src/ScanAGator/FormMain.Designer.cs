@@ -113,6 +113,7 @@
             this.treeView1.TabIndex = 0;
             this.treeView1.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.treeView1_BeforeExpand);
             this.treeView1.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.treeView1_AfterSelect);
+            this.treeView1.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.treeView1_MouseDoubleClick);
             // 
             // pbRef
             // 
@@ -270,6 +271,7 @@
             this.radioDeltaGoR.Name = "radioDeltaGoR";
             this.radioDeltaGoR.Size = new System.Drawing.Size(52, 17);
             this.radioDeltaGoR.TabIndex = 0;
+            this.radioDeltaGoR.TabStop = true;
             this.radioDeltaGoR.Text = "dG/R";
             this.radioDeltaGoR.UseVisualStyleBackColor = true;
             this.radioDeltaGoR.CheckedChanged += new System.EventHandler(this.radioDeltaGoR_CheckedChanged);

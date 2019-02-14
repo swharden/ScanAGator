@@ -590,5 +590,10 @@ namespace ScanAGator
         {
             AnalyzeData();
         }
+
+        private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", linescan.pathLinescanFolder);
+        }
     }
 }
