@@ -12,544 +12,38 @@ namespace ScanAGator
 {
     public partial class FormMain : Form
     {
-        private PrairieLS linescan;
-        public string devConsoleText = "nothing yet";
-        public static Form frmDev;
-
         public FormMain()
         {
             InitializeComponent();
+
+            Text = $"Scan-A-Gator v{Properties.Resources.ResourceManager.GetString("version")}";
+
         }
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            // prepare the tree browser
-            TreeBrowserLoad();
-
-            // define what folder to load when starting the app (most prioritized is on top)
-            List<string> sampleDataPaths = new List<string>();
-            sampleDataPaths.Add(@"X:\Data\OTR-Cre\GCaMP6f PFC injection patch and linescan\2019-02-13\slice1\2p\LineScan-02132019-1317-2782"); // work
-            sampleDataPaths.Add(@"../../../../data/linescans/LineScan-02132019-1317-2778"); // git
-            foreach (string sampleDataPath in sampleDataPaths)
-            {
-                if (System.IO.Directory.Exists(sampleDataPath))
-                {
-                    LoadLinescanFolder(sampleDataPath);
-                    break;
-                }
-            }
-
-            // configure scottPlot style settings
-            scottPlotUC1.plt.settings.figureBgColor = SystemColors.Control;
-            scottPlotUC1.plt.settings.axisLabelX = "time (milliseconds)";
-            scottPlotUC1.Render();
+            SetFolder(@"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans\LineScan-02132019-1317-2778");
         }
 
-        #region actions
-
-        public void SetStatus(string message, bool error = false)
+        public LineScanFolder lsFolder;
+        private void SetFolder(string path, bool updateTree = true)
         {
-            lblStatus.Text = message;
-            /*
-            if (error)
-                lblStatus.BackColor = Color.Red;
+            if (updateTree)
+                // if you update the tree, an event will re-call this function
+                treeViewDirUC1.SelectPath(path);
             else
-                lblStatus.BackColor = SystemColors.Control;
-            */
+                lsFolder = new LineScanFolder(path);
         }
 
-        private void SaveNeeded(bool needed = false)
-        {
-            if (needed)
-            {
-                btnSave.BackColor = Color.Red;
-                btnSave.ForeColor = Color.White;
-            }
-            else
-            {
-                btnSave.UseVisualStyleBackColor = true;
-                btnSave.ForeColor = Color.Black;
-            }
-        }
-
-        private void LoadLinescanFolder(string path)
-        {
-            if (treeView1.SelectedNode == null)
-                TreeBrowserSelectPath(path);
-
-            linescan = new PrairieLS(path);
-            pbRef.BackgroundImage = (linescan.validLinescanFolder) ? linescan.GetBmpReference() : null;
-            UpdateGuiFromLinescan();
-            AnalyzeData();
-
-            if (linescan.validLinescanFolder && !System.IO.File.Exists(linescan.pathIniFile))
-                SaveNeeded(true);
-            else
-                SaveNeeded(false);
-
-            if (linescan.validLinescanFolder)
-                SetStatus($"Loaded PrairieView Linescan: {linescan.folderName}");
-            else
-                SetStatus($"Selected folder is not a valid PrairieView Linescan", true);
-
-        }
-
-        private void UpdateLinescanFromGui()
-        {
-            linescan.baseline1 = tbBaseline1.Value;
-            linescan.baseline2 = tbBaseline2.Value;
-            linescan.structure1 = tbStructure1.Value;
-            linescan.structure2 = tbStructure2.Value;
-            linescan.filterPx = (int)nudFilter.Value;
-            linescan.frame = (int)nudFrame.Value - 1;
-            SaveNeeded(true);
-
-            UpdateGuiFromLinescan(); // to update labels
-        }
-
-        private void UpdateGuiFromLinescan()
-        {
-            if (!linescan.validLinescanFolder)
-                return;
-
-            if (linescan.pathsDataR.Length == 0)
-            {
-                // single-channel linescan
-                radioDeltaGoR.Enabled = false;
-                radioGoR.Enabled = false;
-                radioPMT.Enabled = false;
-                radioDeltaG.Checked = true;
-            }
-            else
-            {
-                // ratiometric linescan
-                radioDeltaGoR.Enabled = true;
-                radioGoR.Enabled = true;
-                radioPMT.Enabled = true;
-                radioDeltaGoR.Checked = true;
-            }
-
-            tbBaseline1.Maximum = linescan.dataImage.Height;
-            tbBaseline1.Value = linescan.baseline1;
-            tbBaseline2.Maximum = linescan.dataImage.Height;
-            tbBaseline2.Value = linescan.baseline2;
-
-            tbStructure1.Maximum = linescan.dataImage.Width;
-            tbStructure1.Value = linescan.structure1;
-            tbStructure2.Maximum = linescan.dataImage.Width;
-            tbStructure2.Value = linescan.structure2;
-
-            nudFilter.Maximum = linescan.dataImage.Height / 5;
-            nudFilter.Value = linescan.filterPx;
-            lblFilterMs.Text = string.Format("{0:0.00} ms", linescan.filterMillisec);
-
-            nudFrame.Maximum = linescan.pathsDataG.Length;
-            nudFrame.Minimum = 1;
-            nudFrame.Value = linescan.frame + 1;
-            gbFrame.Text = $"Frame (of {nudFrame.Maximum})";
-            if (linescan.pathsDataG.Length == 1)
-                gbFrame.Enabled = false;
-            else
-                gbFrame.Enabled = true;
-
-            gbBaseline.Text = $"Baseline ({tbBaseline1.Value} px to {tbBaseline2.Value} px)";
-            gbStructure.Text = $"Structure ({tbStructure1.Value} px to {tbStructure2.Value} px)";
-
-            //SetStatus($"linescan analysis completed in {Math.Round(linescan.analysisTimeMsec, 3)} ms");
-        }
-
-        private void UpdateImages()
-        {
-            if (linescan.validLinescanFolder)
-            {
-            }
-            else
-            {
-                pbRef.BackgroundImage = null;
-            }
-        }
-
-        public double[] lastDataCurve;
-        private void AnalyzeData(bool loadNewFrame = false)
-        {
-            if (linescan == null)
-                return;
-
-            if (!linescan.validLinescanFolder)
-            {
-                pbData.BackgroundImage = null;
-                lblPeak.Text = "";
-                scottPlotUC1.plt.data.Clear();
-                scottPlotUC1.Render();
-                return;
-            }
-
-            if (loadNewFrame)
-                linescan.LoadFrame();
-
-            linescan.Analyze();
-
-            if (radioImageG.Checked)
-                pbData.BackgroundImage = linescan.GetBmpMarkedG();
-            else
-                pbData.BackgroundImage = linescan.GetBmpMarkedR();
-
-            scottPlotUC1.plt.data.Clear();
-
-            if (radioDeltaGoR.Checked & linescan.dataDeltaGoR != null)
-            {
-                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataDeltaGoR, markerColor: System.Drawing.ColorTranslator.FromHtml("#a2d1f2"), lineWidth: 0, markerSize: 2);
-                scottPlotUC1.plt.data.AddScatter(linescan.dataDeltaGoRsmoothedChoppedXs, linescan.dataDeltaGoRsmoothedChoppedYs, markerSize: 0, lineColor: System.Drawing.ColorTranslator.FromHtml("#1f77b4"), lineWidth: 2);
-                scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline1], 2, System.Drawing.ColorTranslator.FromHtml("#969696"));
-                scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline2], 2, System.Drawing.ColorTranslator.FromHtml("#969696"));
-                scottPlotUC1.plt.data.AddHorizLine(0, 2, System.Drawing.ColorTranslator.FromHtml("#000000"), ScottPlot.Style.LineStyle.dashed);
-                scottPlotUC1.plt.data.AddHorizLine(linescan.dataDeltaGoRsmoothedPeak, 2, System.Drawing.ColorTranslator.FromHtml("#d62728"), ScottPlot.Style.LineStyle.dashed);
-                scottPlotUC1.plt.settings.AxisFit(0, .1);
-                scottPlotUC1.plt.settings.title = "Delta G/R";
-                scottPlotUC1.plt.settings.axisLabelY = "Delta G/R (%)";
-                lblPeak.Text = string.Format("{0:0.00}%", Math.Round(linescan.dataDeltaGoRsmoothedPeak, 2));
-                lastDataCurve = linescan.dataDeltaGoRsmoothedChoppedYs;
-            }
-            else if (radioGoR.Checked)
-            {
-                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataGoR, lineColor: System.Drawing.ColorTranslator.FromHtml("#1f77b4"), markerSize: 0);
-                scottPlotUC1.plt.settings.AxisFit(0, .1);
-                scottPlotUC1.plt.settings.title = "Raw G/R";
-                scottPlotUC1.plt.settings.axisLabelY = "G/R (%)";
-                lblPeak.Text = string.Format("");
-                lastDataCurve = linescan.dataGoR;
-            }
-            else if (radioPMT.Checked)
-            {
-                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataR, lineColor: System.Drawing.ColorTranslator.FromHtml("#d62728"), markerSize: 0);
-                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataG, lineColor: System.Drawing.ColorTranslator.FromHtml("#2ca02c"), markerSize: 0);
-                scottPlotUC1.plt.settings.AxisFit(0, .1);
-                scottPlotUC1.plt.settings.axisY.Set(0, null);
-                scottPlotUC1.plt.settings.title = "Raw G and R";
-                scottPlotUC1.plt.settings.axisLabelY = "PMT Value (AFU)";
-                lblPeak.Text = string.Format("");
-                lastDataCurve = linescan.dataG;
-            }
-            else if (radioDeltaG.Checked)
-            {
-                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataDeltaG, markerColor: System.Drawing.ColorTranslator.FromHtml("#98df8a"), lineWidth: 0, markerSize: 2);
-                scottPlotUC1.plt.data.AddScatter(linescan.dataDeltaGoRsmoothedChoppedXs, linescan.dataDeltaGsmoothedChoppedYs, markerSize: 0, lineColor: System.Drawing.ColorTranslator.FromHtml("#2ca02c"), lineWidth: 2);
-                scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline1], 2, System.Drawing.ColorTranslator.FromHtml("#969696"));
-                scottPlotUC1.plt.data.AddVertLine(linescan.dataTimeMsec[linescan.baseline2], 2, System.Drawing.ColorTranslator.FromHtml("#969696"));
-                scottPlotUC1.plt.data.AddHorizLine(0, 2, System.Drawing.ColorTranslator.FromHtml("#000000"), ScottPlot.Style.LineStyle.dashed);
-                scottPlotUC1.plt.data.AddHorizLine(linescan.dataDeltaGsmoothedPeak, 2, System.Drawing.ColorTranslator.FromHtml("#d62728"), ScottPlot.Style.LineStyle.dashed);
-                scottPlotUC1.plt.settings.AxisFit(0, .1);
-                scottPlotUC1.plt.settings.title = "Delta G";
-                scottPlotUC1.plt.settings.axisLabelY = "Delta G (%)";
-                lblPeak.Text = string.Format("{0:0.00}%", Math.Round(linescan.dataDeltaGsmoothedPeak, 2));
-                lastDataCurve = linescan.dataDeltaGsmoothedChoppedYs;
-            }
-            else if (radioG.Checked)
-            {
-                scottPlotUC1.plt.data.AddScatter(linescan.dataTimeMsec, linescan.dataG, lineColor: System.Drawing.ColorTranslator.FromHtml("#2ca02c"), markerSize: 0);
-                scottPlotUC1.plt.settings.AxisFit(0, .1);
-                scottPlotUC1.plt.settings.axisY.Set(0, null);
-                scottPlotUC1.plt.settings.title = "Raw G";
-                scottPlotUC1.plt.settings.axisLabelY = "PMT Value (AFU)";
-                lblPeak.Text = string.Format("");
-                lastDataCurve = linescan.dataG;
-            }
-
-            scottPlotUC1.Render();
-
-            Application.DoEvents();
-        }
+        #region developer
 
         #endregion
 
-        #region directory browser
+        #region drop-down menu
 
-        private void TreeBrowserSelectPath(string path)
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            path = System.IO.Path.GetFullPath(path);
-            List<string> folderNames = new List<string>(path.Split(System.IO.Path.DirectorySeparatorChar));
-            foreach (TreeNode driveNode in treeView1.Nodes)
-            {
-                if (folderNames.Count() == 0)
-                    return;
-                if (driveNode.Text + ":" == folderNames[0])
-                    TreeBrowserExpandChildren(driveNode, folderNames);
-            }
-        }
-
-        private void TreeBrowserExpandChildren(TreeNode node, List<string> children)
-        {
-            children.RemoveAt(0);
-            node.Expand();
-            if (children.Count == 0)
-                return;
-            foreach (TreeNode mynode in node.Nodes)
-                if (mynode.Text == children[0])
-                {
-                    treeView1.SelectedNode = mynode;
-                    TreeBrowserExpandChildren(mynode, children);
-                    break;
-                }
-        }
-
-        private void TreeBrowserLoad()
-        {
-            string[] drives = Environment.GetLogicalDrives();
-            foreach (string drive in drives)
-            {
-                System.IO.DriveInfo di = new System.IO.DriveInfo(drive);
-                int driveImage;
-
-                // define icon based on drive type
-                switch (di.DriveType)
-                {
-                    case System.IO.DriveType.CDRom:
-                        driveImage = 3;
-                        break;
-                    case System.IO.DriveType.Network:
-                        driveImage = 6;
-                        break;
-                    case System.IO.DriveType.NoRootDirectory:
-                        driveImage = 8;
-                        break;
-                    case System.IO.DriveType.Unknown:
-                        driveImage = 8;
-                        break;
-                    default:
-                        driveImage = 2;
-                        break;
-                }
-
-                TreeNode node = new TreeNode(drive.Substring(0, 1), driveImage, driveImage);
-                node.Tag = drive;
-                if (di.IsReady == true)
-                    node.Nodes.Add("...");
-                treeView1.Nodes.Add(node);
-            }
-        }
-
-        private void treeView1_BeforeExpand(object sender, TreeViewCancelEventArgs e)
-        {
-            if (e.Node.Nodes.Count > 0)
-            {
-                if (e.Node.Nodes[0].Text == "..." && e.Node.Nodes[0].Tag == null)
-                {
-                    e.Node.Nodes.Clear();
-
-                    //get the list of sub direcotires
-                    string[] dirs = System.IO.Directory.GetDirectories(e.Node.Tag.ToString());
-
-                    foreach (string dir in dirs)
-                    {
-                        System.IO.DirectoryInfo di = new System.IO.DirectoryInfo(dir);
-                        TreeNode node = new TreeNode(di.Name, 0, 1);
-
-                        try
-                        {
-                            //keep the directory's full path in the tag for use later
-                            node.Tag = dir;
-
-                            //if the directory has sub directories add the place holder
-                            if (di.GetDirectories().Count() > 0)
-                                node.Nodes.Add(null, "...", 0, 0);
-                        }
-                        catch (UnauthorizedAccessException)
-                        {
-                            //display a locked folder icon
-                            node.ImageIndex = 12;
-                            node.SelectedImageIndex = 12;
-                        }
-                        catch (Exception ex)
-                        {
-                            MessageBox.Show(ex.Message, "DirectoryLister",
-                                MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        }
-                        finally
-                        {
-                            e.Node.Nodes.Add(node);
-                        }
-                    }
-                }
-            }
-        }
-
-        string lastSelectedFolder = "C:";
-        private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
-        {
-            string path = "";
-            var mynode = e.Node;
-            while (mynode != null)
-            {
-                path = mynode.Text + "/" + path;
-                mynode = mynode.Parent;
-            }
-            path = path.Insert(1, ":");
-            lastSelectedFolder = System.IO.Path.GetFullPath(path);
-            LoadLinescanFolder(lastSelectedFolder);
-        }
-
-        #endregion
-
-        #region GUI bindings
-
-        private void tbBaseline1_Scroll(object sender, EventArgs e)
-        {
-            UpdateLinescanFromGui();
-            AnalyzeData();
-        }
-
-        private void tbBaseline2_Scroll(object sender, EventArgs e)
-        {
-            UpdateLinescanFromGui();
-            AnalyzeData();
-        }
-
-        private void tbStructure1_Scroll(object sender, EventArgs e)
-        {
-            UpdateLinescanFromGui();
-            AnalyzeData();
-        }
-
-        private void tbStructure2_Scroll(object sender, EventArgs e)
-        {
-            UpdateLinescanFromGui();
-            AnalyzeData();
-        }
-
-        private void radioDeltaGoR_CheckedChanged(object sender, EventArgs e)
-        {
-            AnalyzeData();
-        }
-
-        private void radioGoR_CheckedChanged(object sender, EventArgs e)
-        {
-            AnalyzeData();
-        }
-
-        private void radioPMT_CheckedChanged(object sender, EventArgs e)
-        {
-            AnalyzeData();
-        }
-
-        private void nudFilter_ValueChanged(object sender, EventArgs e)
-        {
-            UpdateLinescanFromGui();
-            AnalyzeData();
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start("explorer.exe", linescan.pathLinescanFolder);
-        }
-
-        private void radioImageG_CheckedChanged(object sender, EventArgs e)
-        {
-            AnalyzeData();
-        }
-
-        private void radioImageR_CheckedChanged(object sender, EventArgs e)
-        {
-            AnalyzeData();
-        }
-
-        private void nudFrame_ValueChanged(object sender, EventArgs e)
-        {
-            UpdateLinescanFromGui();
-            AnalyzeData(true);
-        }
-
-        private void cbFrameAverage_CheckedChanged(object sender, EventArgs e)
-        {
-            // TODO: support analysis from the average of all frames
-        }
-
-        private void button4_Click(object sender, EventArgs e)
-        {
-            if (linescan.validLinescanFolder)
-            {
-                SaveFileDialog savefile = new SaveFileDialog();
-                savefile.FileName = System.IO.Path.GetFileName(linescan.pathLinescanFolder);
-                savefile.Filter = "CSV Files (*.csv)|*.csv|All files (*.*)|*.*";
-                if (savefile.ShowDialog() == DialogResult.OK)
-                {
-                    System.IO.File.WriteAllText(savefile.FileName, linescan.GetCsvAllData(","));
-                    SetStatus($"Saved data as: {savefile.FileName}");
-                }
-            }
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            LoadLinescanFolder(linescan.pathLinescanFolder);
-            SetStatus($"Re-loaded data from: {System.IO.Path.GetFileName(linescan.pathIniFile)}");
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            if (linescan.validLinescanFolder)
-            {
-                linescan.SaveSettingsINI();
-                System.IO.File.WriteAllText(linescan.pathCsvFile, linescan.GetCsvAllData(","));
-                string peakStr = string.Format("{0:0.00}%", Math.Round(linescan.dataDeltaGoRsmoothedPeak, 2));
-                System.IO.File.WriteAllText(linescan.pathPeakFile, peakStr);
-                SaveNeeded(false);
-                SetStatus($"Saved settings (INI) and all linescan data (CSV) in: {linescan.pathSaveFolder}");
-            }
-        }
-
-        private void btnCopyPeak_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText($"{Math.Round(lastDataCurve.Max(), 2)}");
-            SetStatus("copied peak dG/R value to the clipboard");
-        }
-
-        private void btnCopyCurve_Click(object sender, EventArgs e)
-        {
-
-            string csv = "";
-            foreach (double val in lastDataCurve)
-                csv += Math.Round(val, 3).ToString() + "\n";
-            Clipboard.SetText(csv);
-            SetStatus("copied thecurve to the clipboard");
-        }
-
-        private void btnCopyCurves_Click(object sender, EventArgs e)
-        {
-            Clipboard.SetText(linescan.GetCsvAllData());
-            SetStatus("copied all data to the clipboard");
-        }
-
-        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
-
-        private void refreshFoldersToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            treeView1.Nodes.Clear();
-            TreeBrowserLoad();
-            LoadLinescanFolder(lastSelectedFolder);
-            Console.WriteLine("SELECTING: " + lastSelectedFolder);
-            SetStatus("Refreshed folder list");
-        }
-
-        private void setFolderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            // use the save dialog to select the folder because it's better than the folder browser dialog
-            SaveFileDialog sf = new SaveFileDialog();
-            sf.FileName = "Load this folder";
-            if (sf.ShowDialog() == DialogResult.OK)
-            {
-                string thisFolder = System.IO.Path.GetDirectoryName(sf.FileName);
-                Console.WriteLine(">>>>>>>" + thisFolder);
-                TreeBrowserSelectPath(thisFolder);
-                LoadLinescanFolder(thisFolder);
-            }
-        }
-
-        private void showLogToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form frm = new FormLog("ScanAGator Log", linescan.GetLogForTextbox());
+            Form frm = new FormAbout();
             frm.ShowDialog();
         }
 
@@ -558,49 +52,26 @@ namespace ScanAGator
             System.Diagnostics.Process.Start("https://github.com/swharden/Scan-A-Gator");
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        private void exitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Form frm = new FormAbout();
-            frm.ShowDialog();
+            Close();
         }
 
-        private void autoselectToolStripMenuItem_Click(object sender, EventArgs e)
+        private void setFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            linescan.StructureAutoDetect();
-            UpdateGuiFromLinescan();
-            SaveNeeded(true);
-            AnalyzeData();
+            treeViewDirUC1.SelectPath(@"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans");
         }
 
         #endregion
 
-        #region reports
+        #region navigation
 
-        private void multilinescanSummaryToolStripMenuItem_Click(object sender, EventArgs e)
+        private void treeViewDirUC1_PathSelected(object sender, EventArgs e)
         {
-            string csv = PrairieLStools.GetPeakByLinescan(lastSelectedFolder);
-            if (csv != "")
-            {
-                Form frm = new FormLog("Multi-Linescan Report", csv);
-                frm.ShowDialog();
-            }
+            SetFolder(treeViewDirUC1.selectedPath, false);
         }
 
         #endregion
 
-        private void radioDeltaG_CheckedChanged(object sender, EventArgs e)
-        {
-            AnalyzeData();
-        }
-
-        private void radioG_CheckedChanged(object sender, EventArgs e)
-        {
-            AnalyzeData();
-        }
-
-        private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
-            System.Diagnostics.Process.Start("explorer.exe", linescan.pathLinescanFolder);
-        }
     }
 }
