@@ -12,6 +12,8 @@ namespace ScanAGator
 {
     public partial class TreeViewDirUC : UserControl
     {
+        public string selectedPath = "C:";
+
         public TreeViewDirUC()
         {
             InitializeComponent();
@@ -150,7 +152,6 @@ namespace ScanAGator
                 handler(this, e);
         }
 
-        public string selectedPath = "C:";
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
             string path = "";
@@ -167,5 +168,9 @@ namespace ScanAGator
         }
         #endregion
 
+        private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            System.Diagnostics.Process.Start("explorer.exe", selectedPath);
+        }
     }
 }

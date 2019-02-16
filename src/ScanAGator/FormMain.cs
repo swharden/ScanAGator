@@ -15,9 +15,9 @@ namespace ScanAGator
         public FormMain()
         {
             InitializeComponent();
+            DebugLogHide();
 
             Text = $"Scan-A-Gator v{Properties.Resources.ResourceManager.GetString("version")}";
-
         }
 
         private void FormMain_Load(object sender, EventArgs e)
@@ -26,20 +26,282 @@ namespace ScanAGator
         }
 
         public LineScanFolder lsFolder;
+        private bool ignoreGuiUpdates;
         private void SetFolder(string path, bool updateTree = true)
         {
             if (updateTree)
-                // if you update the tree, an event will re-call this function
+            {
+                // update the tree (will can an event to re-call fhis function)
                 treeViewDirUC1.SelectPath(path);
-            else
-                lsFolder = new LineScanFolder(path);
+                return;
+            }
+
+            lsFolder = new LineScanFolder(path);
+            UpdateGuiFromLinescanFirst();
+            UpdateGuiFromLinescan();
         }
 
-        #region developer
+        public void UpdateGuiFromLinescanFirst()
+        {
+            // call this when first loading a linescan to set limits and control gray-states
 
+            ignoreGuiUpdates = true;
+
+            // reference image
+            if (lsFolder.isValid)
+                pbRef.BackgroundImage = lsFolder.bmpRef;
+            else
+                pbRef.BackgroundImage = null;
+
+            // lock or unlock settings
+            gbDisplay.Enabled = lsFolder.isValid;
+            gbFrame.Enabled = lsFolder.isValid;
+            gbFilter.Enabled = lsFolder.isValid;
+            gbBaseline.Enabled = lsFolder.isValid;
+            gbStructure.Enabled = lsFolder.isValid;
+            gbSettings.Enabled = lsFolder.isValid;
+            gbData.Enabled = lsFolder.isValid;
+            gbAuto.Enabled = lsFolder.isValid;
+            gbDisplayType.Enabled = lsFolder.isValid;
+            gbPeak.Enabled = lsFolder.isValid;
+            cbRatio.Enabled = lsFolder.isRatiometric;
+
+            if (lsFolder.isRatiometric)
+            {
+                cbRatio.Checked = true;
+                cbR.Checked = true;
+                cbG.Checked = true;
+            }
+            else
+            {
+                cbG.Checked = true;
+            }
+
+            if (lsFolder.isValid)
+            {
+                cbG.Enabled = (lsFolder.pathsDataG.Length > 0) ? true : false;
+                cbR.Enabled = (lsFolder.pathsDataR.Length > 0) ? true : false;
+
+                if (lsFolder.isRatiometric)
+                {
+                    cbRatio.Checked = true;
+                    cbDelta.Checked = true;
+                } else
+                {
+                    cbDelta.Checked = true;
+                }
+
+                nudFrame.Minimum = 1;
+                nudFrame.Maximum = lsFolder.pathsDataG.Length;
+                gbFrame.Text = $"Frame (of {lsFolder.pathsDataG.Length})";
+                if (lsFolder.pathsDataG.Length == 1)
+                    nudFrame.Enabled = false;
+                else
+                    nudFrame.Enabled = true;
+
+                nudFilter.Maximum = (int)(lsFolder.bmpDataG.Height / 3.0);
+
+                nudBaseline1.Maximum = lsFolder.bmpDataG.Height;
+                nudBaseline2.Maximum = lsFolder.bmpDataG.Height;
+                tbBaseline1.Maximum = lsFolder.bmpDataG.Height;
+                tbBaseline2.Maximum = lsFolder.bmpDataG.Height;
+
+                nudStructure1.Maximum = lsFolder.bmpDataG.Width;
+                nudStructure2.Maximum = lsFolder.bmpDataG.Width;
+                tbStructure1.Maximum = lsFolder.bmpDataG.Width;
+                tbStructure2.Maximum = lsFolder.bmpDataG.Width;
+            }
+            ignoreGuiUpdates = false;
+        }
+
+        public void UpdateGuiFromLinescan()
+        {
+            // update control values from linescan object
+            // AVOID PROCESSING DATA AND LOADING IMAGES!
+
+            if (ignoreGuiUpdates)
+                return;
+
+            // log window
+            tbLog.Text = lsFolder.log.Replace("\n", "\r\n");
+            if (lsFolder.isValid)
+                tbLog.BackColor = SystemColors.Control;
+            else
+                tbLog.BackColor = Color.Salmon;
+
+            // linescan image
+            if ((cbR.Checked && cbR.Enabled) && (cbG.Checked && cbG.Enabled))
+                pbLinescan.BackgroundImage = lsFolder.MarkLinescan(lsFolder.bmpDataM);
+            else if (cbR.Checked && cbR.Enabled)
+                pbLinescan.BackgroundImage = lsFolder.MarkLinescan(lsFolder.bmpDataR);
+            else if (cbG.Checked && cbG.Enabled)
+                pbLinescan.BackgroundImage = lsFolder.MarkLinescan(lsFolder.bmpDataG);
+            else
+                pbLinescan.BackgroundImage = null;
+
+            // update sliders and NUDs
+            tbBaseline1.Value = tbBaseline1.Maximum - lsFolder.baseline1;
+            tbBaseline2.Value = tbBaseline2.Maximum - lsFolder.baseline2;
+            tbStructure1.Value = lsFolder.structure1;
+            tbStructure2.Value = lsFolder.structure2;
+            nudBaseline1.Value = lsFolder.baseline1;
+            nudBaseline2.Value = lsFolder.baseline2;
+            nudStructure1.Value = lsFolder.structure1;
+            nudStructure2.Value = lsFolder.structure2;
+            nudFilter.Value = lsFolder.filterPx;
+            lblFilterMs.Text = $"{Math.Round(lsFolder.filterPx * lsFolder.scanLinePeriod, 2)} ms";
+
+            // generate and plot curves
+            UpdateGraph();
+        }
+
+        public double[] curveToCopy;
+        public bool busyUpdating = false;
+        public void UpdateGraph(bool skipUpdatesIfBusy = true)
+        {
+            if (!lsFolder.isValid)
+            {
+                scottPlotUC1.plt.data.Clear();
+                scottPlotUC2.plt.data.Clear();
+                scottPlotUC1.Render();
+                scottPlotUC2.Render();
+                return;
+            }
+
+            if (skipUpdatesIfBusy && busyUpdating)
+                return;
+            else
+                busyUpdating = true;
+
+            // do the analysis
+            lsFolder.GenerateAnalysisCurves();
+
+            // update the structure profile plot
+            double[] columnPixelIndices = new double[lsFolder.imgG.width];
+            for (int i = 0; i < columnPixelIndices.Length; i++)
+                columnPixelIndices[i] = i;
+            scottPlotUC2.plt.data.Clear();
+            if ((cbR.Enabled && cbR.Checked))
+            {
+                double[] columnBrightnessR = ImageDataTools.GetAverageLeftright(lsFolder.imgR);
+                scottPlotUC2.plt.data.AddScatter(columnPixelIndices, columnBrightnessR, markerSize: 0, lineColor: Color.Red);
+            }
+            if ((cbG.Enabled && cbG.Checked))
+            {
+                double[] columnBrightnessG = ImageDataTools.GetAverageLeftright(lsFolder.imgG);
+                scottPlotUC2.plt.data.AddScatter(columnPixelIndices, columnBrightnessG, markerSize: 0, lineColor: Color.Green);
+            }
+            scottPlotUC2.plt.settings.AxisFit(0, .1);
+            scottPlotUC2.plt.data.AddVertLine(lsFolder.structure1, lineColor: Color.Black);
+            scottPlotUC2.plt.data.AddVertLine(lsFolder.structure2, lineColor: Color.Black);
+            //scottPlotUC2.plt.data.AddHorizLine(0, lineColor: Color.Black);
+
+            // update styling before the render
+            scottPlotUC2.plt.settings.figureBgColor = SystemColors.Control;
+            scottPlotUC2.plt.settings.title = "";
+            scottPlotUC2.plt.settings.axisLabelY = "Intensity";
+            scottPlotUC2.plt.settings.axisLabelX = "Position (pixel number)";
+            scottPlotUC2.plt.settings.SetDataPadding(60, 5, 45, 5);
+            scottPlotUC2.Render();
+
+            // update the time series plot
+            curveToCopy = null;
+            scottPlotUC1.plt.data.Clear();
+            if (cbRatio.Checked && cbRatio.Enabled)
+            {
+                if (cbDelta.Enabled && cbDelta.Checked)
+                {
+                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveDeltaGoR);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveDeltaGoR, markerColor: Color.LightBlue, lineWidth: 0, markerSize: 2);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: Color.Blue);
+
+                    scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline1 * lsFolder.scanLinePeriod, lineColor: Color.Black);
+                    scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline2 * lsFolder.scanLinePeriod, lineColor: Color.Black);
+                    scottPlotUC1.plt.data.AddHorizLine(0, lineColor: Color.Black);
+                    scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: Color.Black);
+
+                    scottPlotUC1.plt.settings.axisLabelY = "Delta G/R (%)";
+                    
+                }
+                else
+                {
+                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveGoR);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveGoR, markerColor: Color.LightBlue, lineWidth: 0, markerSize: 2);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: Color.Blue);
+                    scottPlotUC1.plt.settings.axisLabelY = "G/R (%)";
+                    scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: Color.Black);
+                }
+            }
+            else if ((cbR.Checked && cbR.Enabled) && (cbG.Checked && cbG.Enabled))
+            {
+                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveG, markerSize: 0, lineColor: Color.Green);
+                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, lineColor: Color.Red);
+                scottPlotUC1.plt.settings.axisLabelY = "G and R (AFU)";
+            }
+            else if (cbR.Checked && cbR.Enabled)
+            {
+                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, lineColor: Color.Red);
+                scottPlotUC1.plt.settings.axisLabelY = "R (AFU)";
+            }
+            else if (cbG.Checked && cbG.Enabled)
+            {
+                if (cbDelta.Enabled && cbDelta.Checked)
+                {
+                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveDeltaG);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveDeltaG, lineWidth: 0, markerColor: Color.LightGreen, markerSize: 2);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: Color.Green);
+
+                    scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline1 * lsFolder.scanLinePeriod, lineColor: Color.Black);
+                    scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline2 * lsFolder.scanLinePeriod, lineColor: Color.Black);
+                    scottPlotUC1.plt.data.AddHorizLine(0, lineColor: Color.Black);
+                    scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: Color.Black);
+
+                    scottPlotUC1.plt.settings.axisLabelY = "Delta G (%)";
+                }
+                else
+                {
+                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveG);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveG, lineWidth: 0, markerColor: Color.LightGreen, markerSize: 2);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: Color.Green);
+                    scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: Color.Black);
+                    scottPlotUC1.plt.settings.axisLabelY = "G (AFU)";
+                }
+
+            }
+            scottPlotUC1.plt.settings.AxisFit(.05, .1);
+
+            // update styling before the render
+            scottPlotUC1.plt.settings.figureBgColor = SystemColors.Control;
+            scottPlotUC1.plt.settings.title = "";
+            scottPlotUC1.plt.settings.axisLabelX = "Time (milliseconds)";
+            scottPlotUC1.plt.settings.SetDataPadding(60, 5, 45, 5);
+            scottPlotUC1.plt.settings.drawAxes = true;
+            scottPlotUC1.Render();
+
+            // update peak label
+            if (curveToCopy == null)
+                lblPeak.Text = $"";
+            else
+                lblPeak.Text = $"{Math.Round(curveToCopy.Max(), 2)}%";
+
+            Application.DoEvents();
+            busyUpdating = false;
+        }
+
+        #region debug log
+        private void DebugLogShow()
+        {
+            this.Height = 656;
+            tbLog.Visible = false;
+        }
+        private void DebugLogHide()
+        {
+            this.Height = 800;
+            tbLog.Visible = true;
+        }
         #endregion
 
-        #region drop-down menu
+        #region drop-down menus
 
         private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -62,9 +324,17 @@ namespace ScanAGator
             treeViewDirUC1.SelectPath(@"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans");
         }
 
+        private void debugLogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (debugLogToolStripMenuItem.Checked)
+                DebugLogHide();
+            else
+                DebugLogShow();
+        }
+
         #endregion
 
-        #region navigation
+        #region tree directory browser
 
         private void treeViewDirUC1_PathSelected(object sender, EventArgs e)
         {
@@ -73,5 +343,140 @@ namespace ScanAGator
 
         #endregion
 
+        #region GUI bindings for linescan settings
+
+        private void cbR_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateGuiFromLinescan();
+        }
+
+        private void cbG_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateGuiFromLinescan();
+        }
+
+        private void cbRatio_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateGuiFromLinescan();
+        }
+
+        private void cbDelta_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateGuiFromLinescan();
+        }
+
+        private void tbStructure1_Scroll(object sender, EventArgs e)
+        {
+            if (!ignoreGuiUpdates)
+                lsFolder.structure1 = tbStructure1.Value;
+            UpdateGuiFromLinescan();
+        }
+
+        private void tbStructure2_Scroll(object sender, EventArgs e)
+        {
+            if (!ignoreGuiUpdates)
+                lsFolder.structure2 = tbStructure2.Value;
+            UpdateGuiFromLinescan();
+        }
+
+        private void tbBaseline1_Scroll(object sender, EventArgs e)
+        {
+            if (!ignoreGuiUpdates)
+                lsFolder.baseline1 = tbBaseline1.Maximum - tbBaseline1.Value;
+            UpdateGuiFromLinescan();
+        }
+
+        private void tbBaseline2_Scroll(object sender, EventArgs e)
+        {
+            if (!ignoreGuiUpdates)
+                lsFolder.baseline2 = tbBaseline2.Maximum - tbBaseline2.Value;
+            UpdateGuiFromLinescan();
+        }
+        #endregion
+
+        private void nudFrame_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ignoreGuiUpdates)
+                lsFolder.SetFrame((int)nudFrame.Value - 1);
+            UpdateGuiFromLinescan();
+        }
+
+        private void nudBaseline1_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ignoreGuiUpdates)
+                lsFolder.baseline1 = (int)nudBaseline1.Value;
+            UpdateGuiFromLinescan();
+        }
+
+        private void nudBaseline2_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ignoreGuiUpdates)
+                lsFolder.baseline2 = (int)nudBaseline2.Value;
+            UpdateGuiFromLinescan();
+        }
+
+        private void nudStructure1_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ignoreGuiUpdates)
+                lsFolder.structure1 = (int)nudStructure1.Value;
+            UpdateGuiFromLinescan();
+        }
+
+        private void nudStructure2_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ignoreGuiUpdates)
+                lsFolder.structure2 = (int)nudStructure2.Value;
+            UpdateGuiFromLinescan();
+        }
+
+        private void nudFilter_ValueChanged(object sender, EventArgs e)
+        {
+            if (!ignoreGuiUpdates)
+                lsFolder.filterPx = (int)nudFilter.Value;
+            UpdateGuiFromLinescan();
+        }
+
+        private void btnAutoBase_Click(object sender, EventArgs e)
+        {
+            lsFolder.AutoBaseline();
+            UpdateGuiFromLinescan();
+        }
+
+        private void btnAutoStructure_Click(object sender, EventArgs e)
+        {
+            lsFolder.AutoStructure();
+            UpdateGuiFromLinescan();
+        }
+
+        private void btnPeakCopy_Click(object sender, EventArgs e)
+        {
+            if (curveToCopy == null)
+                return;
+            Clipboard.SetText(Math.Round(curveToCopy.Max(), 3).ToString());
+        }
+
+        private void btnCurveCopy_Click(object sender, EventArgs e)
+        {
+            if (curveToCopy == null)
+                return;
+            string txt = "";
+            foreach (var val in curveToCopy)
+                txt += $"{Math.Round(val, 3)}\n";
+            Clipboard.SetText(txt);
+        }
+
+        private void btnCopyAllData_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(lsFolder.GetCsvAllData());
+        }
+
+        private void btnSaveAllData_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog savefile = new SaveFileDialog();
+            savefile.FileName = $"{lsFolder.folderName}.png";
+            savefile.Filter = "CSV Files (*.png)|*.png|All files (*.*)|*.*";
+            if (savefile.ShowDialog() == DialogResult.OK)
+                System.IO.File.WriteAllText(savefile.FileName, lsFolder.GetCsvAllData());
+        }
     }
 }

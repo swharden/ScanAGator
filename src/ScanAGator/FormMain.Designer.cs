@@ -31,82 +31,85 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.setFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.documentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.groupBox11 = new System.Windows.Forms.GroupBox();
-            this.button13 = new System.Windows.Forms.Button();
-            this.button14 = new System.Windows.Forms.Button();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.debugLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gbAuto = new System.Windows.Forms.GroupBox();
+            this.btnAutoStructure = new System.Windows.Forms.Button();
+            this.btnAutoBase = new System.Windows.Forms.Button();
             this.pbLinescan = new System.Windows.Forms.PictureBox();
-            this.trackBar3 = new System.Windows.Forms.TrackBar();
-            this.pbProfile = new System.Windows.Forms.PictureBox();
-            this.trackBar5 = new System.Windows.Forms.TrackBar();
-            this.trackBar6 = new System.Windows.Forms.TrackBar();
+            this.tbBaseline1 = new System.Windows.Forms.TrackBar();
+            this.tbStructure1 = new System.Windows.Forms.TrackBar();
+            this.tbStructure2 = new System.Windows.Forms.TrackBar();
             this.pbRef = new System.Windows.Forms.PictureBox();
-            this.trackBar4 = new System.Windows.Forms.TrackBar();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.checkBox2 = new System.Windows.Forms.CheckBox();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
-            this.groupBox12 = new System.Windows.Forms.GroupBox();
-            this.checkBox5 = new System.Windows.Forms.CheckBox();
-            this.checkBox6 = new System.Windows.Forms.CheckBox();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.numericUpDown4 = new System.Windows.Forms.NumericUpDown();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.button2 = new System.Windows.Forms.Button();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
-            this.checkBox4 = new System.Windows.Forms.CheckBox();
-            this.checkBox3 = new System.Windows.Forms.CheckBox();
-            this.groupBox7 = new System.Windows.Forms.GroupBox();
-            this.numericUpDown3 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown2 = new System.Windows.Forms.NumericUpDown();
-            this.groupBox8 = new System.Windows.Forms.GroupBox();
-            this.numericUpDown5 = new System.Windows.Forms.NumericUpDown();
-            this.numericUpDown6 = new System.Windows.Forms.NumericUpDown();
-            this.groupBox9 = new System.Windows.Forms.GroupBox();
+            this.tbBaseline2 = new System.Windows.Forms.TrackBar();
+            this.gbFrame = new System.Windows.Forms.GroupBox();
+            this.cbFrame = new System.Windows.Forms.CheckBox();
+            this.nudFrame = new System.Windows.Forms.NumericUpDown();
+            this.gbDisplayType = new System.Windows.Forms.GroupBox();
+            this.cbRatio = new System.Windows.Forms.CheckBox();
+            this.cbDelta = new System.Windows.Forms.CheckBox();
+            this.gbFilter = new System.Windows.Forms.GroupBox();
+            this.lblFilterMs = new System.Windows.Forms.Label();
+            this.nudFilter = new System.Windows.Forms.NumericUpDown();
+            this.gbPeak = new System.Windows.Forms.GroupBox();
+            this.lblPeak = new System.Windows.Forms.Label();
+            this.btnPeakCopy = new System.Windows.Forms.Button();
+            this.gbDisplay = new System.Windows.Forms.GroupBox();
+            this.cbG = new System.Windows.Forms.CheckBox();
+            this.cbR = new System.Windows.Forms.CheckBox();
+            this.gbBaseline = new System.Windows.Forms.GroupBox();
+            this.nudBaseline2 = new System.Windows.Forms.NumericUpDown();
+            this.nudBaseline1 = new System.Windows.Forms.NumericUpDown();
+            this.gbStructure = new System.Windows.Forms.GroupBox();
+            this.nudStructure2 = new System.Windows.Forms.NumericUpDown();
+            this.nudStructure1 = new System.Windows.Forms.NumericUpDown();
+            this.gbSettings = new System.Windows.Forms.GroupBox();
             this.button11 = new System.Windows.Forms.Button();
             this.button9 = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.button4 = new System.Windows.Forms.Button();
-            this.button6 = new System.Windows.Forms.Button();
-            this.button8 = new System.Windows.Forms.Button();
+            this.gbData = new System.Windows.Forms.GroupBox();
+            this.btnCopyAllData = new System.Windows.Forms.Button();
+            this.btnCurveCopy = new System.Windows.Forms.Button();
+            this.btnSaveAllData = new System.Windows.Forms.Button();
             this.scottPlotUC1 = new ScottPlotDev2.ScottPlotUC();
+            this.tbLog = new System.Windows.Forms.TextBox();
+            this.scottPlotUC2 = new ScottPlotDev2.ScottPlotUC();
             this.treeViewDirUC1 = new ScanAGator.TreeViewDirUC();
-            this.setFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
-            this.groupBox11.SuspendLayout();
+            this.gbAuto.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLinescan)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbProfile)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar6)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBaseline1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbStructure1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbStructure2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRef)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).BeginInit();
-            this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
-            this.groupBox12.SuspendLayout();
-            this.groupBox5.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).BeginInit();
-            this.groupBox1.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            this.groupBox7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).BeginInit();
-            this.groupBox8.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).BeginInit();
-            this.groupBox9.SuspendLayout();
-            this.groupBox4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBaseline2)).BeginInit();
+            this.gbFrame.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFrame)).BeginInit();
+            this.gbDisplayType.SuspendLayout();
+            this.gbFilter.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilter)).BeginInit();
+            this.gbPeak.SuspendLayout();
+            this.gbDisplay.SuspendLayout();
+            this.gbBaseline.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBaseline2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).BeginInit();
+            this.gbStructure.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStructure2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStructure1)).BeginInit();
+            this.gbSettings.SuspendLayout();
+            this.gbData.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.helpToolStripMenuItem});
+            this.helpToolStripMenuItem,
+            this.settingsToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1202, 24);
@@ -122,10 +125,17 @@
             this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fileToolStripMenuItem.Text = "File";
             // 
+            // setFolderToolStripMenuItem
+            // 
+            this.setFolderToolStripMenuItem.Name = "setFolderToolStripMenuItem";
+            this.setFolderToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
+            this.setFolderToolStripMenuItem.Text = "Set Folder";
+            this.setFolderToolStripMenuItem.Click += new System.EventHandler(this.setFolderToolStripMenuItem_Click);
+            // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(126, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -152,307 +162,333 @@
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
-            // groupBox11
+            // settingsToolStripMenuItem
             // 
-            this.groupBox11.Controls.Add(this.button13);
-            this.groupBox11.Controls.Add(this.button14);
-            this.groupBox11.Location = new System.Drawing.Point(740, 379);
-            this.groupBox11.Name = "groupBox11";
-            this.groupBox11.Size = new System.Drawing.Size(96, 78);
-            this.groupBox11.TabIndex = 32;
-            this.groupBox11.TabStop = false;
-            this.groupBox11.Text = "Auto-Select";
+            this.settingsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.debugLogToolStripMenuItem});
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 20);
+            this.settingsToolStripMenuItem.Text = "Settings";
             // 
-            // button13
+            // debugLogToolStripMenuItem
             // 
-            this.button13.Location = new System.Drawing.Point(6, 48);
-            this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(84, 23);
-            this.button13.TabIndex = 3;
-            this.button13.Text = "Structure";
-            this.button13.UseVisualStyleBackColor = true;
+            this.debugLogToolStripMenuItem.CheckOnClick = true;
+            this.debugLogToolStripMenuItem.Name = "debugLogToolStripMenuItem";
+            this.debugLogToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.debugLogToolStripMenuItem.Text = "debug log";
+            this.debugLogToolStripMenuItem.Click += new System.EventHandler(this.debugLogToolStripMenuItem_Click);
             // 
-            // button14
+            // gbAuto
             // 
-            this.button14.Location = new System.Drawing.Point(6, 19);
-            this.button14.Name = "button14";
-            this.button14.Size = new System.Drawing.Size(84, 23);
-            this.button14.TabIndex = 2;
-            this.button14.Text = "Baseline";
-            this.button14.UseVisualStyleBackColor = true;
+            this.gbAuto.Controls.Add(this.btnAutoStructure);
+            this.gbAuto.Controls.Add(this.btnAutoBase);
+            this.gbAuto.Location = new System.Drawing.Point(740, 379);
+            this.gbAuto.Name = "gbAuto";
+            this.gbAuto.Size = new System.Drawing.Size(96, 78);
+            this.gbAuto.TabIndex = 32;
+            this.gbAuto.TabStop = false;
+            this.gbAuto.Text = "Auto-Select";
+            // 
+            // btnAutoStructure
+            // 
+            this.btnAutoStructure.Location = new System.Drawing.Point(6, 48);
+            this.btnAutoStructure.Name = "btnAutoStructure";
+            this.btnAutoStructure.Size = new System.Drawing.Size(84, 23);
+            this.btnAutoStructure.TabIndex = 3;
+            this.btnAutoStructure.Text = "Structure";
+            this.btnAutoStructure.UseVisualStyleBackColor = true;
+            this.btnAutoStructure.Click += new System.EventHandler(this.btnAutoStructure_Click);
+            // 
+            // btnAutoBase
+            // 
+            this.btnAutoBase.Location = new System.Drawing.Point(6, 19);
+            this.btnAutoBase.Name = "btnAutoBase";
+            this.btnAutoBase.Size = new System.Drawing.Size(84, 23);
+            this.btnAutoBase.TabIndex = 2;
+            this.btnAutoBase.Text = "Baseline";
+            this.btnAutoBase.UseVisualStyleBackColor = true;
+            this.btnAutoBase.Click += new System.EventHandler(this.btnAutoBase_Click);
             // 
             // pbLinescan
             // 
             this.pbLinescan.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pbLinescan.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pbLinescan.Location = new System.Drawing.Point(384, 27);
             this.pbLinescan.Name = "pbLinescan";
             this.pbLinescan.Size = new System.Drawing.Size(350, 350);
             this.pbLinescan.TabIndex = 36;
             this.pbLinescan.TabStop = false;
             // 
-            // trackBar3
+            // tbBaseline1
             // 
-            this.trackBar3.Location = new System.Drawing.Point(740, 27);
-            this.trackBar3.Name = "trackBar3";
-            this.trackBar3.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBar3.Size = new System.Drawing.Size(45, 350);
-            this.trackBar3.TabIndex = 37;
-            this.trackBar3.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.tbBaseline1.Location = new System.Drawing.Point(740, 27);
+            this.tbBaseline1.Name = "tbBaseline1";
+            this.tbBaseline1.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbBaseline1.Size = new System.Drawing.Size(45, 350);
+            this.tbBaseline1.TabIndex = 37;
+            this.tbBaseline1.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.tbBaseline1.Scroll += new System.EventHandler(this.tbBaseline1_Scroll);
             // 
-            // pbProfile
+            // tbStructure1
             // 
-            this.pbProfile.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pbProfile.Location = new System.Drawing.Point(384, 482);
-            this.pbProfile.Name = "pbProfile";
-            this.pbProfile.Size = new System.Drawing.Size(350, 122);
-            this.pbProfile.TabIndex = 39;
-            this.pbProfile.TabStop = false;
+            this.tbStructure1.Location = new System.Drawing.Point(384, 383);
+            this.tbStructure1.Name = "tbStructure1";
+            this.tbStructure1.Size = new System.Drawing.Size(350, 45);
+            this.tbStructure1.TabIndex = 40;
+            this.tbStructure1.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.tbStructure1.Scroll += new System.EventHandler(this.tbStructure1_Scroll);
             // 
-            // trackBar5
+            // tbStructure2
             // 
-            this.trackBar5.Location = new System.Drawing.Point(384, 383);
-            this.trackBar5.Name = "trackBar5";
-            this.trackBar5.Size = new System.Drawing.Size(350, 45);
-            this.trackBar5.TabIndex = 40;
-            this.trackBar5.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
-            // 
-            // trackBar6
-            // 
-            this.trackBar6.Location = new System.Drawing.Point(384, 434);
-            this.trackBar6.Name = "trackBar6";
-            this.trackBar6.Size = new System.Drawing.Size(350, 45);
-            this.trackBar6.TabIndex = 41;
-            this.trackBar6.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.tbStructure2.Location = new System.Drawing.Point(384, 434);
+            this.tbStructure2.Name = "tbStructure2";
+            this.tbStructure2.Size = new System.Drawing.Size(350, 45);
+            this.tbStructure2.TabIndex = 41;
+            this.tbStructure2.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.tbStructure2.Scroll += new System.EventHandler(this.tbStructure2_Scroll);
             // 
             // pbRef
             // 
             this.pbRef.BackColor = System.Drawing.SystemColors.ControlDark;
+            this.pbRef.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.pbRef.Location = new System.Drawing.Point(842, 27);
             this.pbRef.Name = "pbRef";
             this.pbRef.Size = new System.Drawing.Size(350, 350);
             this.pbRef.TabIndex = 42;
             this.pbRef.TabStop = false;
             // 
-            // trackBar4
+            // tbBaseline2
             // 
-            this.trackBar4.Location = new System.Drawing.Point(791, 27);
-            this.trackBar4.Name = "trackBar4";
-            this.trackBar4.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.trackBar4.Size = new System.Drawing.Size(45, 350);
-            this.trackBar4.TabIndex = 38;
-            this.trackBar4.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.tbBaseline2.Location = new System.Drawing.Point(791, 27);
+            this.tbBaseline2.Name = "tbBaseline2";
+            this.tbBaseline2.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.tbBaseline2.Size = new System.Drawing.Size(45, 350);
+            this.tbBaseline2.TabIndex = 38;
+            this.tbBaseline2.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
+            this.tbBaseline2.Scroll += new System.EventHandler(this.tbBaseline2_Scroll);
             // 
-            // groupBox2
+            // gbFrame
             // 
-            this.groupBox2.Controls.Add(this.checkBox2);
-            this.groupBox2.Controls.Add(this.numericUpDown1);
-            this.groupBox2.Location = new System.Drawing.Point(134, 447);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(107, 49);
-            this.groupBox2.TabIndex = 49;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Frame";
+            this.gbFrame.Controls.Add(this.cbFrame);
+            this.gbFrame.Controls.Add(this.nudFrame);
+            this.gbFrame.Location = new System.Drawing.Point(134, 447);
+            this.gbFrame.Name = "gbFrame";
+            this.gbFrame.Size = new System.Drawing.Size(107, 49);
+            this.gbFrame.TabIndex = 49;
+            this.gbFrame.TabStop = false;
+            this.gbFrame.Text = "Frame";
             // 
-            // checkBox2
+            // cbFrame
             // 
-            this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(56, 20);
-            this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(45, 17);
-            this.checkBox2.TabIndex = 26;
-            this.checkBox2.Text = "Avg";
-            this.checkBox2.UseVisualStyleBackColor = true;
+            this.cbFrame.AutoSize = true;
+            this.cbFrame.Location = new System.Drawing.Point(56, 20);
+            this.cbFrame.Name = "cbFrame";
+            this.cbFrame.Size = new System.Drawing.Size(45, 17);
+            this.cbFrame.TabIndex = 26;
+            this.cbFrame.Text = "Avg";
+            this.cbFrame.UseVisualStyleBackColor = true;
             // 
-            // numericUpDown1
+            // nudFrame
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(6, 19);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(44, 20);
-            this.numericUpDown1.TabIndex = 24;
+            this.nudFrame.Location = new System.Drawing.Point(6, 19);
+            this.nudFrame.Name = "nudFrame";
+            this.nudFrame.Size = new System.Drawing.Size(44, 20);
+            this.nudFrame.TabIndex = 24;
+            this.nudFrame.ValueChanged += new System.EventHandler(this.nudFrame_ValueChanged);
             // 
-            // groupBox12
+            // gbDisplayType
             // 
-            this.groupBox12.Controls.Add(this.checkBox5);
-            this.groupBox12.Controls.Add(this.checkBox6);
-            this.groupBox12.Location = new System.Drawing.Point(740, 462);
-            this.groupBox12.Name = "groupBox12";
-            this.groupBox12.Size = new System.Drawing.Size(96, 66);
-            this.groupBox12.TabIndex = 44;
-            this.groupBox12.TabStop = false;
-            this.groupBox12.Text = "Display";
+            this.gbDisplayType.Controls.Add(this.cbRatio);
+            this.gbDisplayType.Controls.Add(this.cbDelta);
+            this.gbDisplayType.Location = new System.Drawing.Point(740, 462);
+            this.gbDisplayType.Name = "gbDisplayType";
+            this.gbDisplayType.Size = new System.Drawing.Size(96, 66);
+            this.gbDisplayType.TabIndex = 44;
+            this.gbDisplayType.TabStop = false;
+            this.gbDisplayType.Text = "Display";
             // 
-            // checkBox5
+            // cbRatio
             // 
-            this.checkBox5.AutoSize = true;
-            this.checkBox5.Location = new System.Drawing.Point(9, 44);
-            this.checkBox5.Name = "checkBox5";
-            this.checkBox5.Size = new System.Drawing.Size(51, 17);
-            this.checkBox5.TabIndex = 5;
-            this.checkBox5.Text = "Ratio";
-            this.checkBox5.UseVisualStyleBackColor = true;
+            this.cbRatio.AutoSize = true;
+            this.cbRatio.Location = new System.Drawing.Point(9, 44);
+            this.cbRatio.Name = "cbRatio";
+            this.cbRatio.Size = new System.Drawing.Size(51, 17);
+            this.cbRatio.TabIndex = 5;
+            this.cbRatio.Text = "Ratio";
+            this.cbRatio.UseVisualStyleBackColor = true;
+            this.cbRatio.CheckedChanged += new System.EventHandler(this.cbRatio_CheckedChanged);
             // 
-            // checkBox6
+            // cbDelta
             // 
-            this.checkBox6.AutoSize = true;
-            this.checkBox6.Location = new System.Drawing.Point(9, 21);
-            this.checkBox6.Name = "checkBox6";
-            this.checkBox6.Size = new System.Drawing.Size(51, 17);
-            this.checkBox6.TabIndex = 4;
-            this.checkBox6.Text = "Delta";
-            this.checkBox6.UseVisualStyleBackColor = true;
+            this.cbDelta.AutoSize = true;
+            this.cbDelta.Location = new System.Drawing.Point(9, 21);
+            this.cbDelta.Name = "cbDelta";
+            this.cbDelta.Size = new System.Drawing.Size(51, 17);
+            this.cbDelta.TabIndex = 4;
+            this.cbDelta.Text = "Delta";
+            this.cbDelta.UseVisualStyleBackColor = true;
+            this.cbDelta.CheckedChanged += new System.EventHandler(this.cbDelta_CheckedChanged);
             // 
-            // groupBox5
+            // gbFilter
             // 
-            this.groupBox5.Controls.Add(this.label1);
-            this.groupBox5.Controls.Add(this.numericUpDown4);
-            this.groupBox5.Location = new System.Drawing.Point(247, 447);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(131, 49);
-            this.groupBox5.TabIndex = 47;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Filter";
+            this.gbFilter.Controls.Add(this.lblFilterMs);
+            this.gbFilter.Controls.Add(this.nudFilter);
+            this.gbFilter.Location = new System.Drawing.Point(247, 447);
+            this.gbFilter.Name = "gbFilter";
+            this.gbFilter.Size = new System.Drawing.Size(131, 49);
+            this.gbFilter.TabIndex = 47;
+            this.gbFilter.TabStop = false;
+            this.gbFilter.Text = "Filter";
             // 
-            // label1
+            // lblFilterMs
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(57, 21);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(56, 13);
-            this.label1.TabIndex = 24;
-            this.label1.Text = "123.45 ms";
+            this.lblFilterMs.AutoSize = true;
+            this.lblFilterMs.Location = new System.Drawing.Point(57, 21);
+            this.lblFilterMs.Name = "lblFilterMs";
+            this.lblFilterMs.Size = new System.Drawing.Size(56, 13);
+            this.lblFilterMs.TabIndex = 24;
+            this.lblFilterMs.Text = "123.45 ms";
             // 
-            // numericUpDown4
+            // nudFilter
             // 
-            this.numericUpDown4.Location = new System.Drawing.Point(6, 19);
-            this.numericUpDown4.Name = "numericUpDown4";
-            this.numericUpDown4.Size = new System.Drawing.Size(45, 20);
-            this.numericUpDown4.TabIndex = 23;
+            this.nudFilter.Location = new System.Drawing.Point(6, 19);
+            this.nudFilter.Name = "nudFilter";
+            this.nudFilter.Size = new System.Drawing.Size(45, 20);
+            this.nudFilter.TabIndex = 23;
+            this.nudFilter.ValueChanged += new System.EventHandler(this.nudFilter_ValueChanged);
             // 
-            // groupBox1
+            // gbPeak
             // 
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.button2);
-            this.groupBox1.Location = new System.Drawing.Point(740, 533);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(96, 73);
-            this.groupBox1.TabIndex = 46;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Peak";
+            this.gbPeak.Controls.Add(this.lblPeak);
+            this.gbPeak.Controls.Add(this.btnPeakCopy);
+            this.gbPeak.Location = new System.Drawing.Point(740, 533);
+            this.gbPeak.Name = "gbPeak";
+            this.gbPeak.Size = new System.Drawing.Size(96, 73);
+            this.gbPeak.TabIndex = 46;
+            this.gbPeak.TabStop = false;
+            this.gbPeak.Text = "Peak";
             // 
-            // label3
+            // lblPeak
             // 
-            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.lblPeak.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label3.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label3.Location = new System.Drawing.Point(6, 16);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(84, 25);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "4433.22%";
-            this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblPeak.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblPeak.Location = new System.Drawing.Point(6, 16);
+            this.lblPeak.Name = "lblPeak";
+            this.lblPeak.Size = new System.Drawing.Size(84, 25);
+            this.lblPeak.TabIndex = 8;
+            this.lblPeak.Text = "4433.22%";
+            this.lblPeak.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
-            // button2
+            // btnPeakCopy
             // 
-            this.button2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.btnPeakCopy.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.button2.Location = new System.Drawing.Point(6, 44);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(84, 23);
-            this.button2.TabIndex = 6;
-            this.button2.Text = "Copy";
-            this.button2.UseVisualStyleBackColor = true;
+            this.btnPeakCopy.Location = new System.Drawing.Point(6, 44);
+            this.btnPeakCopy.Name = "btnPeakCopy";
+            this.btnPeakCopy.Size = new System.Drawing.Size(84, 23);
+            this.btnPeakCopy.TabIndex = 6;
+            this.btnPeakCopy.Text = "Copy";
+            this.btnPeakCopy.UseVisualStyleBackColor = true;
+            this.btnPeakCopy.Click += new System.EventHandler(this.btnPeakCopy_Click);
             // 
-            // groupBox6
+            // gbDisplay
             // 
-            this.groupBox6.Controls.Add(this.checkBox4);
-            this.groupBox6.Controls.Add(this.checkBox3);
-            this.groupBox6.Location = new System.Drawing.Point(12, 447);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(110, 49);
-            this.groupBox6.TabIndex = 48;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Display";
+            this.gbDisplay.Controls.Add(this.cbG);
+            this.gbDisplay.Controls.Add(this.cbR);
+            this.gbDisplay.Location = new System.Drawing.Point(12, 447);
+            this.gbDisplay.Name = "gbDisplay";
+            this.gbDisplay.Size = new System.Drawing.Size(110, 49);
+            this.gbDisplay.TabIndex = 48;
+            this.gbDisplay.TabStop = false;
+            this.gbDisplay.Text = "Display";
             // 
-            // checkBox4
+            // cbG
             // 
-            this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(62, 23);
-            this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(34, 17);
-            this.checkBox4.TabIndex = 1;
-            this.checkBox4.Text = "G";
-            this.checkBox4.UseVisualStyleBackColor = true;
+            this.cbG.AutoSize = true;
+            this.cbG.Location = new System.Drawing.Point(62, 23);
+            this.cbG.Name = "cbG";
+            this.cbG.Size = new System.Drawing.Size(34, 17);
+            this.cbG.TabIndex = 1;
+            this.cbG.Text = "G";
+            this.cbG.UseVisualStyleBackColor = true;
+            this.cbG.CheckedChanged += new System.EventHandler(this.cbG_CheckedChanged);
             // 
-            // checkBox3
+            // cbR
             // 
-            this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(15, 23);
-            this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(34, 17);
-            this.checkBox3.TabIndex = 0;
-            this.checkBox3.Text = "R";
-            this.checkBox3.UseVisualStyleBackColor = true;
+            this.cbR.AutoSize = true;
+            this.cbR.Location = new System.Drawing.Point(15, 23);
+            this.cbR.Name = "cbR";
+            this.cbR.Size = new System.Drawing.Size(34, 17);
+            this.cbR.TabIndex = 0;
+            this.cbR.Text = "R";
+            this.cbR.UseVisualStyleBackColor = true;
+            this.cbR.CheckedChanged += new System.EventHandler(this.cbR_CheckedChanged);
             // 
-            // groupBox7
+            // gbBaseline
             // 
-            this.groupBox7.Controls.Add(this.numericUpDown3);
-            this.groupBox7.Controls.Add(this.numericUpDown2);
-            this.groupBox7.Location = new System.Drawing.Point(12, 502);
-            this.groupBox7.Name = "groupBox7";
-            this.groupBox7.Size = new System.Drawing.Size(110, 49);
-            this.groupBox7.TabIndex = 50;
-            this.groupBox7.TabStop = false;
-            this.groupBox7.Text = "Baseline";
+            this.gbBaseline.Controls.Add(this.nudBaseline2);
+            this.gbBaseline.Controls.Add(this.nudBaseline1);
+            this.gbBaseline.Location = new System.Drawing.Point(12, 502);
+            this.gbBaseline.Name = "gbBaseline";
+            this.gbBaseline.Size = new System.Drawing.Size(110, 49);
+            this.gbBaseline.TabIndex = 50;
+            this.gbBaseline.TabStop = false;
+            this.gbBaseline.Text = "Baseline";
             // 
-            // numericUpDown3
+            // nudBaseline2
             // 
-            this.numericUpDown3.Location = new System.Drawing.Point(56, 19);
-            this.numericUpDown3.Name = "numericUpDown3";
-            this.numericUpDown3.Size = new System.Drawing.Size(44, 20);
-            this.numericUpDown3.TabIndex = 25;
+            this.nudBaseline2.Location = new System.Drawing.Point(56, 19);
+            this.nudBaseline2.Name = "nudBaseline2";
+            this.nudBaseline2.Size = new System.Drawing.Size(44, 20);
+            this.nudBaseline2.TabIndex = 25;
+            this.nudBaseline2.ValueChanged += new System.EventHandler(this.nudBaseline2_ValueChanged);
             // 
-            // numericUpDown2
+            // nudBaseline1
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(6, 19);
-            this.numericUpDown2.Name = "numericUpDown2";
-            this.numericUpDown2.Size = new System.Drawing.Size(44, 20);
-            this.numericUpDown2.TabIndex = 24;
+            this.nudBaseline1.Location = new System.Drawing.Point(6, 19);
+            this.nudBaseline1.Name = "nudBaseline1";
+            this.nudBaseline1.Size = new System.Drawing.Size(44, 20);
+            this.nudBaseline1.TabIndex = 24;
+            this.nudBaseline1.ValueChanged += new System.EventHandler(this.nudBaseline1_ValueChanged);
             // 
-            // groupBox8
+            // gbStructure
             // 
-            this.groupBox8.Controls.Add(this.numericUpDown5);
-            this.groupBox8.Controls.Add(this.numericUpDown6);
-            this.groupBox8.Location = new System.Drawing.Point(128, 502);
-            this.groupBox8.Name = "groupBox8";
-            this.groupBox8.Size = new System.Drawing.Size(113, 49);
-            this.groupBox8.TabIndex = 51;
-            this.groupBox8.TabStop = false;
-            this.groupBox8.Text = "Structure";
+            this.gbStructure.Controls.Add(this.nudStructure2);
+            this.gbStructure.Controls.Add(this.nudStructure1);
+            this.gbStructure.Location = new System.Drawing.Point(128, 502);
+            this.gbStructure.Name = "gbStructure";
+            this.gbStructure.Size = new System.Drawing.Size(113, 49);
+            this.gbStructure.TabIndex = 51;
+            this.gbStructure.TabStop = false;
+            this.gbStructure.Text = "Structure";
             // 
-            // numericUpDown5
+            // nudStructure2
             // 
-            this.numericUpDown5.Location = new System.Drawing.Point(56, 19);
-            this.numericUpDown5.Name = "numericUpDown5";
-            this.numericUpDown5.Size = new System.Drawing.Size(44, 20);
-            this.numericUpDown5.TabIndex = 25;
+            this.nudStructure2.Location = new System.Drawing.Point(56, 19);
+            this.nudStructure2.Name = "nudStructure2";
+            this.nudStructure2.Size = new System.Drawing.Size(44, 20);
+            this.nudStructure2.TabIndex = 25;
+            this.nudStructure2.ValueChanged += new System.EventHandler(this.nudStructure2_ValueChanged);
             // 
-            // numericUpDown6
+            // nudStructure1
             // 
-            this.numericUpDown6.Location = new System.Drawing.Point(6, 19);
-            this.numericUpDown6.Name = "numericUpDown6";
-            this.numericUpDown6.Size = new System.Drawing.Size(44, 20);
-            this.numericUpDown6.TabIndex = 24;
+            this.nudStructure1.Location = new System.Drawing.Point(6, 19);
+            this.nudStructure1.Name = "nudStructure1";
+            this.nudStructure1.Size = new System.Drawing.Size(44, 20);
+            this.nudStructure1.TabIndex = 24;
+            this.nudStructure1.ValueChanged += new System.EventHandler(this.nudStructure1_ValueChanged);
             // 
-            // groupBox9
+            // gbSettings
             // 
-            this.groupBox9.Controls.Add(this.button11);
-            this.groupBox9.Controls.Add(this.button9);
-            this.groupBox9.Location = new System.Drawing.Point(247, 502);
-            this.groupBox9.Name = "groupBox9";
-            this.groupBox9.Size = new System.Drawing.Size(131, 49);
-            this.groupBox9.TabIndex = 52;
-            this.groupBox9.TabStop = false;
-            this.groupBox9.Text = "Settings";
+            this.gbSettings.Controls.Add(this.button11);
+            this.gbSettings.Controls.Add(this.button9);
+            this.gbSettings.Location = new System.Drawing.Point(247, 502);
+            this.gbSettings.Name = "gbSettings";
+            this.gbSettings.Size = new System.Drawing.Size(131, 49);
+            this.gbSettings.TabIndex = 52;
+            this.gbSettings.TabStop = false;
+            this.gbSettings.Text = "Settings";
             // 
             // button11
             // 
@@ -472,44 +508,47 @@
             this.button9.Text = "Save";
             this.button9.UseVisualStyleBackColor = true;
             // 
-            // groupBox4
+            // gbData
             // 
-            this.groupBox4.Controls.Add(this.button4);
-            this.groupBox4.Controls.Add(this.button6);
-            this.groupBox4.Controls.Add(this.button8);
-            this.groupBox4.Location = new System.Drawing.Point(12, 555);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(366, 49);
-            this.groupBox4.TabIndex = 45;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Data";
+            this.gbData.Controls.Add(this.btnCopyAllData);
+            this.gbData.Controls.Add(this.btnCurveCopy);
+            this.gbData.Controls.Add(this.btnSaveAllData);
+            this.gbData.Location = new System.Drawing.Point(12, 555);
+            this.gbData.Name = "gbData";
+            this.gbData.Size = new System.Drawing.Size(366, 49);
+            this.gbData.TabIndex = 45;
+            this.gbData.TabStop = false;
+            this.gbData.Text = "Data";
             // 
-            // button4
+            // btnCopyAllData
             // 
-            this.button4.Location = new System.Drawing.Point(116, 17);
-            this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(100, 23);
-            this.button4.TabIndex = 9;
-            this.button4.Text = "Copy All Data";
-            this.button4.UseVisualStyleBackColor = true;
+            this.btnCopyAllData.Location = new System.Drawing.Point(116, 17);
+            this.btnCopyAllData.Name = "btnCopyAllData";
+            this.btnCopyAllData.Size = new System.Drawing.Size(100, 23);
+            this.btnCopyAllData.TabIndex = 9;
+            this.btnCopyAllData.Text = "Copy All Data";
+            this.btnCopyAllData.UseVisualStyleBackColor = true;
+            this.btnCopyAllData.Click += new System.EventHandler(this.btnCopyAllData_Click);
             // 
-            // button6
+            // btnCurveCopy
             // 
-            this.button6.Location = new System.Drawing.Point(10, 17);
-            this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(100, 23);
-            this.button6.TabIndex = 8;
-            this.button6.Text = "Copy Curve";
-            this.button6.UseVisualStyleBackColor = true;
+            this.btnCurveCopy.Location = new System.Drawing.Point(10, 17);
+            this.btnCurveCopy.Name = "btnCurveCopy";
+            this.btnCurveCopy.Size = new System.Drawing.Size(100, 23);
+            this.btnCurveCopy.TabIndex = 8;
+            this.btnCurveCopy.Text = "Copy Curve";
+            this.btnCurveCopy.UseVisualStyleBackColor = true;
+            this.btnCurveCopy.Click += new System.EventHandler(this.btnCurveCopy_Click);
             // 
-            // button8
+            // btnSaveAllData
             // 
-            this.button8.Location = new System.Drawing.Point(222, 17);
-            this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(138, 23);
-            this.button8.TabIndex = 7;
-            this.button8.Text = "Save All Data (CSV)";
-            this.button8.UseVisualStyleBackColor = true;
+            this.btnSaveAllData.Location = new System.Drawing.Point(222, 17);
+            this.btnSaveAllData.Name = "btnSaveAllData";
+            this.btnSaveAllData.Size = new System.Drawing.Size(138, 23);
+            this.btnSaveAllData.TabIndex = 7;
+            this.btnSaveAllData.Text = "Save All Data (CSV)";
+            this.btnSaveAllData.UseVisualStyleBackColor = true;
+            this.btnSaveAllData.Click += new System.EventHandler(this.btnSaveAllData_Click);
             // 
             // scottPlotUC1
             // 
@@ -519,6 +558,25 @@
             this.scottPlotUC1.Size = new System.Drawing.Size(348, 223);
             this.scottPlotUC1.TabIndex = 53;
             // 
+            // tbLog
+            // 
+            this.tbLog.Font = new System.Drawing.Font("Consolas", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.tbLog.Location = new System.Drawing.Point(12, 612);
+            this.tbLog.Multiline = true;
+            this.tbLog.Name = "tbLog";
+            this.tbLog.ReadOnly = true;
+            this.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbLog.Size = new System.Drawing.Size(1178, 134);
+            this.tbLog.TabIndex = 55;
+            // 
+            // scottPlotUC2
+            // 
+            this.scottPlotUC2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.scottPlotUC2.Location = new System.Drawing.Point(384, 485);
+            this.scottPlotUC2.Name = "scottPlotUC2";
+            this.scottPlotUC2.Size = new System.Drawing.Size(350, 121);
+            this.scottPlotUC2.TabIndex = 56;
+            // 
             // treeViewDirUC1
             // 
             this.treeViewDirUC1.Location = new System.Drawing.Point(12, 27);
@@ -527,38 +585,33 @@
             this.treeViewDirUC1.TabIndex = 54;
             this.treeViewDirUC1.PathSelected += new System.EventHandler(this.treeViewDirUC1_PathSelected);
             // 
-            // setFolderToolStripMenuItem
-            // 
-            this.setFolderToolStripMenuItem.Name = "setFolderToolStripMenuItem";
-            this.setFolderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.setFolderToolStripMenuItem.Text = "Set Folder";
-            this.setFolderToolStripMenuItem.Click += new System.EventHandler(this.setFolderToolStripMenuItem_Click);
-            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1202, 617);
+            this.ClientSize = new System.Drawing.Size(1202, 758);
+            this.Controls.Add(this.scottPlotUC2);
+            this.Controls.Add(this.tbLog);
             this.Controls.Add(this.treeViewDirUC1);
             this.Controls.Add(this.scottPlotUC1);
-            this.Controls.Add(this.groupBox9);
-            this.Controls.Add(this.groupBox8);
-            this.Controls.Add(this.groupBox7);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox12);
-            this.Controls.Add(this.groupBox4);
-            this.Controls.Add(this.groupBox5);
-            this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.groupBox6);
+            this.Controls.Add(this.gbSettings);
+            this.Controls.Add(this.gbStructure);
+            this.Controls.Add(this.gbBaseline);
+            this.Controls.Add(this.gbFrame);
+            this.Controls.Add(this.gbDisplayType);
+            this.Controls.Add(this.gbData);
+            this.Controls.Add(this.gbFilter);
+            this.Controls.Add(this.gbPeak);
+            this.Controls.Add(this.gbDisplay);
             this.Controls.Add(this.pbRef);
-            this.Controls.Add(this.pbProfile);
-            this.Controls.Add(this.trackBar5);
-            this.Controls.Add(this.trackBar6);
+            this.Controls.Add(this.tbStructure1);
+            this.Controls.Add(this.tbStructure2);
             this.Controls.Add(this.pbLinescan);
-            this.Controls.Add(this.trackBar3);
-            this.Controls.Add(this.trackBar4);
-            this.Controls.Add(this.groupBox11);
+            this.Controls.Add(this.tbBaseline1);
+            this.Controls.Add(this.tbBaseline2);
+            this.Controls.Add(this.gbAuto);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "FormMain";
@@ -566,33 +619,32 @@
             this.Load += new System.EventHandler(this.FormMain_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
-            this.groupBox11.ResumeLayout(false);
+            this.gbAuto.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pbLinescan)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbProfile)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar6)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbBaseline1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbStructure1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.tbStructure2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRef)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar4)).EndInit();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
-            this.groupBox12.ResumeLayout(false);
-            this.groupBox12.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown4)).EndInit();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            this.groupBox7.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown3)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
-            this.groupBox8.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown5)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown6)).EndInit();
-            this.groupBox9.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.tbBaseline2)).EndInit();
+            this.gbFrame.ResumeLayout(false);
+            this.gbFrame.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFrame)).EndInit();
+            this.gbDisplayType.ResumeLayout(false);
+            this.gbDisplayType.PerformLayout();
+            this.gbFilter.ResumeLayout(false);
+            this.gbFilter.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.nudFilter)).EndInit();
+            this.gbPeak.ResumeLayout(false);
+            this.gbDisplay.ResumeLayout(false);
+            this.gbDisplay.PerformLayout();
+            this.gbBaseline.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudBaseline2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).EndInit();
+            this.gbStructure.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.nudStructure2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.nudStructure1)).EndInit();
+            this.gbSettings.ResumeLayout(false);
+            this.gbData.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -606,46 +658,49 @@
         private System.Windows.Forms.ToolStripMenuItem documentationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.GroupBox groupBox11;
-        private System.Windows.Forms.Button button13;
-        private System.Windows.Forms.Button button14;
+        private System.Windows.Forms.GroupBox gbAuto;
+        private System.Windows.Forms.Button btnAutoStructure;
+        private System.Windows.Forms.Button btnAutoBase;
         private System.Windows.Forms.PictureBox pbLinescan;
-        private System.Windows.Forms.TrackBar trackBar3;
-        private System.Windows.Forms.PictureBox pbProfile;
-        private System.Windows.Forms.TrackBar trackBar5;
-        private System.Windows.Forms.TrackBar trackBar6;
+        private System.Windows.Forms.TrackBar tbBaseline1;
+        private System.Windows.Forms.TrackBar tbStructure1;
+        private System.Windows.Forms.TrackBar tbStructure2;
         private System.Windows.Forms.PictureBox pbRef;
-        private System.Windows.Forms.TrackBar trackBar4;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.CheckBox checkBox2;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
-        private System.Windows.Forms.GroupBox groupBox12;
-        private System.Windows.Forms.CheckBox checkBox5;
-        private System.Windows.Forms.CheckBox checkBox6;
-        private System.Windows.Forms.GroupBox groupBox5;
-        private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.NumericUpDown numericUpDown4;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.GroupBox groupBox6;
-        private System.Windows.Forms.CheckBox checkBox4;
-        private System.Windows.Forms.CheckBox checkBox3;
-        private System.Windows.Forms.GroupBox groupBox7;
-        private System.Windows.Forms.NumericUpDown numericUpDown3;
-        private System.Windows.Forms.NumericUpDown numericUpDown2;
-        private System.Windows.Forms.GroupBox groupBox8;
-        private System.Windows.Forms.NumericUpDown numericUpDown5;
-        private System.Windows.Forms.NumericUpDown numericUpDown6;
-        private System.Windows.Forms.GroupBox groupBox9;
+        private System.Windows.Forms.TrackBar tbBaseline2;
+        private System.Windows.Forms.GroupBox gbFrame;
+        private System.Windows.Forms.CheckBox cbFrame;
+        private System.Windows.Forms.NumericUpDown nudFrame;
+        private System.Windows.Forms.GroupBox gbDisplayType;
+        private System.Windows.Forms.CheckBox cbRatio;
+        private System.Windows.Forms.CheckBox cbDelta;
+        private System.Windows.Forms.GroupBox gbFilter;
+        private System.Windows.Forms.Label lblFilterMs;
+        private System.Windows.Forms.NumericUpDown nudFilter;
+        private System.Windows.Forms.GroupBox gbPeak;
+        private System.Windows.Forms.Label lblPeak;
+        private System.Windows.Forms.Button btnPeakCopy;
+        private System.Windows.Forms.GroupBox gbDisplay;
+        private System.Windows.Forms.CheckBox cbG;
+        private System.Windows.Forms.CheckBox cbR;
+        private System.Windows.Forms.GroupBox gbBaseline;
+        private System.Windows.Forms.NumericUpDown nudBaseline2;
+        private System.Windows.Forms.NumericUpDown nudBaseline1;
+        private System.Windows.Forms.GroupBox gbStructure;
+        private System.Windows.Forms.NumericUpDown nudStructure2;
+        private System.Windows.Forms.NumericUpDown nudStructure1;
+        private System.Windows.Forms.GroupBox gbSettings;
         private System.Windows.Forms.Button button11;
         private System.Windows.Forms.Button button9;
-        private System.Windows.Forms.GroupBox groupBox4;
-        private System.Windows.Forms.Button button4;
-        private System.Windows.Forms.Button button6;
-        private System.Windows.Forms.Button button8;
+        private System.Windows.Forms.GroupBox gbData;
+        private System.Windows.Forms.Button btnCopyAllData;
+        private System.Windows.Forms.Button btnCurveCopy;
+        private System.Windows.Forms.Button btnSaveAllData;
         private ScottPlotDev2.ScottPlotUC scottPlotUC1;
         private TreeViewDirUC treeViewDirUC1;
         private System.Windows.Forms.ToolStripMenuItem setFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem debugLogToolStripMenuItem;
+        private System.Windows.Forms.TextBox tbLog;
+        private ScottPlotDev2.ScottPlotUC scottPlotUC2;
     }
 }
