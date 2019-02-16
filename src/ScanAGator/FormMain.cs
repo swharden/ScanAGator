@@ -22,7 +22,8 @@ namespace ScanAGator
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            SetFolder(@"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans\LineScan-02132019-1317-2778");
+            //SetFolder(@"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans\LineScan-02132019-1317-2778");
+            SetFolder("./");
         }
 
         public LineScanFolder lsFolder;
@@ -39,6 +40,10 @@ namespace ScanAGator
             lsFolder = new LineScanFolder(path);
             UpdateGuiFromLinescanFirst();
             UpdateGuiFromLinescan();
+            if (!lsFolder.isValid)
+                SaveNeeded(false);
+            if (lsFolder.isValid && System.IO.File.Exists(lsFolder.pathIniFile))
+                SaveNeeded(false);
         }
 
         public void UpdateGuiFromLinescanFirst()
@@ -65,6 +70,8 @@ namespace ScanAGator
             gbDisplayType.Enabled = lsFolder.isValid;
             gbPeak.Enabled = lsFolder.isValid;
             cbRatio.Enabled = lsFolder.isRatiometric;
+            scottPlotUC1.Visible = lsFolder.isValid;
+            scottPlotUC2.Visible = lsFolder.isValid;
 
             if (lsFolder.isRatiometric)
             {
@@ -86,7 +93,8 @@ namespace ScanAGator
                 {
                     cbRatio.Checked = true;
                     cbDelta.Checked = true;
-                } else
+                }
+                else
                 {
                     cbDelta.Checked = true;
                 }
@@ -153,20 +161,17 @@ namespace ScanAGator
 
             // generate and plot curves
             UpdateGraph();
+
+            SaveNeeded(true);
         }
 
         public double[] curveToCopy;
         public bool busyUpdating = false;
         public void UpdateGraph(bool skipUpdatesIfBusy = true)
         {
+
             if (!lsFolder.isValid)
-            {
-                scottPlotUC1.plt.data.Clear();
-                scottPlotUC2.plt.data.Clear();
-                scottPlotUC1.Render();
-                scottPlotUC2.Render();
                 return;
-            }
 
             if (skipUpdatesIfBusy && busyUpdating)
                 return;
@@ -221,7 +226,7 @@ namespace ScanAGator
                     scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: Color.Black);
 
                     scottPlotUC1.plt.settings.axisLabelY = "Delta G/R (%)";
-                    
+
                 }
                 else
                 {
@@ -289,12 +294,12 @@ namespace ScanAGator
         }
 
         #region debug log
-        private void DebugLogShow()
+        private void DebugLogHide()
         {
             this.Height = 656;
             tbLog.Visible = false;
         }
-        private void DebugLogHide()
+        private void DebugLogShow()
         {
             this.Height = 800;
             tbLog.Visible = true;
@@ -321,15 +326,22 @@ namespace ScanAGator
 
         private void setFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            treeViewDirUC1.SelectPath(@"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans");
+            // use the save dialog to select the folder because it's better than the folder browser dialog
+            SaveFileDialog sf = new SaveFileDialog();
+            sf.FileName = "Load this folder";
+            if (sf.ShowDialog() == DialogResult.OK)
+            {
+                string pathFolder = System.IO.Path.GetDirectoryName(sf.FileName);
+                SetFolder(pathFolder);
+            }
         }
 
         private void debugLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (debugLogToolStripMenuItem.Checked)
-                DebugLogHide();
-            else
                 DebugLogShow();
+            else
+                DebugLogHide();
         }
 
         #endregion
@@ -343,7 +355,7 @@ namespace ScanAGator
 
         #endregion
 
-        #region GUI bindings for linescan settings
+        #region GUI bindings
 
         private void cbR_CheckedChanged(object sender, EventArgs e)
         {
@@ -392,7 +404,6 @@ namespace ScanAGator
                 lsFolder.baseline2 = tbBaseline2.Maximum - tbBaseline2.Value;
             UpdateGuiFromLinescan();
         }
-        #endregion
 
         private void nudFrame_ValueChanged(object sender, EventArgs e)
         {
@@ -478,5 +489,33 @@ namespace ScanAGator
             if (savefile.ShowDialog() == DialogResult.OK)
                 System.IO.File.WriteAllText(savefile.FileName, lsFolder.GetCsvAllData());
         }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            lsFolder.SaveSettingsINI();
+            UpdateGuiFromLinescan();
+            SaveNeeded(false);
+        }
+
+        private void btnReload_Click(object sender, EventArgs e)
+        {
+            lsFolder.LoadSettingsINI();
+            UpdateGuiFromLinescan();
+            SaveNeeded(false);
+        }
+        #endregion
+
+        public void SaveNeeded(bool needed = true)
+        {
+            if (needed)
+            {
+                btnSave.BackColor = Color.Salmon;
+            }
+            else
+            {
+                btnSave.UseVisualStyleBackColor = true;
+            }
+        }
+
     }
 }

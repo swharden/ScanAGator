@@ -45,6 +45,10 @@ namespace ScanAGator
         public double[] curveGoR;
         public double[] curveDeltaGoR;
 
+        public string version { get { return Properties.Resources.ResourceManager.GetString("version"); } }
+        public string pathIniFile { get { return System.IO.Path.Combine(pathFolder, "ScanAGator/LineScanSettings.ini"); } }
+        public string pathSaveFolder { get { return System.IO.Path.GetDirectoryName(pathIniFile); } }
+
         public string log { get; private set; }
 
 
@@ -64,6 +68,7 @@ namespace ScanAGator
             AutoBaseline();
             AutoStructure();
             AutoFilter();
+            LoadSettingsINI();
         }
 
         #region analysis
@@ -545,6 +550,72 @@ namespace ScanAGator
             foreach (string line in csvLines)
                 csv += line + "\n";
             return csv;
+        }
+
+        #endregion
+
+        #region save and load settings
+
+        public void LoadSettingsINI()
+        {
+            if (!isValid)
+                return;
+
+            if (!System.IO.File.Exists(pathIniFile))
+            {
+                Log("INI file not found.");
+                return;
+            }
+
+            Log("Loading data from INI file...");
+
+            foreach (string rawLine in System.IO.File.ReadAllLines(pathIniFile))
+            {
+                string line = rawLine.Trim();
+                if (line.StartsWith(";"))
+                    continue;
+                if (!line.Contains("="))
+                    continue;
+                string[] lineParts = line.Split('=');
+                string var = lineParts[0];
+                string valStr = lineParts[1];
+
+                if (var == "version" && valStr != version)
+                    Log($"Note that INI version ({valStr}) differs from this software version ({version})");
+                else if (var == "baseline1")
+                    baseline1 = int.Parse(valStr);
+                else if (var == "baseline2")
+                    baseline2 = int.Parse(valStr);
+                else if (var == "structure1")
+                    structure1 = int.Parse(valStr);
+                else if (var == "structure2")
+                    structure2 = int.Parse(valStr);
+                else if (var == "filterPx")
+                    filterPx = int.Parse(valStr);
+            }
+        }
+
+        public void SaveSettingsINI()
+        {
+            if (!isValid)
+                return;
+
+            if (!System.IO.Directory.Exists(pathSaveFolder))
+            {
+                System.IO.Directory.CreateDirectory(pathSaveFolder);
+                Log("created folder: " + pathSaveFolder);
+            }
+
+            string text = "; Scan-A-Gator Linescan Settings\n";
+            text += $"version={version}\n";
+            text += $"baseline1={baseline1}\n";
+            text += $"baseline2={baseline2}\n";
+            text += $"structure1={structure1}\n";
+            text += $"structure2={structure2}\n";
+            text += $"filterPx={filterPx}\n";
+            text = text.Replace("\n", "\r\n").Trim();
+            System.IO.File.WriteAllText(pathIniFile, text);
+            Log($"Saved settings in: {pathIniFile}");
         }
 
         #endregion

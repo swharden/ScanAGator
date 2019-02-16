@@ -69,8 +69,8 @@
             this.nudStructure2 = new System.Windows.Forms.NumericUpDown();
             this.nudStructure1 = new System.Windows.Forms.NumericUpDown();
             this.gbSettings = new System.Windows.Forms.GroupBox();
-            this.button11 = new System.Windows.Forms.Button();
-            this.button9 = new System.Windows.Forms.Button();
+            this.btnReload = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.gbData = new System.Windows.Forms.GroupBox();
             this.btnCopyAllData = new System.Windows.Forms.Button();
             this.btnCurveCopy = new System.Windows.Forms.Button();
@@ -108,8 +108,8 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
-            this.helpToolStripMenuItem,
-            this.settingsToolStripMenuItem});
+            this.settingsToolStripMenuItem,
+            this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Size = new System.Drawing.Size(1202, 24);
@@ -151,14 +151,14 @@
             // documentationToolStripMenuItem
             // 
             this.documentationToolStripMenuItem.Name = "documentationToolStripMenuItem";
-            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.documentationToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.documentationToolStripMenuItem.Text = "Documentation";
             this.documentationToolStripMenuItem.Click += new System.EventHandler(this.documentationToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(157, 22);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
@@ -174,7 +174,7 @@
             // 
             this.debugLogToolStripMenuItem.CheckOnClick = true;
             this.debugLogToolStripMenuItem.Name = "debugLogToolStripMenuItem";
-            this.debugLogToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
+            this.debugLogToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.debugLogToolStripMenuItem.Text = "debug log";
             this.debugLogToolStripMenuItem.Click += new System.EventHandler(this.debugLogToolStripMenuItem_Click);
             // 
@@ -481,8 +481,8 @@
             // 
             // gbSettings
             // 
-            this.gbSettings.Controls.Add(this.button11);
-            this.gbSettings.Controls.Add(this.button9);
+            this.gbSettings.Controls.Add(this.btnReload);
+            this.gbSettings.Controls.Add(this.btnSave);
             this.gbSettings.Location = new System.Drawing.Point(247, 502);
             this.gbSettings.Name = "gbSettings";
             this.gbSettings.Size = new System.Drawing.Size(131, 49);
@@ -490,23 +490,25 @@
             this.gbSettings.TabStop = false;
             this.gbSettings.Text = "Settings";
             // 
-            // button11
+            // btnReload
             // 
-            this.button11.Location = new System.Drawing.Point(63, 20);
-            this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(62, 23);
-            this.button11.TabIndex = 4;
-            this.button11.Text = "Reload";
-            this.button11.UseVisualStyleBackColor = true;
+            this.btnReload.Location = new System.Drawing.Point(63, 20);
+            this.btnReload.Name = "btnReload";
+            this.btnReload.Size = new System.Drawing.Size(62, 23);
+            this.btnReload.TabIndex = 4;
+            this.btnReload.Text = "Reload";
+            this.btnReload.UseVisualStyleBackColor = true;
+            this.btnReload.Click += new System.EventHandler(this.btnReload_Click);
             // 
-            // button9
+            // btnSave
             // 
-            this.button9.Location = new System.Drawing.Point(6, 20);
-            this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(51, 23);
-            this.button9.TabIndex = 3;
-            this.button9.Text = "Save";
-            this.button9.UseVisualStyleBackColor = true;
+            this.btnSave.Location = new System.Drawing.Point(6, 20);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(51, 23);
+            this.btnSave.TabIndex = 3;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
             // 
             // gbData
             // 
@@ -689,8 +691,8 @@
         private System.Windows.Forms.NumericUpDown nudStructure2;
         private System.Windows.Forms.NumericUpDown nudStructure1;
         private System.Windows.Forms.GroupBox gbSettings;
-        private System.Windows.Forms.Button button11;
-        private System.Windows.Forms.Button button9;
+        private System.Windows.Forms.Button btnReload;
+        private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.GroupBox gbData;
         private System.Windows.Forms.Button btnCopyAllData;
         private System.Windows.Forms.Button btnCurveCopy;
