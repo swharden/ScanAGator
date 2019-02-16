@@ -11,6 +11,7 @@ https://github.com/swharden/Scan-A-Gator/releases/latest
 * Can analyze TIFs with data of arbitrary bit depths (e.g., 12-bit data in a 16-bit TIF)
 * Semi-automated analysis facilitated by configurable default settings
 * Save/Load linescan configurations (storing baseline, structure, filter settings, etc)
+* Automatic structure detection (based on signal vs. noise floor)
 * Graphs are fully interactive
 * Linescan data can be copied to clipboard or saved as CSV
 * Analytical procedures are documented (below) and easy to review in code
@@ -50,10 +51,10 @@ The following sequence of events is performed in software to calculate the curve
 ### Step 1: Acquire Scan Information
 * **Scan the folder for important files** - PrairieView LineScan configuration XML file, reference images (TIFs in the References folder), and data images (TIFs in the main folder without "Source" in the filename).
 * **Determine number of frames** - Some linescans have multiple repetitions. ScanAGator calls these "frames". Frame count is determined from the number of data images seen in the root folder. Data images are assigned R or G based on filename tags "Ch1" and "Ch2"
-* **Determine linescan speed** - the linescan line period is stored in the PrairieView configuration XML file. Unfortunately our data comes from XML files generated with PrairieView 4 and 5 which have very different XML formats. For this reason, string parsing (instead of XML readers) was used to extract the value property from any node with a `scanlinePeriod` (V4) or `scanLinePeriod` (V5) key. This will break if PrairieView changes their XML format again. Relevant code: [PrairieLS.ParseXML()](https://github.com/swharden/Scan-A-Gator/blob/703fa24fa5bf4e1e287558d2b0d1694d66397dc8/src/ScanAGator/PrairieLS.cs#L179-L203)
+* **Determine linescan speed** - the linescan line period is stored in the PrairieView configuration XML file. Unfortunately our data comes from XML files generated with PrairieView 4 and 5 which have very different XML formats. For this reason, string parsing (instead of XML readers) was used to extract the value property from any node with a `scanlinePeriod` (V4) or `scanLinePeriod` (V5) key. This will break if PrairieView changes their XML format again.
 
 ### Step 2: Load TIFF Images as a floating-point data
-The default TIF-reading libraries do not work well because they fail to display 12-bit data stored in 16-bit TIFs (this is why some images look dark in the windows photo viewer). A TIF reading class (modified from [SciTif](https://github.com/swharden/SciTIF)) was created for this purpose ([ImageData.cs](https://github.com/swharden/Scan-A-Gator/blob/703fa24fa5bf4e1e287558d2b0d1694d66397dc8/src/ScanAGator/ImageData.cs)).  
+The default TIF-reading libraries do not work well because they fail to display 12-bit data stored in 16-bit TIFs (this is why some images look dark in the windows photo viewer). A TIF reading class (modified from [SciTif](https://github.com/swharden/SciTIF)) was created for this purpose (ImageData.cs).  
 
 The ImageData class loads TIFs using TiffBitmapDecoder, stores values as floating point (to make math easier later), and has methods for auto-brightness, auto-contrast, and conversion to RGB Bitmap. This way linescan calculations can operate on the raw data values, and an 8-bit RGB bitmap can be acquired at any time for display. 
 
@@ -68,21 +69,20 @@ A primary function of the ScanAGator user interface is to provide a way for the 
 * `filterPx` - size of the gaussian filter (in pixels) to apply to the data in the time domain
 
 #### Default Baseline
-When loading a LineScan folder without a save file, the baseline defaults to 0-10% of the LineScan time. This behavior is defined in [PrairieLS.LoadDefaultSettings()](https://github.com/swharden/Scan-A-Gator/blob/703fa24fa5bf4e1e287558d2b0d1694d66397dc8/src/ScanAGator/PrairieLS.cs#L255-L258)
+When loading a LineScan folder without a save file, the baseline defaults to 0-10% of the LineScan time.
 
 #### Automatic Structure Detection
-When loading a LineScan folder without a save file, or when _auto-select structure_ is selected from the settings menu, the following sequence of actions is performed. This behavior is defined by [PrairieLS.StructureAutoDetect()](https://github.com/swharden/Scan-A-Gator/blob/703fa24fa5bf4e1e287558d2b0d1694d66397dc8/src/ScanAGator/PrairieLS.cs#L264-L282)
+When loading a LineScan folder without a save file, or when the _auto-select structure_ button pressed, the following sequence of actions is performed:
+
 * Green channel image data is collapsed vertically
-* The brightest value (indicating position of the brightest column) is recorded.
-* `structure1` and `structure2` set to 3px away from this brightest point
-
-_Possible improvement: Structure detection could improve by performing a 1D Gaussian filter to the collapsed image data to produce a more accurate center-structure bright point._
-
-_Possible improvement: Rather than using a fixed distance from center, the structure bounds could be stepped away from center one pixel at a time, and left in place when the intensity reaches something like half-max. Minimum intensity in this case cannot be considered as zero, but rather the noise floor (perhaps the 10 percentile value)._
+* The column with the brightest intensity is noted.
+* The noise floor is calculated as the 20-percentile value of the collapsed data.
+* A structure cutoff value is calculated mid-way between the noise floor and the intensity of the brightest column
+* `structure1` and `structure2` are placed at the brightest column and stepped away until they cross the cutoff value
 
 ### Step 4: Calculate ΔF/F
 
-This sequence of events is used to convert two linescan images into a **ΔF/F** curve. The relevant code is brief and easy to review: [PrairieLS.Analyze()](https://github.com/swharden/Scan-A-Gator/blob/703fa24fa5bf4e1e287558d2b0d1694d66397dc8/src/ScanAGator/PrairieLS.cs#L394-L428)
+This sequence of events is used to convert two linescan images into a **ΔF/F** curve.
 
 * Red and green linescan image data are each collapsed (in the space domain) to yield a 1D array of average fluorescence per pixel (in the time domain). Note that the whole image isn't collected and collapsed, but rather just the pixels between `structure1` and `structure2`. These become the raw PMT **R** and **G** arrays.
 * **G/R** is calculated for every point in the time domain.
