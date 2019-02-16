@@ -160,15 +160,22 @@ namespace ScanAGator
             lblFilterMs.Text = $"{Math.Round(lsFolder.filterPx * lsFolder.scanLinePeriod, 2)} ms";
 
             // generate and plot curves
-            UpdateGraph();
+            UpdateGraphs();
 
             SaveNeeded(true);
         }
 
         public double[] curveToCopy;
         public bool busyUpdating = false;
-        public void UpdateGraph(bool skipUpdatesIfBusy = true)
+        public void UpdateGraphs(bool skipUpdatesIfBusy = true)
         {
+            // use pretty colors
+            Color blue = System.Drawing.ColorTranslator.FromHtml("#1f77b4");
+            Color lightBlue = System.Drawing.ColorTranslator.FromHtml("#a2d1f2");
+            Color red = System.Drawing.ColorTranslator.FromHtml("#d62728");
+            Color lightRed = System.Drawing.ColorTranslator.FromHtml("#e63738");
+            Color green = System.Drawing.ColorTranslator.FromHtml("#2ca02c");
+            Color lightGreen = System.Drawing.ColorTranslator.FromHtml("#98df8a");
 
             if (!lsFolder.isValid)
                 return;
@@ -189,12 +196,12 @@ namespace ScanAGator
             if ((cbR.Enabled && cbR.Checked))
             {
                 double[] columnBrightnessR = ImageDataTools.GetAverageLeftright(lsFolder.imgR);
-                scottPlotUC2.plt.data.AddScatter(columnPixelIndices, columnBrightnessR, markerSize: 0, lineColor: Color.Red);
+                scottPlotUC2.plt.data.AddScatter(columnPixelIndices, columnBrightnessR, markerSize: 0, lineColor: red);
             }
             if ((cbG.Enabled && cbG.Checked))
             {
                 double[] columnBrightnessG = ImageDataTools.GetAverageLeftright(lsFolder.imgG);
-                scottPlotUC2.plt.data.AddScatter(columnPixelIndices, columnBrightnessG, markerSize: 0, lineColor: Color.Green);
+                scottPlotUC2.plt.data.AddScatter(columnPixelIndices, columnBrightnessG, markerSize: 0, lineColor: green);
             }
             scottPlotUC2.plt.settings.AxisFit(0, .1);
             scottPlotUC2.plt.data.AddVertLine(lsFolder.structure1, lineColor: Color.Black);
@@ -217,8 +224,8 @@ namespace ScanAGator
                 if (cbDelta.Enabled && cbDelta.Checked)
                 {
                     curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveDeltaGoR);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveDeltaGoR, markerColor: Color.LightBlue, lineWidth: 0, markerSize: 2);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: Color.Blue);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveDeltaGoR, markerColor: lightBlue, lineWidth: 0, markerSize: 2);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: blue, lineWidth: 2);
 
                     scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline1 * lsFolder.scanLinePeriod, lineColor: Color.Black);
                     scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline2 * lsFolder.scanLinePeriod, lineColor: Color.Black);
@@ -231,21 +238,21 @@ namespace ScanAGator
                 else
                 {
                     curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveGoR);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveGoR, markerColor: Color.LightBlue, lineWidth: 0, markerSize: 2);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: Color.Blue);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveGoR, markerColor: lightBlue, lineWidth: 0, markerSize: 2);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: blue, lineWidth: 2);
                     scottPlotUC1.plt.settings.axisLabelY = "G/R (%)";
                     scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: Color.Black);
                 }
             }
             else if ((cbR.Checked && cbR.Enabled) && (cbG.Checked && cbG.Enabled))
             {
-                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveG, markerSize: 0, lineColor: Color.Green);
-                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, lineColor: Color.Red);
+                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveG, markerSize: 0, lineColor: green);
+                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, lineColor: red);
                 scottPlotUC1.plt.settings.axisLabelY = "G and R (AFU)";
             }
             else if (cbR.Checked && cbR.Enabled)
             {
-                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, lineColor: Color.Red);
+                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, lineColor: red);
                 scottPlotUC1.plt.settings.axisLabelY = "R (AFU)";
             }
             else if (cbG.Checked && cbG.Enabled)
@@ -253,8 +260,8 @@ namespace ScanAGator
                 if (cbDelta.Enabled && cbDelta.Checked)
                 {
                     curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveDeltaG);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveDeltaG, lineWidth: 0, markerColor: Color.LightGreen, markerSize: 2);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: Color.Green);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveDeltaG, lineWidth: 0, markerColor: lightGreen, markerSize: 2);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: green, lineWidth: 2);
 
                     scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline1 * lsFolder.scanLinePeriod, lineColor: Color.Black);
                     scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline2 * lsFolder.scanLinePeriod, lineColor: Color.Black);
@@ -266,8 +273,8 @@ namespace ScanAGator
                 else
                 {
                     curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveG);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveG, lineWidth: 0, markerColor: Color.LightGreen, markerSize: 2);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: Color.Green);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveG, lineWidth: 0, markerColor: lightGreen, markerSize: 2);
+                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: green, lineWidth: 2);
                     scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: Color.Black);
                     scottPlotUC1.plt.settings.axisLabelY = "G (AFU)";
                 }
