@@ -48,6 +48,7 @@ namespace ScanAGator
         public string version { get { return Properties.Resources.ResourceManager.GetString("version"); } }
         public string pathIniFile { get { return System.IO.Path.Combine(pathFolder, "ScanAGator/LineScanSettings.ini"); } }
         public string pathSaveFolder { get { return System.IO.Path.GetDirectoryName(pathIniFile); } }
+        public string pathProgramSettings { get { return System.IO.Path.GetFullPath("Defaults.ini"); } }
 
         public string log { get; private set; }
 
@@ -65,11 +66,46 @@ namespace ScanAGator
             ReadScanLinePeriod();
             SetFrame(0);
             CreateTimePoints();
+            LoadDefaultSettings();
             AutoBaseline();
             AutoStructure();
             AutoFilter();
             LoadSettingsINI();
         }
+
+
+        #region loading of defaults from INI
+        public void LoadDefaultSettings()
+        {
+            if (!isValid)
+                return;
+
+            if (!System.IO.File.Exists(pathProgramSettings))
+            {
+                Log($"Creating settings file: {pathProgramSettings}");
+                string txt = "; ScanAGator default settings\n";
+                txt += "baselineEndFrac = 0.10\n";
+                txt += ";filterTimeMs = 50.0\n";
+                System.IO.File.WriteAllText(pathProgramSettings, txt);
+            }
+
+            Log($"Reading default values from: {pathProgramSettings}");
+            string raw = System.IO.File.ReadAllText(pathProgramSettings);
+            string[] lines = raw.Split('\n');
+            foreach (string thisLine in lines)
+            {
+                string line = thisLine.Trim();
+                if (line.StartsWith(";") || !line.Contains("="))
+                    continue;
+                string var = line.Split('=')[0].Trim();
+                string val = line.Split('=')[1].Trim();
+                if (var == "baselineEndFrac")
+                    defaultBaselineEndFrac = double.Parse(val);
+                if (var == "filterTimeMs")
+                    defaultFilterTimeMs = double.Parse(val);
+            }
+        }
+        #endregion
 
         #region analysis
 
@@ -150,13 +186,14 @@ namespace ScanAGator
 
         #region automatic detection and default values
 
+        private double defaultBaselineEndFrac = 0.10;
         public void AutoBaseline()
         {
             if (!isValid)
                 return;
 
-            baseline1 = (int)(imgG.height * .00);
-            baseline2 = (int)(imgG.height * .10);
+            baseline1 = 0;
+            baseline2 = (int)(imgG.height * defaultBaselineEndFrac);
             Log($"Automatic baseline: {baseline1}px - {baseline1}px ({baseline1 * scanLinePeriod}ms = {baseline1 * scanLinePeriod}ms)");
         }
 
@@ -202,18 +239,21 @@ namespace ScanAGator
             Log($"Automatic structure: {structure1}px - {structure2}px");
         }
 
+        private double defaultFilterTimeMs;
         public void AutoFilter()
         {
             if (!isValid)
                 return;
 
-            double filterTimeMs;
-            double scanTimeMs = scanLinePeriod * imgG.height;
-            if (scanTimeMs > 1000)
-                filterTimeMs = 100;
-            else
-                filterTimeMs = 10;
-
+            double filterTimeMs = defaultFilterTimeMs;
+            if (defaultFilterTimeMs == 0)
+            {
+                double scanTimeMs = scanLinePeriod * imgG.height;
+                if (scanTimeMs > 1000)
+                    filterTimeMs = 100;
+                else
+                    filterTimeMs = 10;
+            }
             // try to set the filter to 100 ms
             filterPx = (int)(filterTimeMs / scanLinePeriod);
 
