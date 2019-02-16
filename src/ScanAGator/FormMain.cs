@@ -493,6 +493,7 @@ namespace ScanAGator
         private void btnSave_Click(object sender, EventArgs e)
         {
             lsFolder.SaveSettingsINI();
+            System.IO.File.WriteAllText(System.IO.Path.Combine(lsFolder.pathSaveFolder, "LineScanAnalysis.csv"), lsFolder.GetCsvAllData());
             UpdateGuiFromLinescan();
             SaveNeeded(false);
         }
