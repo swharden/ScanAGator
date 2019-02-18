@@ -5,7 +5,7 @@
 
 ## Download
 A click-to-run Scan-A-Gator (zipped EXE) is available with each release:\
-https://github.com/swharden/Scan-A-Gator/releases/latest
+https://github.com/swharden/Scan-A-Gator/releases
 
 ## Features
 * Can analyze TIFs with data of arbitrary bit depths (e.g., 12-bit data in a 16-bit TIF)
