@@ -476,6 +476,8 @@ namespace ScanAGator
         #region filtering
         public double[] GetFilteredYs(double[] data)
         {
+            if (data == null)
+                return null;
             double[] filteredValues = ImageDataTools.GaussianFilter1d(data, filterPx);
             int padPoints = filterPx * 2 + 1;
             double[] filteredYs = new double[data.Length - 2 * padPoints];
@@ -485,6 +487,8 @@ namespace ScanAGator
 
         public double[] GetFilteredXs()
         {
+            if (curveG == null)
+                return null;
             int padPoints = filterPx * 2 + 1;
             double[] filteredXs = new double[curveG.Length - 2 * padPoints];
             Array.Copy(timesMsec, padPoints, filteredXs, 0, filteredXs.Length);

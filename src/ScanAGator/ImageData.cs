@@ -197,7 +197,7 @@ namespace ScanAGator
 
         public static double[] GaussianFilter1d(double[] data, int degree = 5)
         {
-            if (degree < 2)
+            if (degree < 2 || data == null)
                 return data;
 
             double[] smooth = new double[data.Length];

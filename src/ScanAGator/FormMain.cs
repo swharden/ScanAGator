@@ -24,6 +24,7 @@ namespace ScanAGator
         {
             //SetFolder(@"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans\LineScan-02132019-1317-2778");
             SetFolder("./");
+            SetFolder(@"X:\Data\OTR-Cre\GCaMP6f PFC injection patch and linescan\2019-02-20\slice1");
         }
 
         public LineScanFolder lsFolder;
@@ -488,7 +489,9 @@ namespace ScanAGator
 
         private void btnCopyAllData_Click(object sender, EventArgs e)
         {
-            Clipboard.SetText(lsFolder.GetCsvAllData());
+            string csv = lsFolder.GetCsvAllData();
+            string tsv = csv.Replace(",", "\t");
+            Clipboard.SetText(tsv);
         }
 
         private void btnSaveAllData_Click(object sender, EventArgs e)
