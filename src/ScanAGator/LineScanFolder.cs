@@ -437,24 +437,15 @@ namespace ScanAGator
             if (!isValid)
                 return;
 
-            // try to load an 8-bit image if it's available
-            string pathRefImage = null;
-            foreach (string path in pathsRef)
-            {
-                if (path.Contains("8bit"))
-                {
-                    pathRefImage = path;
-                    break;
-                }
-            }
+            bmpRef = GetRefImage();
+        }
 
-            // fall back on the first image
-            if (pathRefImage == null)
-                pathRefImage = pathsRef[0];
-
-            //bmpRef = new Bitmap(pathRefImage);
-            ImageData imgRef = new ImageData(pathRefImage);
-            bmpRef = imgRef.GetBmpDisplay();
+        public Bitmap GetRefImage(int number=0)
+        {
+            if (number >= pathsRef.Length)
+                return null;
+            ImageData imgRef = new ImageData(pathsRef[number]);
+            return imgRef.GetBmpDisplay();
         }
 
         public Bitmap MarkLinescan(Bitmap bmpOriginal)

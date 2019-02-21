@@ -22,9 +22,15 @@ namespace ScanAGator
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            //SetFolder(@"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans\LineScan-02132019-1317-2778");
-            SetFolder("./");
-            SetFolder(@"X:\Data\OTR-Cre\GCaMP6f PFC injection patch and linescan\2019-02-20\slice1");
+            string developerStartupFolder1 = @"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans\LineScan-02132019-1317-2778";
+            string developerStartupFolder2 = @"X:\Data\OTR-Cre\GCaMP6f PFC injection patch and linescan\2019-02-20\slice1";
+
+            if (System.IO.Directory.Exists(developerStartupFolder1))
+                SetFolder(developerStartupFolder1);
+            else if (System.IO.Directory.Exists(developerStartupFolder2))
+                SetFolder(developerStartupFolder2);
+            else
+                SetFolder("./");
         }
 
         public LineScanFolder lsFolder;
@@ -54,10 +60,11 @@ namespace ScanAGator
             ignoreGuiUpdates = true;
 
             // reference image
-            if (lsFolder.isValid)
-                pbRef.BackgroundImage = lsFolder.bmpRef;
-            else
-                pbRef.BackgroundImage = null;
+            if (lsFolder.pathsRef != null && lsFolder.pathsRef.Length > 0)
+            {
+                pbRef.BackgroundImage = lsFolder.GetRefImage(0);
+                hScrollRef.Maximum = lsFolder.pathsRef.Length-1;
+            }
 
             // lock or unlock settings
             gbDisplay.Enabled = lsFolder.isValid;
@@ -304,6 +311,18 @@ namespace ScanAGator
             busyUpdating = false;
         }
 
+        public void SaveNeeded(bool needed = true)
+        {
+            if (needed)
+            {
+                btnSave.BackColor = Color.Salmon;
+            }
+            else
+            {
+                btnSave.UseVisualStyleBackColor = true;
+            }
+        }
+
         #region debug log
         private void DebugLogHide()
         {
@@ -517,19 +536,11 @@ namespace ScanAGator
             UpdateGuiFromLinescan();
             SaveNeeded(false);
         }
-        #endregion
 
-        public void SaveNeeded(bool needed = true)
+        private void hScrollRef_Scroll(object sender, ScrollEventArgs e)
         {
-            if (needed)
-            {
-                btnSave.BackColor = Color.Salmon;
-            }
-            else
-            {
-                btnSave.UseVisualStyleBackColor = true;
-            }
+            pbRef.BackgroundImage = lsFolder.GetRefImage(hScrollRef.Value);
         }
-
+        #endregion
     }
 }

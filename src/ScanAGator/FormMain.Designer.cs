@@ -78,6 +78,7 @@
             this.scottPlotUC1 = new ScottPlotDev2.ScottPlotUC();
             this.tbLog = new System.Windows.Forms.TextBox();
             this.scottPlotUC2 = new ScottPlotDev2.ScottPlotUC();
+            this.hScrollRef = new System.Windows.Forms.HScrollBar();
             this.treeViewDirUC1 = new ScanAGator.TreeViewDirUC();
             this.menuStrip1.SuspendLayout();
             this.gbAuto.SuspendLayout();
@@ -555,9 +556,9 @@
             // scottPlotUC1
             // 
             this.scottPlotUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.scottPlotUC1.Location = new System.Drawing.Point(842, 383);
+            this.scottPlotUC1.Location = new System.Drawing.Point(842, 398);
             this.scottPlotUC1.Name = "scottPlotUC1";
-            this.scottPlotUC1.Size = new System.Drawing.Size(348, 223);
+            this.scottPlotUC1.Size = new System.Drawing.Size(348, 208);
             this.scottPlotUC1.TabIndex = 53;
             // 
             // tbLog
@@ -579,6 +580,16 @@
             this.scottPlotUC2.Size = new System.Drawing.Size(350, 121);
             this.scottPlotUC2.TabIndex = 56;
             // 
+            // hScrollRef
+            // 
+            this.hScrollRef.LargeChange = 1;
+            this.hScrollRef.Location = new System.Drawing.Point(842, 379);
+            this.hScrollRef.Maximum = 5;
+            this.hScrollRef.Name = "hScrollRef";
+            this.hScrollRef.Size = new System.Drawing.Size(350, 18);
+            this.hScrollRef.TabIndex = 57;
+            this.hScrollRef.Scroll += new System.Windows.Forms.ScrollEventHandler(this.hScrollRef_Scroll);
+            // 
             // treeViewDirUC1
             // 
             this.treeViewDirUC1.Location = new System.Drawing.Point(12, 27);
@@ -591,6 +602,7 @@
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1202, 758);
+            this.Controls.Add(this.hScrollRef);
             this.Controls.Add(this.scottPlotUC2);
             this.Controls.Add(this.tbLog);
             this.Controls.Add(this.treeViewDirUC1);
@@ -703,5 +715,6 @@
         private System.Windows.Forms.ToolStripMenuItem debugLogToolStripMenuItem;
         private System.Windows.Forms.TextBox tbLog;
         private ScottPlotDev2.ScottPlotUC scottPlotUC2;
+        private System.Windows.Forms.HScrollBar hScrollRef;
     }
 }
