@@ -601,15 +601,18 @@
             // 
             // treeViewDirUC1
             // 
+            this.treeViewDirUC1.AllowDrop = true;
             this.treeViewDirUC1.Location = new System.Drawing.Point(12, 27);
             this.treeViewDirUC1.Name = "treeViewDirUC1";
             this.treeViewDirUC1.Size = new System.Drawing.Size(366, 414);
             this.treeViewDirUC1.TabIndex = 54;
             this.treeViewDirUC1.PathSelected += new System.EventHandler(this.treeViewDirUC1_PathSelected);
+            this.treeViewDirUC1.PathDragDropped += new System.EventHandler(this.treeViewDirUC1_PathDragDropped);
             this.treeViewDirUC1.Load += new System.EventHandler(this.treeViewDirUC1_Load);
             // 
             // FormMain
             // 
+            this.AllowDrop = true;
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1202, 758);
             this.Controls.Add(this.hScrollRef);

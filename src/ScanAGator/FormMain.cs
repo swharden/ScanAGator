@@ -559,5 +559,9 @@ namespace ScanAGator
         }
         #endregion
 
+        private void treeViewDirUC1_PathDragDropped(object sender, EventArgs e)
+        {
+            SetFolder(treeViewDirUC1.selectedPath, true);
+        }
     }
 }

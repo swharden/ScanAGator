@@ -166,11 +166,43 @@ namespace ScanAGator
             //Console.WriteLine($"PATH SELECTED: {selectedPath}");
             OnPathSelected(EventArgs.Empty);
         }
-        #endregion
 
         private void treeView1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             System.Diagnostics.Process.Start("explorer.exe", selectedPath);
         }
+
+        #endregion
+
+        #region drag-drop handling
+
+        private void treeView1_DragEnter(object sender, DragEventArgs e)
+        {
+            Console.WriteLine("Tree drag enter");
+
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.All;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void treeView1_DragDrop(object sender, DragEventArgs e)
+        {
+            Console.WriteLine("Tree drag drop");
+            string[] s = (string[])e.Data.GetData(DataFormats.FileDrop, false);
+            selectedPath = System.IO.Path.GetFullPath(s[0]);
+            OnPathDragDropped(EventArgs.Empty);
+        }
+
+        public event EventHandler PathDragDropped;
+        protected virtual void OnPathDragDropped(EventArgs e)
+        {
+            var handler = PathDragDropped;
+            if (handler != null)
+                handler(this, e);
+        }
+
+
+        #endregion
     }
 }
