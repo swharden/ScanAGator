@@ -32,6 +32,7 @@
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.setFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.refreshFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.debugLogToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -80,7 +81,6 @@
             this.scottPlotUC2 = new ScottPlotDev2.ScottPlotUC();
             this.hScrollRef = new System.Windows.Forms.HScrollBar();
             this.treeViewDirUC1 = new ScanAGator.TreeViewDirUC();
-            this.refreshFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.gbAuto.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbLinescan)).BeginInit();
@@ -131,14 +131,21 @@
             // setFolderToolStripMenuItem
             // 
             this.setFolderToolStripMenuItem.Name = "setFolderToolStripMenuItem";
-            this.setFolderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.setFolderToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.setFolderToolStripMenuItem.Text = "Set Folder";
             this.setFolderToolStripMenuItem.Click += new System.EventHandler(this.setFolderToolStripMenuItem_Click);
+            // 
+            // refreshFolderToolStripMenuItem
+            // 
+            this.refreshFolderToolStripMenuItem.Name = "refreshFolderToolStripMenuItem";
+            this.refreshFolderToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.refreshFolderToolStripMenuItem.Text = "Refresh Folder";
+            this.refreshFolderToolStripMenuItem.Click += new System.EventHandler(this.refreshFolderToolStripMenuItem_Click);
             // 
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
             // 
@@ -599,13 +606,7 @@
             this.treeViewDirUC1.Size = new System.Drawing.Size(366, 414);
             this.treeViewDirUC1.TabIndex = 54;
             this.treeViewDirUC1.PathSelected += new System.EventHandler(this.treeViewDirUC1_PathSelected);
-            // 
-            // refreshFolderToolStripMenuItem
-            // 
-            this.refreshFolderToolStripMenuItem.Name = "refreshFolderToolStripMenuItem";
-            this.refreshFolderToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.refreshFolderToolStripMenuItem.Text = "Refresh Folder";
-            this.refreshFolderToolStripMenuItem.Click += new System.EventHandler(this.refreshFolderToolStripMenuItem_Click);
+            this.treeViewDirUC1.Load += new System.EventHandler(this.treeViewDirUC1_Load);
             // 
             // FormMain
             // 

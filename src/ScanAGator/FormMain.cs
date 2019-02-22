@@ -37,6 +37,9 @@ namespace ScanAGator
         private bool ignoreGuiUpdates;
         private void SetFolder(string path, bool updateTree = true)
         {
+            // stop people from clicking on a new path while this one is loading
+            treeViewDirUC1.Enabled = false;
+
             if (updateTree)
             {
                 // update the tree (will can an event to re-call fhis function)
@@ -51,6 +54,9 @@ namespace ScanAGator
                 SaveNeeded(false);
             if (lsFolder.isValid && System.IO.File.Exists(lsFolder.pathIniFile))
                 SaveNeeded(false);
+
+            // unlock the treeview
+            treeViewDirUC1.Enabled = true;
         }
 
         public void UpdateGuiFromLinescanFirst()
@@ -545,6 +551,11 @@ namespace ScanAGator
         private void hScrollRef_Scroll(object sender, ScrollEventArgs e)
         {
             pbRef.BackgroundImage = lsFolder.GetRefImage(hScrollRef.Value);
+        }
+
+        private void treeViewDirUC1_Load(object sender, EventArgs e)
+        {
+
         }
         #endregion
 
