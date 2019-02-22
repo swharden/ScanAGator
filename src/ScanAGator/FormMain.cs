@@ -366,6 +366,11 @@ namespace ScanAGator
             }
         }
 
+        private void refreshFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SetFolder(lsFolder.pathFolder, true);
+        }
+
         private void debugLogToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (debugLogToolStripMenuItem.Checked)
@@ -542,5 +547,6 @@ namespace ScanAGator
             pbRef.BackgroundImage = lsFolder.GetRefImage(hScrollRef.Value);
         }
         #endregion
+
     }
 }
