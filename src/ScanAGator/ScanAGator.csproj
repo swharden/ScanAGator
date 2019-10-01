@@ -38,6 +38,9 @@
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
+    <Reference Include="ScottPlot, Version=3.1.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>packages\ScottPlot.3.1.4\lib\net45\ScottPlot.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -93,6 +96,7 @@
     <EmbeddedResource Include="TreeViewDirUC.resx">
       <DependentUpon>TreeViewDirUC.cs</DependentUpon>
     </EmbeddedResource>
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -105,12 +109,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\ScottPlot\src\ScottPlot\ScottPlot.csproj">
-      <Project>{2eb18f34-a0c1-4a51-9286-c42da53668cb}</Project>
-      <Name>ScottPlot</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="icon32.ico" />

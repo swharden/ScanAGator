@@ -84,8 +84,8 @@ namespace ScanAGator
             gbDisplayType.Enabled = lsFolder.isValid;
             gbPeak.Enabled = lsFolder.isValid;
             cbRatio.Enabled = lsFolder.isRatiometric;
-            scottPlotUC1.Visible = lsFolder.isValid;
-            scottPlotUC2.Visible = lsFolder.isValid;
+            formsPlot1.Visible = lsFolder.isValid;
+            formsPlot2.Visible = lsFolder.isValid;
 
             if (lsFolder.isRatiometric)
             {
@@ -209,103 +209,100 @@ namespace ScanAGator
             double[] columnPixelIndices = new double[lsFolder.imgG.width];
             for (int i = 0; i < columnPixelIndices.Length; i++)
                 columnPixelIndices[i] = i;
-            scottPlotUC2.plt.data.Clear();
+            formsPlot2.plt.Clear();
             if ((cbR.Enabled && cbR.Checked))
             {
                 double[] columnBrightnessR = ImageDataTools.GetAverageLeftright(lsFolder.imgR);
-                scottPlotUC2.plt.data.AddScatter(columnPixelIndices, columnBrightnessR, markerSize: 0, lineColor: red);
+                formsPlot2.plt.PlotScatter(columnPixelIndices, columnBrightnessR, markerSize: 0, color: red);
             }
             if ((cbG.Enabled && cbG.Checked))
             {
                 double[] columnBrightnessG = ImageDataTools.GetAverageLeftright(lsFolder.imgG);
-                scottPlotUC2.plt.data.AddScatter(columnPixelIndices, columnBrightnessG, markerSize: 0, lineColor: green);
+                formsPlot2.plt.PlotScatter(columnPixelIndices, columnBrightnessG, markerSize: 0, color: green);
             }
-            scottPlotUC2.plt.settings.AxisFit(0, .1);
-            scottPlotUC2.plt.data.AddVertLine(lsFolder.structure1, lineColor: Color.Black);
-            scottPlotUC2.plt.data.AddVertLine(lsFolder.structure2, lineColor: Color.Black);
-            //scottPlotUC2.plt.data.AddHorizLine(0, lineColor: Color.Black);
+            formsPlot2.plt.AxisAuto(0, .1);
+            formsPlot2.plt.PlotVLine(lsFolder.structure1, color: Color.Black);
+            formsPlot2.plt.PlotVLine(lsFolder.structure2, color: Color.Black);
 
             // update styling before the render
-            scottPlotUC2.plt.settings.figureBgColor = SystemColors.Control;
-            scottPlotUC2.plt.settings.title = "";
-            scottPlotUC2.plt.settings.axisLabelY = "Intensity";
-            scottPlotUC2.plt.settings.axisLabelX = "Position (pixel number)";
-            scottPlotUC2.plt.settings.SetDataPadding(60, 5, 45, 5);
-            scottPlotUC2.Render();
+            formsPlot2.plt.YLabel("Intensity");
+            formsPlot2.plt.XLabel("Position (pixel number)");
+            formsPlot2.Render();
 
             // update the time series plot
             curveToCopy = null;
-            scottPlotUC1.plt.data.Clear();
+            formsPlot1.plt.Clear();
             if (cbRatio.Checked && cbRatio.Enabled)
             {
                 if (cbDelta.Enabled && cbDelta.Checked)
                 {
                     curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveDeltaGoR);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveDeltaGoR, markerColor: lightBlue, lineWidth: 0, markerSize: 2);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: blue, lineWidth: 2);
+                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveDeltaGoR, color: lightBlue, lineWidth: 0, markerSize: 2);
+                    formsPlot1.plt.PlotScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, color: blue, lineWidth: 2);
 
-                    scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline1 * lsFolder.scanLinePeriod, lineColor: colorBaselineMarks, lineWidth: 2);
-                    scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline2 * lsFolder.scanLinePeriod, lineColor: colorBaselineMarks, lineWidth: 2);
-                    scottPlotUC1.plt.data.AddHorizLine(0, lineColor: colorZero, lineWidth: 2);
-                    scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: colorPeak, lineWidth: 2);
+                    formsPlot1.plt.PlotVLine(lsFolder.baseline1 * lsFolder.scanLinePeriod, color: colorBaselineMarks, lineWidth: 2);
+                    formsPlot1.plt.PlotVLine(lsFolder.baseline2 * lsFolder.scanLinePeriod, color: colorBaselineMarks, lineWidth: 2);
+                    formsPlot1.plt.PlotHLine(0, color: colorZero, lineWidth: 2);
+                    formsPlot1.plt.PlotHLine(curveToCopy.Max(), color: colorPeak, lineWidth: 2);
 
-                    scottPlotUC1.plt.settings.axisLabelY = "Delta G/R (%)";
+                    formsPlot1.plt.YLabel("Delta G/R (%)");
 
                 }
                 else
                 {
                     curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveGoR);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveGoR, markerColor: lightBlue, lineWidth: 0, markerSize: 2);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: blue, lineWidth: 2);
-                    scottPlotUC1.plt.settings.axisLabelY = "G/R (%)";
-                    scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: colorPeak, lineWidth: 2);
+                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveGoR, color: lightBlue, lineWidth: 0, markerSize: 2);
+                    formsPlot1.plt.PlotScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, color: blue, lineWidth: 2);
+                    formsPlot1.plt.YLabel("G/R (%)");
+                    formsPlot1.plt.PlotHLine(curveToCopy.Max(), color: colorPeak, lineWidth: 2);
                 }
             }
             else if ((cbR.Checked && cbR.Enabled) && (cbG.Checked && cbG.Enabled))
             {
-                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveG, markerSize: 0, lineColor: green);
-                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, lineColor: red);
-                scottPlotUC1.plt.settings.axisLabelY = "G and R (AFU)";
+                formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveG, markerSize: 0, color: green);
+                formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, color: red);
+                formsPlot1.plt.YLabel("G and R (AFU)");
             }
             else if (cbR.Checked && cbR.Enabled)
             {
-                scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, lineColor: red);
-                scottPlotUC1.plt.settings.axisLabelY = "R (AFU)";
+                formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, color: red);
+                formsPlot1.plt.YLabel("R (AFU)");
             }
             else if (cbG.Checked && cbG.Enabled)
             {
                 if (cbDelta.Enabled && cbDelta.Checked)
                 {
                     curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveDeltaG);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveDeltaG, lineWidth: 0, markerColor: lightGreen, markerSize: 2);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: green, lineWidth: 2);
+                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveDeltaG, lineWidth: 0, color: lightGreen, markerSize: 2);
+                    formsPlot1.plt.PlotScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, color: green, lineWidth: 2);
 
-                    scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline1 * lsFolder.scanLinePeriod, lineColor: colorBaselineMarks, lineWidth: 2);
-                    scottPlotUC1.plt.data.AddVertLine(lsFolder.baseline2 * lsFolder.scanLinePeriod, lineColor: colorBaselineMarks, lineWidth: 2);
-                    scottPlotUC1.plt.data.AddHorizLine(0, lineColor: colorZero, lineWidth: 2);
-                    scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: colorPeak, lineWidth: 2);
+                    formsPlot1.plt.PlotVLine(lsFolder.baseline1 * lsFolder.scanLinePeriod, color: colorBaselineMarks, lineWidth: 2);
+                    formsPlot1.plt.PlotVLine(lsFolder.baseline2 * lsFolder.scanLinePeriod, color: colorBaselineMarks, lineWidth: 2);
+                    formsPlot1.plt.PlotHLine(0, color: colorZero, lineWidth: 2);
+                    formsPlot1.plt.PlotHLine(curveToCopy.Max(), color: colorPeak, lineWidth: 2);
 
-                    scottPlotUC1.plt.settings.axisLabelY = "Delta G (%)";
+                    formsPlot1.plt.YLabel("Delta G (%)");
                 }
                 else
                 {
                     curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveG);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.timesMsec, lsFolder.curveG, lineWidth: 0, markerColor: lightGreen, markerSize: 2);
-                    scottPlotUC1.plt.data.AddScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, lineColor: green, lineWidth: 2);
-                    scottPlotUC1.plt.data.AddHorizLine(curveToCopy.Max(), lineColor: colorPeak, lineWidth: 2);
-                    scottPlotUC1.plt.settings.axisLabelY = "G (AFU)";
+                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveG, lineWidth: 0, color: lightGreen, markerSize: 2);
+                    formsPlot1.plt.PlotScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, color: green, lineWidth: 2);
+                    formsPlot1.plt.PlotHLine(curveToCopy.Max(), color: colorPeak, lineWidth: 2);
+                    formsPlot1.plt.YLabel("G (AFU)");
                 }
 
             }
-            scottPlotUC1.plt.settings.AxisFit(.05, .1);
+            formsPlot1.plt.AxisAuto(.05, .1);
+
+            // make ticks smaller than typical
+            var tickFont = new Font(FontFamily.GenericMonospace, (float)10.0);
+            //formsPlot1.plt.Ticks(font: tickFont);
+            //formsPlot2.plt.Ticks(font: tickFont);
 
             // update styling before the render
-            scottPlotUC1.plt.settings.figureBgColor = SystemColors.Control;
-            scottPlotUC1.plt.settings.title = "";
-            scottPlotUC1.plt.settings.axisLabelX = "Time (milliseconds)";
-            scottPlotUC1.plt.settings.SetDataPadding(60, 5, 45, 5);
-            scottPlotUC1.plt.settings.drawAxes = true;
-            scottPlotUC1.Render();
+            formsPlot1.plt.XLabel("Time (milliseconds)");
+            formsPlot1.Render();
 
             // update peak label
             if (curveToCopy == null)

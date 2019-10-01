@@ -76,9 +76,9 @@
             this.btnCopyAllData = new System.Windows.Forms.Button();
             this.btnCurveCopy = new System.Windows.Forms.Button();
             this.btnSaveAllData = new System.Windows.Forms.Button();
-            this.scottPlotUC1 = new ScottPlotDev2.ScottPlotUC();
+            this.formsPlot1 = new ScottPlot.FormsPlot();
             this.tbLog = new System.Windows.Forms.TextBox();
-            this.scottPlotUC2 = new ScottPlotDev2.ScottPlotUC();
+            this.formsPlot2 = new ScottPlot.FormsPlot();
             this.hScrollRef = new System.Windows.Forms.HScrollBar();
             this.treeViewDirUC1 = new ScanAGator.TreeViewDirUC();
             this.menuStrip1.SuspendLayout();
@@ -564,11 +564,11 @@
             // 
             // scottPlotUC1
             // 
-            this.scottPlotUC1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.scottPlotUC1.Location = new System.Drawing.Point(842, 398);
-            this.scottPlotUC1.Name = "scottPlotUC1";
-            this.scottPlotUC1.Size = new System.Drawing.Size(348, 208);
-            this.scottPlotUC1.TabIndex = 53;
+            this.formsPlot1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.formsPlot1.Location = new System.Drawing.Point(842, 398);
+            this.formsPlot1.Name = "scottPlotUC1";
+            this.formsPlot1.Size = new System.Drawing.Size(348, 208);
+            this.formsPlot1.TabIndex = 53;
             // 
             // tbLog
             // 
@@ -583,11 +583,11 @@
             // 
             // scottPlotUC2
             // 
-            this.scottPlotUC2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
-            this.scottPlotUC2.Location = new System.Drawing.Point(384, 485);
-            this.scottPlotUC2.Name = "scottPlotUC2";
-            this.scottPlotUC2.Size = new System.Drawing.Size(350, 121);
-            this.scottPlotUC2.TabIndex = 56;
+            this.formsPlot2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.formsPlot2.Location = new System.Drawing.Point(384, 485);
+            this.formsPlot2.Name = "scottPlotUC2";
+            this.formsPlot2.Size = new System.Drawing.Size(350, 121);
+            this.formsPlot2.TabIndex = 56;
             // 
             // hScrollRef
             // 
@@ -616,10 +616,10 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.ClientSize = new System.Drawing.Size(1202, 758);
             this.Controls.Add(this.hScrollRef);
-            this.Controls.Add(this.scottPlotUC2);
+            this.Controls.Add(this.formsPlot2);
             this.Controls.Add(this.tbLog);
             this.Controls.Add(this.treeViewDirUC1);
-            this.Controls.Add(this.scottPlotUC1);
+            this.Controls.Add(this.formsPlot1);
             this.Controls.Add(this.gbSettings);
             this.Controls.Add(this.gbStructure);
             this.Controls.Add(this.gbBaseline);
@@ -721,13 +721,13 @@
         private System.Windows.Forms.Button btnCopyAllData;
         private System.Windows.Forms.Button btnCurveCopy;
         private System.Windows.Forms.Button btnSaveAllData;
-        private ScottPlotDev2.ScottPlotUC scottPlotUC1;
+        private ScottPlot.FormsPlot formsPlot1;
         private TreeViewDirUC treeViewDirUC1;
         private System.Windows.Forms.ToolStripMenuItem setFolderToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem debugLogToolStripMenuItem;
         private System.Windows.Forms.TextBox tbLog;
-        private ScottPlotDev2.ScottPlotUC scottPlotUC2;
+        private ScottPlot.FormsPlot formsPlot2;
         private System.Windows.Forms.HScrollBar hScrollRef;
         private System.Windows.Forms.ToolStripMenuItem refreshFolderToolStripMenuItem;
     }
