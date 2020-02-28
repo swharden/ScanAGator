@@ -124,12 +124,12 @@ namespace ScanAGator
             return bmp;
         }
 
-        private void LoadDataFromFile(string filePath, int frameNumber = 0)
+        private void LoadDataFromFile(string filePath)
         {
             using (Tiff image = Tiff.Open(filePath, "r"))
             {
-                int width = image.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
-                int height = image.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
+                width = image.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
+                height = image.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
                 int numberOfStrips = image.NumberOfStrips();
 
                 byte[] bytes = new byte[numberOfStrips * image.StripSize()];

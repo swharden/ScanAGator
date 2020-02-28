@@ -23,7 +23,7 @@ namespace ScanAGator
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            string developerStartupFolder1 = @"C:\Users\scott\Documents\GitHub\Scan-A-Gator\data\linescans\LineScan-02132019-1317-2778";
+            string developerStartupFolder1 = @"X:\Data\OT-Cre\calcium-mannitol\2020-02-13 puff MT 2P\20218000\distal_MT_1sp_2";
             string developerStartupFolder2 = @"X:\Data\OTR-Cre\GCaMP6f PFC injection patch and linescan\2019-02-20\slice1";
 
             if (System.IO.Directory.Exists(developerStartupFolder1))

@@ -1,6 +1,8 @@
-﻿using System;
+﻿using BitMiracle.LibTiff.Classic;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -77,6 +79,47 @@ namespace ScanAGator.GUI
                 LoadLinescan(FolderListbox.SelectedItem.ToString());
         }
 
+        private static System.Drawing.Bitmap TiffToBitmap(string fileName)
+        {
+            if (!System.IO.File.Exists(fileName))
+                throw new ArgumentException("file does not exist: " + fileName);
+
+            using Tiff tif = Tiff.Open(fileName, "r");
+
+            int height = tif.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
+            int width = tif.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
+            Debug.WriteLine($"image dimensions: {width} x {height}");
+
+            FieldValue[] bitsPerSample = tif.GetField(TiffTag.BITSPERSAMPLE);
+            short bpp = bitsPerSample[0].ToShort();
+            Debug.WriteLine($"bits per pixel: {bpp}");
+
+            FieldValue[] samplesPerPixel = tif.GetField(TiffTag.SAMPLESPERPIXEL);
+            short spp = samplesPerPixel[0].ToShort();
+            Debug.WriteLine($"samples per pixel: {spp}");
+
+            int stride = tif.ScanlineSize();
+            Debug.WriteLine($"scan line size: {stride}");
+
+            System.Drawing.Bitmap result = new System.Drawing.Bitmap(width, height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+            Debug.WriteLine($"result: {result} ({result.Width} x {result.Height})");
+
+            for (int i = 0; i < height; i++)
+            {
+                var imgRect = new System.Drawing.Rectangle(0, i, width, 1);
+                System.Drawing.Imaging.BitmapData imgData = result.LockBits(imgRect, System.Drawing.Imaging.ImageLockMode.WriteOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+
+                byte[] buffer = new byte[stride];
+                tif.ReadScanline(buffer, i);
+
+                System.Runtime.InteropServices.Marshal.Copy(buffer, 0, imgData.Scan0, buffer.Length);
+                result.UnlockBits(imgData);
+            }
+
+            return result;
+        }
+
         private static BitmapImage BmpImageFromBmp(System.Drawing.Bitmap bmp)
         {
             System.IO.MemoryStream stream = new System.IO.MemoryStream();
@@ -105,7 +148,8 @@ namespace ScanAGator.GUI
                 LinescanImage.Visibility = Visibility.Visible;
             }
 
-            LinescanImage.Source = BmpImageFromBmp(linescan.GetRefImage(linescan.pathsRef.Length - 1));
+            LinescanImage.Source = BmpImageFromBmp(TiffToBitmap(linescan.pathsRef.Last()));
+
             (double[] redPositionIntensity, int px1, int px2, double noiseFloor) = linescan.AutoStructure();
             double widthMicrons = (px2 - px1) * linescan.micronsPerPx;
 
