@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BitMiracle.LibTiff.Classic;
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
@@ -125,67 +126,22 @@ namespace ScanAGator
 
         private void LoadDataFromFile(string filePath, int frameNumber = 0)
         {
-            /*
-            // open a file stream and keep it open until we're done reading the file
-            System.IO.Stream stream = new System.IO.FileStream(filePath, System.IO.FileMode.Open,
-                System.IO.FileAccess.Read, System.IO.FileShare.Read);
-
-            // carefully open the file to see if it will decode
-            TiffBitmapDecoder decoder;
-            try
+            using (Tiff image = Tiff.Open(filePath, "r"))
             {
-                decoder = new TiffBitmapDecoder(stream, BitmapCreateOptions.PreservePixelFormat, BitmapCacheOption.Default);
-            }
-            catch
-            {
-                Console.WriteLine("TiffBitmapDecoder crashed");
-                stream.Dispose();
-                data = null;
-                return;
-            }
+                int width = image.GetField(TiffTag.IMAGEWIDTH)[0].ToInt();
+                int height = image.GetField(TiffTag.IMAGELENGTH)[0].ToInt();
+                int numberOfStrips = image.NumberOfStrips();
 
-            // access information about the image
-            int imageFrames = decoder.Frames.Count;
-            BitmapSource bitmapSource = decoder.Frames[frameNumber];
-            int sourceImageDepth = bitmapSource.Format.BitsPerPixel;
-            int bytesPerPixel = sourceImageDepth / 8;
-            Size imageSize = new Size(bitmapSource.PixelWidth, bitmapSource.PixelHeight);
-            width = imageSize.Width;
-            height = imageSize.Height;
-            Console.WriteLine($"Image size ({width}, {height}), bytesPerPx {bytesPerPixel} ({sourceImageDepth}-bit), frames: {imageFrames}, format: {bitmapSource.Format}");
+                byte[] bytes = new byte[numberOfStrips * image.StripSize()];
+                for (int i = 0; i < numberOfStrips; ++i)
+                {
+                    image.ReadRawStrip(i, bytes, i * image.StripSize(), image.StripSize());
+                }
 
-            // fill a byte array with source data bytes from the file
-            int imageByteCount = pixelCount * bytesPerPixel;
-            byte[] bytesSource = new byte[imageByteCount];
-            bitmapSource.CopyPixels(bytesSource, imageSize.Width * bytesPerPixel, 0);
-
-            // close the original file
-            stream.Dispose();
-
-            // convert the byte array to an array of values
-            data = new double[pixelCount];
-            if (bitmapSource.Format == PixelFormats.Gray8)
-            {
-                for (int i = 0; i < data.Length; i++)
-                    data[i] += bytesSource[i];
+                data = new double[bytes.Length / 2];
+                for (int i = 0; i < bytes.Length; i += 2)
+                    data[i / 2] = bytes[i] + (bytes[i + 1] << 8);
             }
-            else if (bitmapSource.Format == PixelFormats.Gray16)
-            {
-                for (int i = 0; i < data.Length; i++)
-                    data[i] = bytesSource[i * 2] + (bytesSource[i * 2 + 1] << 8);
-            }
-            else if (bitmapSource.Format == PixelFormats.Bgra32)
-            {
-                for (int i = 0; i < data.Length; i++)
-                    data[i] += bytesSource[i * 4] + bytesSource[i * 4 + 1] + bytesSource[i * 4 + 2];
-            }
-            else
-            {
-                Console.WriteLine($"Unsupported TIF pixel format: {bitmapSource.Format}");
-            }
-
-            */
         }
     }
-
 }
