@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
@@ -32,6 +33,8 @@ namespace ScanAGator
 
         public double scanLinePeriod;
         public double[] timesMsec;
+        public double micronsPerPx;
+        public double pixelsPerMicron { get { return 1.0 / micronsPerPx; } }
 
         public int baseline1;
         public int baseline2;
@@ -63,7 +66,7 @@ namespace ScanAGator
 
             ScanForFiles();
             LoadRefBmp();
-            ReadScanLinePeriod();
+            ReadValuesFromXML();
             SetFrame(0);
             CreateTimePoints();
             LoadDefaultSettings();
@@ -197,10 +200,10 @@ namespace ScanAGator
             Log($"Automatic baseline: {baseline1}px - {baseline1}px ({baseline1 * scanLinePeriod}ms = {baseline1 * scanLinePeriod}ms)");
         }
 
-        public void AutoStructure()
+        public (double[], int, int, double) AutoStructure()
         {
             if (!isValid)
-                return;
+                return (null, -1, -1, -1);
 
             // determine the brightest column
             double[] columnIntensities = ImageDataTools.GetAverageLeftright(imgG);
@@ -237,6 +240,7 @@ namespace ScanAGator
                 structure2++;
 
             Log($"Automatic structure: {structure1}px - {structure2}px");
+            return (columnIntensities, structure1, structure2, noiseFloor);
         }
 
         private double defaultFilterTimeMs;
@@ -332,14 +336,17 @@ namespace ScanAGator
             Log($"XML File: {System.IO.Path.GetFileName(pathXml)}");
         }
 
-        public void ReadScanLinePeriod()
+        public void ReadValuesFromXML()
         {
             // error checking
             if (!isValid)
                 return;
 
-            // PrarieView has version-specific XML structures, so discrete string parsing is simplest
+            // WARNING: PrarieView has version-specific XML structures, so discrete string parsing is simplest
             string[] xmlLines = System.IO.File.ReadAllLines(pathXml);
+
+            // scan line period
+            scanLinePeriod = -1;
             foreach (string line in xmlLines)
             {
                 if ((line.Contains("scanLinePeriod") || line.Contains("scanlinePeriod")) && line.Contains("value="))
@@ -350,10 +357,28 @@ namespace ScanAGator
                     valStr = valStr.Substring(0, valStr.IndexOf(split2));
                     scanLinePeriod = double.Parse(valStr) * 1000;
                     Log($"Scan line period: {scanLinePeriod} ms");
-                    return;
+                    break;
                 }
             }
-            Error($"Scan line period could not be found in: {pathXml}");
+            if (scanLinePeriod == -1)
+                Error($"Scan line period could not be found in: {pathXml}");
+
+            // microns per pixel
+            micronsPerPx = double.NaN;
+            for (int i = 0; i < xmlLines.Length - 1; i++)
+            {
+                string line = xmlLines[i];
+                if (line.Contains("micronsPerPixel"))
+                {
+                    string value = xmlLines[i + 1];
+                    string[] values = value.Split('"');
+                    micronsPerPx = double.Parse(values[3]);
+                    Log($"Microns per pixel: {micronsPerPx} µm");
+                    break;
+                }
+            }
+            if (micronsPerPx == double.NaN)
+                Error($"Microns per pixel could not be found in: {pathXml}");
         }
 
         public void CreateTimePoints()
@@ -423,7 +448,7 @@ namespace ScanAGator
             if (log is null)
                 log = "";
             log = log + message + "\n";
-            Console.WriteLine(message);
+            Debug.WriteLine(message);
         }
 
         #endregion
@@ -440,7 +465,7 @@ namespace ScanAGator
             bmpRef = GetRefImage();
         }
 
-        public Bitmap GetRefImage(int number=0)
+        public Bitmap GetRefImage(int number = 0)
         {
             if (number >= pathsRef.Length)
                 return null;

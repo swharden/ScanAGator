@@ -1,0 +1,32 @@
+﻿<Window x:Class="ScanAGator.GUI.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ScanAGator.GUI"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterScreen"
+        Title="Scan-A-Gator" Height="450" Width="300">
+    
+    <StackPanel Margin="10">
+        <StackPanel.Resources>
+            <Style x:Key="btn" TargetType="Button">
+                <Setter Property="FontSize" Value="16" />
+                <Setter Property="Margin" Value="10" />
+                <Setter Property="Padding" Value="10" />
+                <Setter Property="BorderBrush" Value="LightGray" />
+            </Style>
+        </StackPanel.Resources>
+
+        <StackPanel Orientation="Horizontal">
+            <Label Content="Scan-A-Gator" FontSize="32" FontWeight="Bold" />
+            <Label Name="VersionLabel" Content="version 8.8" Foreground="Gray" VerticalAlignment="Bottom" Margin="-70, 0, 0, -5" FontStyle="Italic"/>
+        </StackPanel>
+        <Button x:Name="OriginalViewerButton" Content="Original Viewer" Click="LaunchOriginalViewer" Style="{StaticResource btn}"/>
+        <Button x:Name="NewViewerButton" Content="New  Viewer" Style="{StaticResource btn}" IsEnabled="False" MouseDoubleClick="EnableNewViewerButton"/>
+        <Button Content="Linescan Finder" Style="{StaticResource btn}" Click="LaunchLinescanFinder"/>
+    </StackPanel>
+</Window>
+
+    
+    

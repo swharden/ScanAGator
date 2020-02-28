@@ -17,7 +17,8 @@ namespace ScanAGator
             InitializeComponent();
             DebugLogHide();
 
-            Text = $"Scan-A-Gator v{Properties.Resources.ResourceManager.GetString("version")}";
+            Version ver = typeof(LineScanFolder).Assembly.GetName().Version;
+            Text = $"Scan-A-Gator v{ver.Major}.{ver.Minor}";
         }
 
         private void FormMain_Load(object sender, EventArgs e)

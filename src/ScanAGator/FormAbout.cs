@@ -15,8 +15,8 @@ namespace ScanAGator
         public FormAbout()
         {
             InitializeComponent();
-            string verson = Properties.Resources.ResourceManager.GetString("version");
-            lblVersion.Text = $"version {verson}";
+            Version ver = typeof(LineScanFolder).Assembly.GetName().Version;
+            lblVersion.Text = $"version{ver.Major}.{ver.Minor}";
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -37,6 +37,11 @@ namespace ScanAGator
         private void label7_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start("http://www.SWHarden.com");
+        }
+
+        private void FormAbout_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
