@@ -2,7 +2,11 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Imaging;
+using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace ScanAGator
 {
@@ -44,7 +48,7 @@ namespace ScanAGator
         public double[] curveGoR;
         public double[] curveDeltaGoR;
 
-        public string version { get { Version ver = typeof(LineScanFolder).Assembly.GetName().Version; return $"Scan-A-Gator v{ver.Major}.{ver.Minor}"; } }
+        public string version { get { return Properties.Resources.ResourceManager.GetString("version"); } }
         public string pathIniFile { get { return System.IO.Path.Combine(pathFolder, "ScanAGator/LineScanSettings.ini"); } }
         public string pathSaveFolder { get { return System.IO.Path.GetDirectoryName(pathIniFile); } }
         public string pathProgramSettings { get { return System.IO.Path.GetFullPath("Defaults.ini"); } }
