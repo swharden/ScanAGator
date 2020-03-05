@@ -4,79 +4,51 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ScanAGator.GUI"
+        xmlns:ScottPlot="clr-namespace:ScottPlot;assembly=ScottPlot.WPF"
         mc:Ignorable="d"
-        Title="LinescanEditor" Height="400" Width="400">
-    <Grid Margin="5">
+        Background="WhiteSmoke"
+        Title="LinescanEditor" Height="400" Width="600">
+    <Grid>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
 
-        <DockPanel>
+        <GroupBox Grid.Row="0" Grid.Column="0" Header="Folders" Margin="5" >
+            <TreeView DockPanel.Dock="Left" BorderThickness="0"/>
+        </GroupBox>
+        
+        <GroupBox Grid.Row="1" Grid.Column="0" Header="Configuration" Margin="5">
+            
+        </GroupBox>
 
-            <StackPanel DockPanel.Dock="Bottom">
-
-                <GroupBox Header="Channel">
-                    <ComboBox>
-                        <ComboBoxItem Content="merge"/>
-                        <ComboBoxItem Content="red"/>
-                        <ComboBoxItem Content="green"/>
-                    </ComboBox>
-                </GroupBox>
-
-                <GroupBox Header="Scan Frame">
-                    <ComboBox>
-                        <ComboBoxItem Content="mean"/>
-                        <ComboBoxItem Content="1"/>
-                        <ComboBoxItem Content="2"/>
-                        <ComboBoxItem Content="3"/>
-                    </ComboBox>
-                </GroupBox>
-
-                <GroupBox Header="Filter">
-                    <StackPanel Orientation="Horizontal">
-                        <Label Content="Pixels:"/>
-                        <TextBox Text="10" VerticalAlignment="Center" />
-                        <Label Content="12.45 um" />
-                    </StackPanel>
-                </GroupBox>
-
-                <GroupBox Header="Baseline">
-
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                            <RowDefinition Height="*"/>
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                            <ColumnDefinition Width="auto"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Label Grid.Row="0" Grid.Column="1" Content="micron"/>
-                        <Label Grid.Row="0" Grid.Column="2" Content="micron"/>
-
-                        <Label Grid.Row="1" Grid.Column="0" Content="x1:"/>
-                        <Label Grid.Row="2" Grid.Column="0" Content="x2:"/>
-
-                        <TextBox Grid.Row="1" Grid.Column="1" Text="micron" VerticalAlignment="Center"/>
-                        <Label Grid.Row="1" Grid.Column="2" Content="12.34"/>
-                        <TextBox Grid.Row="2" Grid.Column="1" Text="micron" VerticalAlignment="Center"/>
-                        <Label Grid.Row="2" Grid.Column="2" Content="12.34"/>
-
-                    </Grid>
-
-                </GroupBox>
-
-            </StackPanel>
-
-            <TreeView DockPanel.Dock="Top" />
-        </DockPanel>
+        <GroupBox Grid.Row="0" Grid.Column="1" Header="Reference" Margin="5">
+            <Image />
+        </GroupBox>
+        
+        <GroupBox Grid.Row="0" Grid.Column="2" Header="Linescan" Margin="5">
+            <DockPanel>
+                <Slider DockPanel.Dock="Bottom" Maximum="100" Value="56" />
+                <Slider DockPanel.Dock="Bottom" Maximum="100" Value="32" />
+                <Image />
+            </DockPanel>
+        </GroupBox>
+        
+        <GroupBox Grid.Row="1" Grid.Column="1" Header="Configuration" Margin="5"></GroupBox>
+        <GroupBox Grid.Row="1" Grid.Column="2" Header="Analysis" Margin="5">
+            <DockPanel>
+                <ComboBox SelectedIndex="0" DockPanel.Dock="Top">
+                    <ComboBoxItem Content="Structure"/>
+                </ComboBox>
+                <ScottPlot:WpfPlot />
+            </DockPanel>
+        </GroupBox>
+        
     </Grid>
 </Window>

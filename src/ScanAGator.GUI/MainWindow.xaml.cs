@@ -35,14 +35,14 @@ namespace ScanAGator.GUI
             new LinescanFinder().ShowDialog();
         }
 
-        private void EnableNewViewerButton(object sender, MouseButtonEventArgs e)
-        {
-            NewViewerButton.IsEnabled = true;
-        }
-
         private void LaunchOriginalViewer(object sender, RoutedEventArgs e)
         {
             System.Diagnostics.Process.Start("oldViewer/ScanAGator.exe");
+        }
+
+        private void LaunchNewViewer(object sender, RoutedEventArgs e)
+        {
+            new LinescanEditor().ShowDialog();
         }
     }
 }

@@ -23,7 +23,7 @@
             <Label Name="VersionLabel" Content="version 8.8" Foreground="Gray" VerticalAlignment="Bottom" Margin="-70, 0, 0, -5" FontStyle="Italic"/>
         </StackPanel>
         <Button x:Name="OriginalViewerButton" Content="Original Viewer" Click="LaunchOriginalViewer" Style="{StaticResource btn}"/>
-        <Button x:Name="NewViewerButton" Content="New  Viewer" Style="{StaticResource btn}" IsEnabled="False" MouseDoubleClick="EnableNewViewerButton"/>
+        <Button x:Name="NewViewerButton" Content="New  Viewer" Style="{StaticResource btn}" Click="LaunchNewViewer"/>
         <Button Content="Linescan Finder" Style="{StaticResource btn}" Click="LaunchLinescanFinder"/>
     </StackPanel>
 </Window>
