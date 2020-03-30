@@ -7,19 +7,30 @@
         xmlns:ScottPlot="clr-namespace:ScottPlot;assembly=ScottPlot.WPF"
         mc:Ignorable="d"
         Background="WhiteSmoke"
-        Title="LinescanEditor" Height="600" Width="800">
+        MinWidth="800"
+        Width="600"
+        MinHeight="600"
+        Height="600"
+        WindowStartupLocation="CenterScreen"
+        Title="Scan-A-Gator Linescan Analysis Tool">
     <Grid>
 
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <local:LinescanSelectorControl Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"/>
 
+        <local:SettingsControl Grid.Row="0" Grid.Column="1"/>
+        <local:StructureControl Grid.Row="0" Grid.Column="2"/>
+
+        <local:ResultsControl Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"/>
 
     </Grid>
 </Window>
