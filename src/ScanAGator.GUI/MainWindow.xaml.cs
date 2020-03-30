@@ -28,6 +28,9 @@ namespace ScanAGator.GUI
             VersionLabel.Content = $"version {ver.Major}.{ver.Minor}";
 
             OriginalViewerButton.IsEnabled = System.IO.File.Exists("oldViewer/ScanAGator.exe");
+
+            // open new app on launch
+            LaunchNewViewer(null, null);
         }
 
         private void LaunchLinescanFinder(object sender, RoutedEventArgs e)

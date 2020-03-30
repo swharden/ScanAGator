@@ -13,9 +13,9 @@
 
         <GroupBox Header="Baseline" Margin="5">
             <StackPanel>
-                <Slider Maximum="100" Value="56" />
+                <Slider x:Name="BaselineSlider1" Maximum="100" Value="{Binding b1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
                 <Label Content="5px (6.78 µm)" HorizontalAlignment="Right" Margin="0,-10,0,0" Foreground="Gray"/>
-                <Slider Maximum="100" Value="32" />
+                <Slider x:Name="BaselineSlider2" Maximum="100" Value="32" />
                 <Label Content="5px (6.78 µm)" HorizontalAlignment="Right" Margin="0,-10,0,0" Foreground="Gray"/>
             </StackPanel>
         </GroupBox>
@@ -24,10 +24,10 @@
             <StackPanel>
                 <Slider Maximum="100" Value="56" />
                 <Label Content="5px (6.78 µm)" HorizontalAlignment="Right" Margin="0,-10,0,0" Foreground="Gray"/>
-                <Slider Maximum="100" Value="32" />
+                <Slider x:Name="StructureSlider2" Maximum="100" Value="32" ValueChanged="StructureSlider2_ValueChanged" />
                 <Label Content="5px (6.78 µm)" HorizontalAlignment="Right" Margin="0,-10,0,0" Foreground="Gray"/>
             </StackPanel>
         </GroupBox>
-        
+
     </StackPanel>
 </UserControl>
