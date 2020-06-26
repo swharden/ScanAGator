@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormMain));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -291,6 +292,7 @@
             // cbFrame
             // 
             this.cbFrame.AutoSize = true;
+            this.cbFrame.Enabled = false;
             this.cbFrame.Location = new System.Drawing.Point(56, 20);
             this.cbFrame.Name = "cbFrame";
             this.cbFrame.Size = new System.Drawing.Size(45, 17);
@@ -562,11 +564,11 @@
             this.btnSaveAllData.UseVisualStyleBackColor = true;
             this.btnSaveAllData.Click += new System.EventHandler(this.btnSaveAllData_Click);
             // 
-            // scottPlotUC1
+            // formsPlot1
             // 
             this.formsPlot1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.formsPlot1.Location = new System.Drawing.Point(842, 398);
-            this.formsPlot1.Name = "scottPlotUC1";
+            this.formsPlot1.Name = "formsPlot1";
             this.formsPlot1.Size = new System.Drawing.Size(348, 208);
             this.formsPlot1.TabIndex = 53;
             // 
@@ -581,11 +583,11 @@
             this.tbLog.Size = new System.Drawing.Size(1178, 134);
             this.tbLog.TabIndex = 55;
             // 
-            // scottPlotUC2
+            // formsPlot2
             // 
             this.formsPlot2.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.formsPlot2.Location = new System.Drawing.Point(384, 485);
-            this.formsPlot2.Name = "scottPlotUC2";
+            this.formsPlot2.Name = "formsPlot2";
             this.formsPlot2.Size = new System.Drawing.Size(350, 121);
             this.formsPlot2.TabIndex = 56;
             // 
