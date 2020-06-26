@@ -39,11 +39,11 @@
     <Reference Include="runtime.osx.10.10-x64.CoreCompat.System.Drawing, Version=5.8.64.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\runtime.osx.10.10-x64.CoreCompat.System.Drawing.5.8.64\lib\netstandard2.0\runtime.osx.10.10-x64.CoreCompat.System.Drawing.dll</HintPath>
     </Reference>
-    <Reference Include="ScottPlot, Version=4.0.18.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ScottPlot.4.0.18\lib\netstandard2.0\ScottPlot.dll</HintPath>
+    <Reference Include="ScottPlot, Version=4.0.37.0, Culture=neutral, PublicKeyToken=86698dc10387c39e, processorArchitecture=MSIL">
+      <HintPath>..\packages\ScottPlot.4.0.37\lib\netstandard2.0\ScottPlot.dll</HintPath>
     </Reference>
-    <Reference Include="ScottPlot.WinForms, Version=4.0.18.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ScottPlot.WinForms.4.0.18\lib\net472\ScottPlot.WinForms.dll</HintPath>
+    <Reference Include="ScottPlot.WinForms, Version=4.0.37.0, Culture=neutral, PublicKeyToken=5df1dfa5321e734b, processorArchitecture=MSIL">
+      <HintPath>..\packages\ScottPlot.WinForms.4.0.37\lib\net472\ScottPlot.WinForms.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
