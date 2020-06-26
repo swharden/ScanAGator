@@ -342,6 +342,7 @@ namespace ScanAGator
             string[] xmlLines = System.IO.File.ReadAllLines(pathXml);
 
             // scan line period
+            // WARNING: XML files can have multiple scan line periods. Take the last one.
             scanLinePeriod = -1;
             foreach (string line in xmlLines)
             {
@@ -353,7 +354,6 @@ namespace ScanAGator
                     valStr = valStr.Substring(0, valStr.IndexOf(split2));
                     scanLinePeriod = double.Parse(valStr) * 1000;
                     Log($"Scan line period: {scanLinePeriod} ms");
-                    break;
                 }
             }
             if (scanLinePeriod == -1)
