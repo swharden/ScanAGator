@@ -21,7 +21,9 @@ namespace ScanAGator.XmlTool
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            LoadXmlFile("../../../../data/tseries/TSeries-10232020-1129-1771.xml");
+            string startupFilePath = "../../../../data/tseries/TSeries-10232020-1129-1771.xml";
+            if (File.Exists(startupFilePath))
+                LoadXmlFile(startupFilePath);
         }
 
         private void LoadXmlFile(string filePath)
