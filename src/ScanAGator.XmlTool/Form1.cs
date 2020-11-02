@@ -21,6 +21,8 @@ namespace ScanAGator.XmlTool
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            UpdateGuiValues(new ExperimentXml(null));
+
             string startupFilePath = "../../../../data/tseries/TSeries-10232020-1129-1771.xml";
             if (File.Exists(startupFilePath))
                 LoadXmlFile(startupFilePath);
@@ -32,19 +34,37 @@ namespace ScanAGator.XmlTool
             XmlFilePathLabel.Text = Path.GetDirectoryName(filePath);
             XmlFileNameLabel.Text = Path.GetFileName(filePath);
 
-            var tseries = new PrairieXml.TSeries(filePath);
-            dataGridView1.Visible = tseries.IsValid;
-            if (!tseries.IsValid)
-                return;
-            
-            dataGridView1.DataSource = tseries.GetDataTable();
+            var experiment = new ExperimentXml(filePath);
+            UpdateGuiValues(experiment);
+        }
 
-            foreach (DataGridViewColumn col in dataGridView1.Columns)
-                col.SortMode = DataGridViewColumnSortMode.NotSortable;
+        private void UpdateGuiValues(ExperimentXml experiment)
+        {
+            dataGridView1.Visible = experiment.IsValid;
+            LaserPowerGroupBox.Visible = experiment.IsValid;
+            ImageGroupBox.Visible = experiment.IsValid;
+            PmtGainGroupBox.Visible = experiment.IsValid;
+            SettingsGroupBox.Visible = experiment.IsValid;
 
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullColumnSelect;
-            dataGridView1.AutoResizeColumns();
-            
+            if (experiment.IsValid)
+            {
+                dataGridView1.DataSource = experiment.GetFrameDataTable();
+                foreach (DataGridViewColumn col in dataGridView1.Columns)
+                    col.SortMode = DataGridViewColumnSortMode.NotSortable;
+                dataGridView1.SelectionMode = DataGridViewSelectionMode.FullColumnSelect;
+                dataGridView1.AutoResizeColumns();
+
+                MiraPowerLabel.Text = experiment.PowerMira.ToString();
+                X3FixedPowerLabel.Text = experiment.PowerX3Fixed.ToString();
+                X3TunablePowerLabel.Text = experiment.PowerX3Tunable.ToString();
+                ImageWidthLabel.Text = experiment.PixelsPerLine.ToString();
+                ImageHeightLabel.Text = experiment.LinesPerFrame.ToString();
+                ImageScaleLabel.Text = Math.Round(experiment.MicronsPerPixel, 4).ToString();
+                PmtCh1Label.Text = experiment.PmtGainCh1.ToString();
+                PmtCh2Label.Text = experiment.PmtGainCh2.ToString();
+                DwellLabel.Text = experiment.DwellTime.ToString();
+                ZoomLabel.Text = experiment.OpticalZoom.ToString();
+            }
         }
 
         private void Form1_DragEnter(object sender, DragEventArgs e)
