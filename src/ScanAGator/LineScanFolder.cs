@@ -54,9 +54,12 @@ namespace ScanAGator
 
         public LineScanFolder(string pathFolder)
         {
-            isValid = true;
+            if (!System.IO.Directory.Exists(pathFolder))
+                throw new ArgumentException($"folder does not exist: {System.IO.Path.GetFullPath(pathFolder)}");
 
+            isValid = true;
             this.pathFolder = System.IO.Path.GetFullPath(pathFolder);
+
             folderName = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(this.pathFolder));
             Log($"Loading linescan folder: {this.pathFolder}");
 
