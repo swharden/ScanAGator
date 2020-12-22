@@ -52,7 +52,7 @@ namespace ScanAGator
         public string log { get; private set; }
 
 
-        public LineScanFolder(string pathFolder)
+        public LineScanFolder(string pathFolder, bool analyzeImmediately = true)
         {
             if (!System.IO.Directory.Exists(pathFolder))
                 throw new ArgumentException($"folder does not exist: {System.IO.Path.GetFullPath(pathFolder)}");
@@ -73,6 +73,8 @@ namespace ScanAGator
             AutoStructure();
             AutoFilter();
             LoadSettingsINI();
+            if (analyzeImmediately)
+                GenerateAnalysisCurves();
         }
 
 

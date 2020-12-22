@@ -48,7 +48,7 @@ namespace ScanAGator
                 return;
             }
 
-            lsFolder = new LineScanFolder(path);
+            lsFolder = new LineScanFolder(path, analyzeImmediately: false);
             UpdateGuiFromLinescanFirst();
             UpdateGuiFromLinescan();
             if (!lsFolder.isValid)
