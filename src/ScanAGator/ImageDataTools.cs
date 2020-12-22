@@ -99,6 +99,9 @@ namespace ScanAGator
             return bmpM;
         }
 
+        /// <summary>
+        /// Given a 2D image return the mean pixel value of each row (between left and right columns) from top to bottom
+        /// </summary>
         public static double[] GetAverageTopdown(ImageData img, int leftPx = -1, int rightPx = -1)
         {
             if (img == null)
@@ -126,6 +129,9 @@ namespace ScanAGator
             return avgByRow;
         }
 
+        /// <summary>
+        /// Given a 2D image return the mean pixel value of each column from left to right
+        /// </summary>
         public static double[] GetAverageLeftright(ImageData img)
         {
             if (img == null)
