@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Linq;
 using System.Text;
 
 namespace ScanAGator
 {
     public class LineScanFolder
     {
-        public bool isValid { get; private set; }
-        public bool isRatiometric { get; private set; }
+        public bool isValid { get; private set; } = true;
+        public bool isRatiometric => pathsDataG?.Length > 0 && pathsDataR?.Length > 0;
 
         public readonly string pathFolder;
-        public readonly string folderName;
+        public string folderName => System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(pathFolder));
         public string pathXml;
         public string[] pathsRef;
         public string[] pathsDataR;
@@ -38,85 +39,79 @@ namespace ScanAGator
         public int structure2;
         public int filterPx;
 
+        public double defaultBaselineEndFrac = 0.10;
+        public double defaultFilterTimeMs = 0;
+
         public double[] curveG;
         public double[] curveDeltaG;
         public double[] curveR;
         public double[] curveGoR;
         public double[] curveDeltaGoR;
 
-        public string version { get { Version ver = typeof(LineScanFolder).Assembly.GetName().Version; return $"Scan-A-Gator v{ver.Major}.{ver.Minor}"; } }
-        public string pathIniFile { get { return System.IO.Path.Combine(pathFolder, "ScanAGator/LineScanSettings.ini"); } }
-        public string pathSaveFolder { get { return System.IO.Path.GetDirectoryName(pathIniFile); } }
-        public string pathProgramSettings { get { return System.IO.Path.GetFullPath("Defaults.ini"); } }
+        private Version ver => typeof(LineScanFolder).Assembly.GetName().Version;
+        public string version => $"Scan-A-Gator v{ver.Major}.{ver.Minor}";
+        public string pathIniFile => System.IO.Path.Combine(pathFolder, "ScanAGator/LineScanSettings.ini");
+        public string pathSaveFolder => System.IO.Path.GetDirectoryName(pathIniFile);
+        public string pathProgramSettings => System.IO.Path.GetFullPath("Defaults.ini");
 
-        public string log { get; private set; }
+        private readonly StringBuilder logSB = new StringBuilder();
+        public string log => logSB.ToString();
 
-
+        /// <summary>
+        /// A linescan folder holds data for an experiment at a single position.
+        /// Repeated sequences (multiple frames)
+        /// </summary>
         public LineScanFolder(string pathFolder, bool analyzeImmediately = true)
         {
-            if (!System.IO.Directory.Exists(pathFolder))
-                throw new ArgumentException($"folder does not exist: {System.IO.Path.GetFullPath(pathFolder)}");
-
-            isValid = true;
             this.pathFolder = System.IO.Path.GetFullPath(pathFolder);
-
-            folderName = System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(this.pathFolder));
-            Log($"Loading linescan folder: {this.pathFolder}");
+            if (!System.IO.Directory.Exists(this.pathFolder))
+                throw new ArgumentException($"folder does not exist: {this.pathFolder}");
 
             ScanForFiles();
-            LoadRefBmp();
             ReadValuesFromXML();
-            SetFrame(0);
-            CreateTimePoints();
-            LoadDefaultSettings();
-            AutoBaseline();
-            AutoStructure();
-            AutoFilter();
-            LoadSettingsINI();
-            if (analyzeImmediately)
-                GenerateAnalysisCurves();
-        }
 
-
-        #region loading of defaults from INI
-        public void LoadDefaultSettings()
-        {
-            if (!isValid)
-                return;
-
-            if (!System.IO.File.Exists(pathProgramSettings))
+            if (isValid)
             {
-                Log($"Creating settings file: {pathProgramSettings}");
-                string txt = "; ScanAGator default settings\n";
-                txt += "baselineEndFrac = 0.10\n";
-                txt += ";filterTimeMs = 50.0\n";
-                System.IO.File.WriteAllText(pathProgramSettings, txt);
-            }
-
-            Log($"Reading default values from: {pathProgramSettings}");
-            string raw = System.IO.File.ReadAllText(pathProgramSettings);
-            string[] lines = raw.Split('\n');
-            foreach (string thisLine in lines)
-            {
-                string line = thisLine.Trim();
-                if (line.StartsWith(";") || !line.Contains("="))
-                    continue;
-                string var = line.Split('=')[0].Trim();
-                string val = line.Split('=')[1].Trim();
-                if (var == "baselineEndFrac")
-                    defaultBaselineEndFrac = double.Parse(val);
-                if (var == "filterTimeMs")
-                    defaultFilterTimeMs = double.Parse(val);
+                bmpRef = GetRefImage();
+                SetFrame(0);
+                CreateTimePoints();
+                INI.LoadDefaultSettings(this);
+                AutoBaseline();
+                AutoStructure();
+                AutoFilter();
+                LoadSettingsINI();
+                if (analyzeImmediately)
+                    GenerateAnalysisCurves();
             }
         }
-        #endregion
 
-        #region analysis
-
+        /// <summary>
+        /// This is the primary analysis method for delta green and delta green over red calculations
+        /// </summary>
         public void GenerateAnalysisCurves()
         {
+            // determine mean pixel intensity over time between the structure markers
+            var (structureIndex1, structureIndex2) = GetValidStructure(structure1, structure2);
+            curveG = ImageDataTools.GetAverageTopdown(imgG, structureIndex1, structureIndex2);
+            curveR = ImageDataTools.GetAverageTopdown(imgR, structureIndex1, structureIndex2);
 
-            // quick and dirty error checking for structure
+            // create a dG channel by baseline subtracting just the green channel
+            var (baselineIndex1, baselineIndex2) = GetValidBaseline(baseline1, baseline2);
+            curveDeltaG = CreateBaselineSubtractedCurve(curveG, baselineIndex1, baselineIndex2);
+
+            // create a d(G/R) curve by finding the G/R ratio then baseline subtracting that
+            if (isRatiometric)
+            {
+                curveGoR = CreateRatioCurve(curveG, curveR);
+                curveDeltaGoR = CreateBaselineSubtractedCurve(curveGoR, baselineIndex1, baselineIndex2);
+            }
+        }
+
+        /// <summary>
+        /// Return structure indexes in the proper order and separated by at least 1px
+        /// </summary>
+        private static (int s1, int s2) GetValidStructure(int structure1, int structure2)
+        {
             int s1 = structure1;
             int s2 = structure2;
 
@@ -135,7 +130,14 @@ namespace ScanAGator
                     s1 -= 1;
             }
 
-            // quick and dirty error checking for baseline
+            return (s1, s2);
+        }
+
+        /// <summary>
+        /// Return baseline indexes in the proper order and separated by at least 1px
+        /// </summary>
+        private static (int s1, int s2) GetValidBaseline(int baseline1, int baseline2)
+        {
             int b1 = baseline1;
             int b2 = baseline2;
 
@@ -154,43 +156,42 @@ namespace ScanAGator
                     b1 -= 1;
             }
 
-            // perform the analysis of R and G curves
-            curveG = ImageDataTools.GetAverageTopdown(imgG, s1, s2);
-            curveR = ImageDataTools.GetAverageTopdown(imgR, s1, s2);
-            if (curveG != null && curveR != null)
-            {
-                curveGoR = new double[curveG.Length];
-                for (int i = 0; i < curveG.Length; i++)
-                    curveGoR[i] = curveG[i] / curveR[i] * 100.0;
-            }
-
-            // create delta G curve
-            double baselineGsum = 0;
-            for (int i = b1; i < b2; i++)
-                baselineGsum += curveG[i];
-            double baselineG = baselineGsum / (b2 - b1);
-            curveDeltaG = new double[curveG.Length];
-            for (int i = 0; i < curveDeltaG.Length; i++)
-                curveDeltaG[i] = curveG[i] - baselineG;
-
-            // create delta G over R curve
-            if (curveGoR != null)
-            {
-                double baselineGoRsum = 0;
-                for (int i = b1; i < b2; i++)
-                    baselineGoRsum += curveGoR[i];
-                double baselineGoR = baselineGoRsum / (b2 - b1);
-                curveDeltaGoR = new double[curveGoR.Length];
-                for (int i = 0; i < curveDeltaGoR.Length; i++)
-                    curveDeltaGoR[i] = curveGoR[i] - baselineGoR;
-            }
+            return (b1, b2);
         }
 
-        #endregion
+        /// <summary>
+        /// Return a new array representing numerator / denomenator in % units
+        /// </summary>
+        private static double[] CreateRatioCurve(double[] numerator, double[] denomenator)
+        {
+            if (numerator.Length != denomenator.Length)
+                throw new ArgumentException("numerator and denomenator must have the same length");
 
-        #region automatic detection and default values
+            return Enumerable.Range(0, numerator.Length)
+                             .Select(i => numerator[i] / denomenator[i] * 100)
+                             .ToArray();
+        }
 
-        private double defaultBaselineEndFrac = 0.10;
+        /// <summary>
+        /// Return a copy of the source array where every point was subtracted by the mean value between the baseline indexes
+        /// </summary>
+        private static double[] CreateBaselineSubtractedCurve(double[] source, int baselineIndex1, int baselineIndex2)
+        {
+            double baselineSum = 0;
+            for (int i = baselineIndex1; i < baselineIndex2; i++)
+                baselineSum += source[i];
+            double baselineG = baselineSum / (baselineIndex2 - baselineIndex1);
+
+            double[] delta = new double[source.Length];
+            for (int i = 0; i < delta.Length; i++)
+                delta[i] = source[i] - baselineG;
+
+            return delta;
+        }
+
+        /// <summary>
+        /// Set the baseline to encompass the default amount around the first fraction of the data (defined by defaultBaselineEndFrac)
+        /// </summary>
         public void AutoBaseline()
         {
             if (!isValid)
@@ -201,11 +202,14 @@ namespace ScanAGator
             Log($"Automatic baseline: {baseline1}px - {baseline1}px ({baseline1 * scanLinePeriod}ms = {baseline1 * scanLinePeriod}ms)");
         }
 
-        public (double[], int, int, double) AutoStructure()
+        /// <summary>
+        /// Set the structure bounds around the brightest structure in the image.
+        /// The 1D projected image of the green channel is used.
+        /// Boundaries are placed where intensity drops to half the distance between the peak and the noise floor.
+        /// Noise floor is defined as the 20-percentile of the 1D projected image.
+        /// </summary>
+        public void AutoStructure()
         {
-            if (!isValid)
-                return (null, -1, -1, -1);
-
             // determine the brightest column
             double[] columnIntensities = ImageDataTools.GetAverageLeftright(imgG);
             double brightestValue = 0;
@@ -241,10 +245,11 @@ namespace ScanAGator
                 structure2++;
 
             Log($"Automatic structure: {structure1}px - {structure2}px");
-            return (columnIntensities, structure1, structure2, noiseFloor);
         }
 
-        private double defaultFilterTimeMs;
+        /// <summary>
+        /// Determine the ideal low-pass filter size (pixels) based on the filter time (ms)
+        /// </summary>
         public void AutoFilter()
         {
             if (!isValid)
@@ -259,18 +264,14 @@ namespace ScanAGator
                 else
                     filterTimeMs = 10;
             }
-            // try to set the filter to 100 ms
+
             filterPx = (int)(filterTimeMs / scanLinePeriod);
 
-            // of this linescan is super short, just use 1/5 of it
-            if (filterPx > imgG.height / 5)
-                filterPx = imgG.height / 5;
+            filterPx = Math.Min(filterPx, imgG.height); // limit max filter size to 1/5 of the duration
+
             Log($"Automatic filter: {filterPx}px ({filterPx * scanLinePeriod}ms)");
         }
 
-        #endregion
-
-        #region initialization and frame selection
         private void ScanForFiles()
         {
 
@@ -318,10 +319,6 @@ namespace ScanAGator
                 Error("A different number of red and green images were found");
                 return;
             }
-            if (pathsDataG.Length > 0 && pathsDataR.Length > 0)
-                isRatiometric = true;
-            else
-                isRatiometric = false;
             Log($"Red image count: {pathsDataR.Length}");
             Log($"Green image count: {pathsDataG.Length}");
             Log($"Ratiometric: {isRatiometric}");
@@ -369,6 +366,12 @@ namespace ScanAGator
             for (int i = 0; i < xmlLines.Length - 1; i++)
             {
                 string line = xmlLines[i];
+                if (line.Contains("micronsPerPixel_XAxis"))
+                {
+                    Error("unsupported (old) version of PrairieView");
+                    return;
+                }
+
                 if (line.Contains("micronsPerPixel"))
                 {
                     string value = xmlLines[i + 1];
@@ -382,6 +385,9 @@ namespace ScanAGator
                 Error($"Microns per pixel could not be found in: {pathXml}");
         }
 
+        /// <summary>
+        /// Populate timesMsec based on scanLinePeriod
+        /// </summary>
         public void CreateTimePoints()
         {
             // error checking
@@ -398,6 +404,10 @@ namespace ScanAGator
             }
         }
 
+        /// <summary>
+        /// Multi-scan linescans have multiple frames. 
+        /// Call this to load data for a specific frame.
+        /// </summary>
         public void SetFrame(int frameNumber)
         {
             // error checking
@@ -434,38 +444,27 @@ namespace ScanAGator
             }
         }
 
-        #endregion
-
-        #region logging
-
+        /// <summary>
+        /// Mark the linescan invalid and provide a reason
+        /// </summary>
         private void Error(string message)
         {
             isValid = false;
-            Log("CRITICAL ERROR: " + message);
+            logSB.AppendLine("CRITICAL ERROR: " + message);
         }
 
+        /// <summary>
+        /// Record details about the linescan analysis procedure
+        /// </summary>
         private void Log(string message)
         {
-            if (log is null)
-                log = "";
-            log = log + message + "\n";
+            logSB.AppendLine(message);
             Debug.WriteLine(message);
         }
 
-        #endregion
-
-        #region Bitmap handling
-
-        // pre-load the reference bitmap to make it quick to recall
-        public void LoadRefBmp()
-        {
-            // error checking
-            if (!isValid)
-                return;
-
-            bmpRef = GetRefImage();
-        }
-
+        /// <summary>
+        /// Return a copy of the reference image
+        /// </summary>
         public Bitmap GetRefImage(int number = 0)
         {
             if (number >= pathsRef.Length)
@@ -474,34 +473,40 @@ namespace ScanAGator
             return imgRef.GetBmpDisplay();
         }
 
+        /// <summary>
+        /// Return a copy of a linescan image, brightness/contrast-enhanced, with baseline and structures drawn on it
+        /// </summary>
         public Bitmap MarkLinescan(Bitmap bmpOriginal)
         {
-            // Return a data TIF, brightness/contrast-enhanced, with baseline and structures drawn on it
             Bitmap bmp = new Bitmap(bmpOriginal);
-            Pen pen = new Pen(new SolidBrush(Color.Yellow));
-            Graphics gfx = Graphics.FromImage(bmp);
-            gfx.DrawLine(pen, new Point(0, baseline1), new Point(bmp.Width, baseline1));
-            gfx.DrawLine(pen, new Point(0, baseline2), new Point(bmp.Width, baseline2));
-            gfx.DrawLine(pen, new Point(structure1, 0), new Point(structure1, bmp.Height));
-            gfx.DrawLine(pen, new Point(structure2, 0), new Point(structure2, bmp.Height));
-            gfx.Dispose();
+            using (Graphics gfx = Graphics.FromImage(bmp))
+            using (Pen pen = new Pen(new SolidBrush(Color.Yellow)))
+            {
+                gfx.DrawLine(pen, new Point(0, baseline1), new Point(bmp.Width, baseline1));
+                gfx.DrawLine(pen, new Point(0, baseline2), new Point(bmp.Width, baseline2));
+                gfx.DrawLine(pen, new Point(structure1, 0), new Point(structure1, bmp.Height));
+                gfx.DrawLine(pen, new Point(structure2, 0), new Point(structure2, bmp.Height));
+            }
             return bmp;
         }
 
-        #endregion
-
-        #region filtering
-        public double[] GetFilteredYs(double[] data)
+        /// <summary>
+        /// Return copy of the curve filtered according to the filter settings (shorter by double the filter size)
+        /// </summary>
+        public double[] GetFilteredYs(double[] curve)
         {
-            if (data == null)
+            if (curve == null)
                 return null;
-            double[] filteredValues = ImageDataTools.GaussianFilter1d(data, filterPx);
+            double[] filteredValues = ImageDataTools.GaussianFilter1d(curve, filterPx);
             int padPoints = filterPx * 2 + 1;
-            double[] filteredYs = new double[data.Length - 2 * padPoints];
+            double[] filteredYs = new double[curve.Length - 2 * padPoints];
             Array.Copy(filteredValues, padPoints, filteredYs, 0, filteredYs.Length);
             return filteredYs;
         }
 
+        /// <summary>
+        /// Return copy of the Xs to go with the filtered Ys
+        /// </summary>
         public double[] GetFilteredXs()
         {
             if (curveG == null)
@@ -511,174 +516,11 @@ namespace ScanAGator
             Array.Copy(timesMsec, padPoints, filteredXs, 0, filteredXs.Length);
             return filteredXs;
         }
-        #endregion
 
-        #region CSV
+        public string GetCsvAllData() => CSV.Text(this);
 
-        public string GetCsvAllData()
-        {
-            // name, unit, comment, data...
-            int dataPoints = imgG.height;
-            string[] csvLines = new string[dataPoints + 3];
+        public void LoadSettingsINI() => INI.Load(this);
 
-            // times (ms)
-            csvLines[0] = "Time, ";
-            csvLines[1] = "ms, ";
-            csvLines[2] = folderName + ", ";
-            for (int i = 0; i < dataPoints; i++)
-                csvLines[i + 3] = Math.Round(timesMsec[i], 3).ToString() + ", ";
-
-            // raw PMT values (R)
-            if (curveR != null)
-            {
-                csvLines[0] += "R, ";
-                csvLines[1] += "AFU, ";
-                csvLines[2] += ", ";
-                for (int i = 0; i < dataPoints; i++)
-                    csvLines[i + 3] += Math.Round(curveR[i], 3).ToString() + ", ";
-            }
-
-            // raw PMT values (G)
-            if (curveG != null)
-            {
-                csvLines[0] += "G, ";
-                csvLines[1] += "AFU, ";
-                csvLines[2] += ", ";
-                for (int i = 0; i < dataPoints; i++)
-                    csvLines[i + 3] += Math.Round(curveG[i], 3).ToString() + ", ";
-            }
-
-            // delta raw PMT values (G)
-            if (curveDeltaG != null)
-            {
-                csvLines[0] += "dG, ";
-                csvLines[1] += "AFU, ";
-                csvLines[2] += ", ";
-                for (int i = 0; i < dataPoints; i++)
-                    csvLines[i + 3] += Math.Round(curveDeltaG[i], 3).ToString() + ", ";
-
-                csvLines[0] += "f(dG), ";
-                csvLines[1] += "AFU, ";
-                csvLines[2] += "filtered, ";
-                double[] filteredChopped = GetFilteredYs(curveDeltaG);
-                double[] filtered = new double[dataPoints];
-                for (int i = 0; i < dataPoints; i++)
-                    filtered[i] = 0;
-                Array.Copy(filteredChopped, 0, filtered, filterPx * 2, filteredChopped.Length);
-                for (int i = 0; i < dataPoints; i++)
-                    if (i < filterPx * 2 || i > (dataPoints - filterPx * 2 * 2))
-                        csvLines[i + 3] += ", ";
-                    else
-                        csvLines[i + 3] += Math.Round(filtered[i], 3).ToString() + ", ";
-            }
-
-            // Green over Red
-            if (curveGoR != null)
-            {
-                csvLines[0] += "G/R, ";
-                csvLines[1] += "%, ";
-                csvLines[2] += ", ";
-                for (int i = 0; i < dataPoints; i++)
-                    csvLines[i + 3] += Math.Round(curveGoR[i], 3).ToString() + ", ";
-            }
-
-            // Delta Green over Red
-            if (curveDeltaGoR != null)
-            {
-                csvLines[0] += "dG/R, ";
-                csvLines[1] += "%, ";
-                csvLines[2] += ", ";
-                for (int i = 0; i < dataPoints; i++)
-                    csvLines[i + 3] += Math.Round(curveDeltaGoR[i], 3).ToString() + ", ";
-
-                csvLines[0] += "f(dG/R), ";
-                csvLines[1] += "AFU, ";
-                csvLines[2] += "filtered, ";
-                double[] filteredChopped = GetFilteredYs(curveDeltaGoR);
-                double[] filtered = new double[dataPoints];
-                for (int i = 0; i < dataPoints; i++)
-                    filtered[i] = 0;
-                Array.Copy(filteredChopped, 0, filtered, filterPx * 2, filteredChopped.Length);
-                for (int i = 0; i < dataPoints; i++)
-                    if (i < filterPx * 2 || i > (dataPoints - filterPx * 2 * 2))
-                        csvLines[i + 3] += ", ";
-                    else
-                        csvLines[i + 3] += Math.Round(filtered[i], 3).ToString() + ", ";
-            }
-
-            // convert to CSV
-            string csv = "";
-            foreach (string line in csvLines)
-                csv += line + "\n";
-            return csv;
-        }
-
-        #endregion
-
-        #region save and load settings
-
-        public void LoadSettingsINI()
-        {
-            if (!isValid)
-                return;
-
-            if (!System.IO.File.Exists(pathIniFile))
-            {
-                Log("INI file not found.");
-                return;
-            }
-
-            Log("Loading data from INI file...");
-
-            foreach (string rawLine in System.IO.File.ReadAllLines(pathIniFile))
-            {
-                string line = rawLine.Trim();
-                if (line.StartsWith(";"))
-                    continue;
-                if (!line.Contains("="))
-                    continue;
-                string[] lineParts = line.Split('=');
-                string var = lineParts[0];
-                string valStr = lineParts[1];
-
-                if (var == "version" && valStr != version)
-                    Log($"Note that INI version ({valStr}) differs from this software version ({version})");
-                else if (var == "baseline1")
-                    baseline1 = int.Parse(valStr);
-                else if (var == "baseline2")
-                    baseline2 = int.Parse(valStr);
-                else if (var == "structure1")
-                    structure1 = int.Parse(valStr);
-                else if (var == "structure2")
-                    structure2 = int.Parse(valStr);
-                else if (var == "filterPx")
-                    filterPx = int.Parse(valStr);
-            }
-        }
-
-        public void SaveSettingsINI()
-        {
-            if (!isValid)
-                return;
-
-            if (!System.IO.Directory.Exists(pathSaveFolder))
-            {
-                System.IO.Directory.CreateDirectory(pathSaveFolder);
-                Log("created folder: " + pathSaveFolder);
-            }
-
-            string text = "; Scan-A-Gator Linescan Settings\n";
-            text += $"version={version}\n";
-            text += $"baseline1={baseline1}\n";
-            text += $"baseline2={baseline2}\n";
-            text += $"structure1={structure1}\n";
-            text += $"structure2={structure2}\n";
-            text += $"filterPx={filterPx}\n";
-            text = text.Replace("\n", "\r\n").Trim();
-            System.IO.File.WriteAllText(pathIniFile, text);
-            Log($"Saved settings in: {pathIniFile}");
-        }
-
-        #endregion
+        public void SaveSettingsINI() => INI.Save(this);
     }
 }
