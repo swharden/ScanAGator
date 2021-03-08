@@ -41,7 +41,7 @@ namespace Tests
         {
             var lsFolder = SampleData.GreenOverRed();
             int windowSize = lsFolder.filterPx * 2 - 1;
-            double[] curve = ScanAGator.ImageDataTools.GetHalfGaussian(windowSize);
+            double[] curve = ScanAGator.ImageDataTools.GetGaussianCurve(windowSize, half: true);
             double[] curveXs = ScottPlot.DataGen.Consecutive(curve.Length);
 
             var plt = new ScottPlot.Plot();
