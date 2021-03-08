@@ -11,58 +11,66 @@ namespace ScanAGator
     public class ImageDataTools
     {
 
-
+        /// <summary>
+        /// Return a copy of the input array lowpass filtered using a Gaussian-weighted moving average.
+        /// The first and last N points will not be smoothed (their value will be 0)
+        /// </summary>
+        /// <param name="data">raw data to be filtered</param>
+        /// <param name="degree">Amount of smoothing. The window will have N points where N = degree * 2 - 1</param>
+        /// <returns></returns>
         public static double[] GaussianFilter1d(double[] data, int degree = 5)
         {
+            // input arrays with 1 point or fewer will get returned without modification
             if (degree < 2 || data == null)
                 return data;
 
+            // create a copy of the original data to work with
             double[] smooth = new double[data.Length];
 
             // create a gaussian windowing function
             int windowSize = degree * 2 - 1;
-            double[] kernel = new double[windowSize];
-            for (int i = 0; i < windowSize; i++)
-            {
-                int pos = i - degree + 1;
-                double frac = i / (double)windowSize;
-                double gauss = 1.0 / Math.Exp(Math.Pow(4 * frac, 2)); // TODO: why 4?
-                kernel[i] = gauss * windowSize;
-            }
-
-            // normalize the kernel (so area is 1)
-            double weightSum = kernel.Sum();
-            for (int i = 0; i < windowSize; i++)
-                kernel[i] = kernel[i] / weightSum;
+            double[] kernel = GetHalfGaussian(windowSize);
 
             // apply the window
-            for (int i = 0; i < smooth.Length; i++)
+            int firstSmoothIndex = kernel.Length;
+            int lastSmoothIndex = smooth.Length - kernel.Length;
+            for (int i = firstSmoothIndex; i < lastSmoothIndex; i++)
             {
-                if (i > kernel.Length && i < smooth.Length - kernel.Length)
+                for (int j = 0; j < kernel.Length; j++)
                 {
-                    double smoothedValue = 0;
-                    for (int j = 0; j < kernel.Length; j++)
-                    {
-                        smoothedValue += kernel[j] * data[i + j];
-                    }
-                    smooth[i] = smoothedValue;
-                }
-                else
-                {
-                    smooth[i] = data[i];
+                    smooth[i] += kernel[j] * data[i + j];
                 }
             }
 
-            // The edges are only partially smoothed, so they should be "NaN", but extending
-            // the first and last point out seems to be good enough.
-            int firstValidPoint = kernel.Length;
-            int lastValidPoint = smooth.Length - kernel.Length;
-            for (int i = 0; i < firstValidPoint; i++)
-                smooth[i] = smooth[firstValidPoint];
-            for (int i = lastValidPoint; i < smooth.Length; i++)
-                smooth[i] = smooth[lastValidPoint];
-
             return smooth;
+        }
+
+        /// <summary>
+        /// Return an array starting at a large number and falling toward zero to form half a Gaussian curve.
+        /// The Gaussian curve's half-width is approximately 1/4 the point count.
+        /// If normalized, the curve will be scaled so all points equal one.
+        /// If not normalized, the peak of the curve will be 1.
+        /// </summary>
+        public static double[] GetHalfGaussian(int pointCount, bool normalize = true)
+        {
+            const double xMultiplier = 4; // chosen so the end of the curve is zero
+
+            double[] kernel = new double[pointCount];
+            for (int i = 0; i < pointCount; i++)
+            {
+                double xFraction = i / (double)pointCount;
+                double gauss = 1.0 / Math.Exp(Math.Pow(xMultiplier * xFraction, 2));
+                kernel[i] = gauss * pointCount;
+            }
+
+            if (normalize)
+            {
+                double weightSum = kernel.Sum();
+                for (int i = 0; i < pointCount; i++)
+                    kernel[i] = kernel[i] / weightSum;
+            }
+
+            return kernel;
         }
 
         public static Bitmap Merge(ImageData imgR, ImageData imgG, ImageData imgB)

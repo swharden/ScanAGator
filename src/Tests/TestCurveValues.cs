@@ -5,17 +5,15 @@ using System.Linq;
 
 namespace Tests
 {
-    public class Tests
+    public class TestCurveValues
     {
-        private string PathLinescanGreenAndRed => LinescanFolder + "LineScan-02052019-1234-2683";
-        private string PathLinescanGreenOnly => LinescanFolder + "LineScan-02132019-1317-2775";
         private string LinescanFolder => TestContext.CurrentContext.TestDirectory + "/../../../../../data/linescans/";
         private string SavePrefix => TestContext.CurrentContext.TestDirectory + "/";
 
         [Test]
         public void Test_DeltaGreenOverRed_PlotCurve()
         {
-            var lsFolder = new ScanAGator.LineScanFolder(PathLinescanGreenAndRed);
+            var lsFolder = SampleData.GreenOverRed();
 
             var plt = new ScottPlot.Plot(600, 400);
 
@@ -48,7 +46,7 @@ namespace Tests
         [Test]
         public void Test_GreenOnly_PlotCurve()
         {
-            var lsFolder = new ScanAGator.LineScanFolder(PathLinescanGreenOnly);
+            var lsFolder = SampleData.GreenOnly();
 
             var plt = new ScottPlot.Plot(600, 400);
 
@@ -86,7 +84,7 @@ namespace Tests
         [Test]
         public void Test_DeltaGreenOverRed_CheckCurveValues()
         {
-            var lsFolder = new ScanAGator.LineScanFolder(PathLinescanGreenAndRed);
+            var lsFolder = SampleData.GreenOverRed();
             lsFolder.GenerateAnalysisCurves();
 
             double peakDeltaGreenOverRed = lsFolder.GetFilteredYs(lsFolder.curveDeltaGoR).Max();
@@ -102,7 +100,7 @@ namespace Tests
         [Test]
         public void Test_GreenOnly_CheckCurveValues()
         {
-            var lsFolder = new ScanAGator.LineScanFolder(PathLinescanGreenOnly);
+            var lsFolder = SampleData.GreenOnly();
             lsFolder.GenerateAnalysisCurves();
 
             Assert.AreEqual(241425423, SimpleHash(lsFolder.curveG));
