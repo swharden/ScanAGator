@@ -4,11 +4,11 @@
 
 **ScanAGator is a Windows application to facilitate analysis of calcium levels from single-channel or ratiometric fluorescent line scan data.** It was created to browse and analyze data created by _Prairie View_ software, but can be adapted to navigate and analyze data from other sources.
 
-![](src/ScanAGator-FRAMEWORK/screenshot.png)
+![](dev/graphics/screenshot.png)
 
 Analysis results can be displayed and saved in a variety of formats. Interactive plots allow it to be inspected and saved as images. Values can be copied to the clipboard, or saved as CSV files for easy loading into scientific analysis software like OriginLab and MATLAB.
 
-![](doc/graphics/Graph1making.png)
+![](dev/graphics/Graph1making.png)
 
 ### Download
 Scan-A-Gator can be downloaded from the [**releases page**](https://github.com/swharden/Scan-A-Gator/releases).
