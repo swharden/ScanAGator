@@ -15,7 +15,6 @@ namespace ScanAGator
         public FormMain()
         {
             InitializeComponent();
-            DebugLogHide();
 
             Version ver = typeof(LineScanFolder).Assembly.GetName().Version;
             Text = $"Scan-A-Gator v{ver.Major}.{ver.Minor}";
@@ -70,7 +69,7 @@ namespace ScanAGator
             if (lsFolder.pathsRef != null && lsFolder.pathsRef.Length > 0)
             {
                 pbRef.BackgroundImage = lsFolder.GetRefImage(0);
-                hScrollRef.Maximum = lsFolder.pathsRef.Length-1;
+                hScrollRef.Maximum = lsFolder.pathsRef.Length - 1;
             }
 
             // lock or unlock settings
@@ -80,13 +79,13 @@ namespace ScanAGator
             gbBaseline.Enabled = lsFolder.isValid;
             gbStructure.Enabled = lsFolder.isValid;
             gbSettings.Enabled = lsFolder.isValid;
-            gbData.Enabled = lsFolder.isValid;
             gbAuto.Enabled = lsFolder.isValid;
             gbDisplayType.Enabled = lsFolder.isValid;
             gbPeak.Enabled = lsFolder.isValid;
             cbRatio.Enabled = lsFolder.isRatiometric;
             formsPlot1.Visible = lsFolder.isValid;
             formsPlot2.Visible = lsFolder.isValid;
+            dataToolStripMenuItem.Enabled = lsFolder.isValid;
 
             if (lsFolder.isRatiometric)
             {
@@ -144,13 +143,6 @@ namespace ScanAGator
 
             if (ignoreGuiUpdates)
                 return;
-
-            // log window
-            tbLog.Text = lsFolder.log.Replace("\n", "\r\n");
-            if (lsFolder.isValid)
-                tbLog.BackColor = SystemColors.Control;
-            else
-                tbLog.BackColor = Color.Salmon;
 
             // linescan image
             if ((cbR.Checked && cbR.Enabled) && (cbG.Checked && cbG.Enabled))
@@ -327,26 +319,7 @@ namespace ScanAGator
             }
         }
 
-        #region debug log
-        private void DebugLogHide()
-        {
-            this.Height = 656;
-            tbLog.Visible = false;
-        }
-        private void DebugLogShow()
-        {
-            this.Height = 800;
-            tbLog.Visible = true;
-        }
-        #endregion
-
         #region drop-down menus
-
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            Form frm = new FormAbout();
-            frm.ShowDialog();
-        }
 
         private void documentationToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -360,27 +333,19 @@ namespace ScanAGator
 
         private void setFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // use the save dialog to select the folder because it's better than the folder browser dialog
-            SaveFileDialog sf = new SaveFileDialog();
-            sf.FileName = "Load this folder";
-            if (sf.ShowDialog() == DialogResult.OK)
+            using (var fbd = new FolderBrowserDialog())
             {
-                string pathFolder = System.IO.Path.GetDirectoryName(sf.FileName);
-                SetFolder(pathFolder);
+                DialogResult result = fbd.ShowDialog();
+                if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
+                {
+                    SetFolder(fbd.SelectedPath);
+                }
             }
         }
 
         private void refreshFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetFolder(lsFolder.pathFolder, true);
-        }
-
-        private void debugLogToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (debugLogToolStripMenuItem.Checked)
-                DebugLogShow();
-            else
-                DebugLogHide();
         }
 
         #endregion
@@ -505,31 +470,39 @@ namespace ScanAGator
             Clipboard.SetText(Math.Round(curveToCopy.Max(), 3).ToString());
         }
 
-        private void btnCurveCopy_Click(object sender, EventArgs e)
+        private void CopyCurve()
         {
             if (curveToCopy == null)
                 return;
-            string txt = "";
+
+            var sb = new StringBuilder();
             foreach (var val in curveToCopy)
-                txt += $"{Math.Round(val, 3)}\n";
-            Clipboard.SetText(txt);
+                sb.AppendLine($"{Math.Round(val, 3)}");
+
+            Clipboard.SetText(sb.ToString());
         }
 
-        private void btnCopyAllData_Click(object sender, EventArgs e)
+        private void btnCurveCopy_Click(object sender, EventArgs e) => CopyCurve();
+
+        private void btnCopyAllData_Click(object sender, EventArgs e) => CopyAll();
+
+        private void CopyAll()
         {
             string csv = lsFolder.GetCsvAllData();
             string tsv = csv.Replace(",", "\t");
             Clipboard.SetText(tsv);
         }
 
-        private void btnSaveAllData_Click(object sender, EventArgs e)
+        private void SaveCSV()
         {
             SaveFileDialog savefile = new SaveFileDialog();
-            savefile.FileName = $"{lsFolder.folderName}.png";
-            savefile.Filter = "CSV Files (*.png)|*.png|All files (*.*)|*.*";
+            savefile.FileName = $"{lsFolder.folderName}.csv";
+            savefile.Filter = "CSV Files (*.csv)|*.csv|All files (*.*)|*.*";
             if (savefile.ShowDialog() == DialogResult.OK)
                 System.IO.File.WriteAllText(savefile.FileName, lsFolder.GetCsvAllData());
         }
+
+        private void btnSaveAllData_Click(object sender, EventArgs e) => SaveCSV();
 
         private void btnSave_Click(object sender, EventArgs e)
         {
@@ -561,5 +534,15 @@ namespace ScanAGator
         {
             SetFolder(treeViewDirUC1.selectedPath, true);
         }
+
+        private void copyCurveToolStripMenuItem_Click(object sender, EventArgs e) => CopyCurve();
+
+        private void copyAllToolStripMenuItem_Click(object sender, EventArgs e) => CopyAll();
+
+        private void saveCSVToolStripMenuItem_Click(object sender, EventArgs e) => SaveCSV();
+
+        private void btnCopy_Click(object sender, EventArgs e) => CopyAll();
+
+        private void btnExport_Click(object sender, EventArgs e) => SaveCSV();
     }
 }
