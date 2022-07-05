@@ -5,6 +5,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <UseWindowsForms>true</UseWindowsForms>
     <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+    <ApplicationIcon>icon64.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Compile Update="TreeViewDirUC.cs">
@@ -12,7 +13,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="icon32.ico" />
+    <EmbeddedResource Include="icon32.ico" />
+    <EmbeddedResource Include="icon64.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ScanAGator\ScanAGator.csproj" />
