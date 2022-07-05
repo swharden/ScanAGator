@@ -106,5 +106,15 @@ namespace Tests
             Assert.AreEqual(241425423, SimpleHash(lsFolder.curveG));
             Assert.AreEqual(1707214479, SimpleHash(lsFolder.curveDeltaG));
         }
+
+        [Test]
+        public void Test_Metadata_Export()
+        {
+            var lsFolder = SampleData.GreenOverRed();
+            string metadata = lsFolder.GetMetadataJson();
+            Assert.That(metadata, Is.Not.Null);
+            Assert.That(metadata, Is.Not.Empty);
+            Console.WriteLine(metadata);
+        }
     }
 }

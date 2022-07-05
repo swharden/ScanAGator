@@ -499,7 +499,10 @@ namespace ScanAGator
             savefile.FileName = $"{lsFolder.folderName}.csv";
             savefile.Filter = "CSV Files (*.csv)|*.csv|All files (*.*)|*.*";
             if (savefile.ShowDialog() == DialogResult.OK)
+            {
                 System.IO.File.WriteAllText(savefile.FileName, lsFolder.GetCsvAllData());
+                System.IO.File.WriteAllText(savefile.FileName + ".json", lsFolder.GetMetadataJson());
+            }
         }
 
         private void btnSaveAllData_Click(object sender, EventArgs e) => SaveCSV();
