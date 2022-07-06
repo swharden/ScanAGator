@@ -114,6 +114,8 @@ namespace ScanAGator
 
             writer.WriteStartObject();
             writer.WriteString("version", ls.version);
+            writer.WriteString("acquisitionDate", ls.acquisitionDate.ToString("s"));
+            writer.WriteString("analysisDate", DateTime.Now.ToString("s"));
             writer.WriteString("folderPV", ls.pathFolder);
             writer.WriteString("folderSAG", ls.pathSaveFolder);
             writer.WriteNumber("scanLinePeriod", ls.scanLinePeriod);

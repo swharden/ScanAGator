@@ -33,6 +33,7 @@ namespace ScanAGator
         public double scanLinePeriod;
         public double[] timesMsec;
         public double micronsPerPx;
+        public DateTime acquisitionDate;
         public double pixelsPerMicron { get { return 1.0 / micronsPerPx; } }
 
         public int baseline1;
@@ -344,6 +345,13 @@ namespace ScanAGator
 
             // WARNING: PrarieView has version-specific XML structures, so discrete string parsing is simplest
             string[] xmlLines = System.IO.File.ReadAllLines(pathXml);
+
+            // date
+            if (xmlLines[1].Contains("date="))
+            {
+                string dateString = xmlLines[1].Split('\"')[3];
+                acquisitionDate = DateTime.Parse(dateString);
+            }
 
             // scan line period
             // WARNING: XML files can have multiple scan line periods. Take the last one.
