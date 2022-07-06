@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Text.Json;
 
 namespace ScanAGator
 {
-    public static class CSV
+    public static class DataExport
     {
-        public static string Text(LineScanFolder ls)
+        public static string GetCSV(LineScanFolder ls)
         {
             // name, unit, comment, data...
             int dataPoints = ls.imgG.height;
@@ -102,6 +104,32 @@ namespace ScanAGator
             foreach (string line in csvLines)
                 csv += line + "\n";
             return csv;
+        }
+
+        public static string GetMetadataJson(LineScanFolder ls)
+        {
+            using MemoryStream stream = new();
+            JsonWriterOptions options = new() { Indented = true };
+            using Utf8JsonWriter writer = new(stream, options);
+
+            writer.WriteStartObject();
+            writer.WriteString("version", ls.version);
+            writer.WriteString("folderPV", ls.pathFolder);
+            writer.WriteString("folderSAG", ls.pathSaveFolder);
+            writer.WriteNumber("scanLinePeriod", ls.scanLinePeriod);
+            writer.WriteNumber("micronsPerPixel", ls.micronsPerPx);
+            writer.WriteNumber("baselinePixel1", ls.baseline1);
+            writer.WriteNumber("baselinePixel2", ls.baseline2);
+            writer.WriteNumber("structurePixel1", ls.structure1);
+            writer.WriteNumber("structurePixel2", ls.structure2);
+            writer.WriteNumber("filterPixels", ls.filterPx);
+
+            writer.WriteEndObject();
+
+            writer.Flush();
+            string json = Encoding.UTF8.GetString(stream.ToArray());
+
+            return json;
         }
     }
 }

@@ -4,12 +4,12 @@ using System.Text;
 
 namespace ScanAGator
 {
-    public static class INI
+    public static class ConfigFile
     {
         /// <summary>
         /// Load baseline, structure, and filter settings from LineScanSettings.ini in the linescan folder
         /// </summary>
-        public static void Load(LineScanFolder ls)
+        public static void LoadINI(LineScanFolder ls)
         {
             if (!ls.isValid)
                 return;
@@ -44,7 +44,7 @@ namespace ScanAGator
         /// <summary>
         /// Save baseline, structure, and filter settings to LineScanSettings.ini in the linescan folder
         /// </summary>
-        public static void Save(LineScanFolder ls)
+        public static void SaveINI(LineScanFolder ls)
         {
             if (!ls.isValid)
                 return;

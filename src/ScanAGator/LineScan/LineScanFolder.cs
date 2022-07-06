@@ -77,7 +77,7 @@ namespace ScanAGator
                 bmpRef = GetRefImage();
                 SetFrame(0);
                 CreateTimePoints();
-                INI.LoadDefaultSettings(this);
+                ConfigFile.LoadDefaultSettings(this);
                 AutoBaseline();
                 AutoStructure();
                 AutoFilter();
@@ -519,36 +519,12 @@ namespace ScanAGator
             return filteredXs;
         }
 
-        public string GetCsvAllData() => CSV.Text(this);
+        public string GetCsvAllData() => DataExport.GetCSV(this);
 
-        public void LoadSettingsINI() => INI.Load(this);
+        public void LoadSettingsINI() => ConfigFile.LoadINI(this);
 
-        public void SaveSettingsINI() => INI.Save(this);
+        public void SaveSettingsINI() => ConfigFile.SaveINI(this);
 
-        public string GetMetadataJson()
-        {
-            using MemoryStream stream = new();
-            JsonWriterOptions options = new() { Indented = true };
-            using Utf8JsonWriter writer = new(stream, options);
-
-            writer.WriteStartObject();
-            writer.WriteString("version", version);
-            writer.WriteString("folderPV", pathFolder);
-            writer.WriteString("folderSAG", pathSaveFolder);
-            writer.WriteNumber("scanLinePeriod", scanLinePeriod);
-            writer.WriteNumber("micronsPerPixel", micronsPerPx);
-            writer.WriteNumber("baselinePixel1", baseline1);
-            writer.WriteNumber("baselinePixel2", baseline2);
-            writer.WriteNumber("structurePixel1", structure1);
-            writer.WriteNumber("structurePixel2", structure2);
-            writer.WriteNumber("filterPixels", filterPx);
-
-            writer.WriteEndObject();
-
-            writer.Flush();
-            string json = Encoding.UTF8.GetString(stream.ToArray());
-
-            return json;
-        }
+        public string GetMetadataJson() => DataExport.GetMetadataJson(this);
     }
 }
