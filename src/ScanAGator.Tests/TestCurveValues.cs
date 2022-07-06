@@ -110,7 +110,9 @@ namespace Tests
         [Test]
         public void Test_Metadata_Export()
         {
-            var lsFolder = SampleData.GreenOverRed();
+            string lsFolderPath = System.IO.Path.Combine(LinescanFolder, "LineScan-03272018-1330-2145");
+            var lsFolder = new ScanAGator.LineScanFolder(lsFolderPath);
+
             string metadata = lsFolder.GetMetadataJson();
             Assert.That(metadata, Is.Not.Null);
             Assert.That(metadata, Is.Not.Empty);
