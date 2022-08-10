@@ -16,6 +16,9 @@ namespace ScanAGator
         {
             InitializeComponent();
 
+            System.IO.Stream iconStream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream("ScanAGator.icon64.ico");
+            if (iconStream != null) Icon = new Icon(iconStream);
+
             Version ver = typeof(LineScanFolder).Assembly.GetName().Version;
             Text = $"Scan-A-Gator v{ver.Major}.{ver.Minor}";
         }
@@ -507,10 +510,24 @@ namespace ScanAGator
 
         private void btnSaveAllData_Click(object sender, EventArgs e) => SaveCSV();
 
-        private void btnSave_Click(object sender, EventArgs e)
+        private void btnSave_Click(object sender, EventArgs e) => SaveAnalysis();
+
+        private void SaveAnalysis(bool launch = false)
         {
-            lsFolder.SaveSettingsINI();
-            System.IO.File.WriteAllText(System.IO.Path.Combine(lsFolder.pathSaveFolder, "LineScanAnalysis.csv"), lsFolder.GetCsvAllData());
+            if (!System.IO.Directory.Exists(lsFolder.pathSaveFolder))
+                System.IO.Directory.CreateDirectory(lsFolder.pathSaveFolder);
+
+            string csvFilePath = System.IO.Path.Combine(lsFolder.pathSaveFolder, "LineScanAnalysis.csv");
+
+            lsFolder.SaveSettingsINI(); // TODO: collapse INI and JSON metadata file into one
+            System.IO.File.WriteAllText(csvFilePath, lsFolder.GetCsvAllData());
+            System.IO.File.WriteAllText(csvFilePath + ".json", lsFolder.GetMetadataJson());
+
+            if (launch)
+            {
+                System.Diagnostics.Process.Start("explorer.exe", lsFolder.pathSaveFolder);
+            }
+
             UpdateGuiFromLinescan();
             SaveNeeded(false);
         }
@@ -546,6 +563,11 @@ namespace ScanAGator
 
         private void btnCopy_Click(object sender, EventArgs e) => CopyAll();
 
-        private void btnExport_Click(object sender, EventArgs e) => SaveCSV();
+        private void btnExport_Click(object sender, EventArgs e) => SaveAnalysis(true);
+
+        private void cbFrame_CheckedChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

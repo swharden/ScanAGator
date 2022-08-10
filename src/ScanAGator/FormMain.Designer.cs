@@ -104,13 +104,14 @@
             // 
             // menuStrip1
             // 
+            this.menuStrip1.GripMargin = new System.Windows.Forms.Padding(2, 2, 0, 2);
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.dataToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1202, 33);
+            this.menuStrip1.Size = new System.Drawing.Size(1202, 36);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -121,7 +122,7 @@
             this.refreshFolderToolStripMenuItem,
             this.exitToolStripMenuItem});
             this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 29);
+            this.fileToolStripMenuItem.Size = new System.Drawing.Size(54, 30);
             this.fileToolStripMenuItem.Text = "File";
             // 
             // setFolderToolStripMenuItem
@@ -153,7 +154,7 @@
             this.toolStripSeparator1,
             this.saveCSVToolStripMenuItem});
             this.dataToolStripMenuItem.Name = "dataToolStripMenuItem";
-            this.dataToolStripMenuItem.Size = new System.Drawing.Size(65, 29);
+            this.dataToolStripMenuItem.Size = new System.Drawing.Size(65, 30);
             this.dataToolStripMenuItem.Text = "Data";
             // 
             // copyCurveToolStripMenuItem
@@ -292,6 +293,7 @@
             this.cbFrame.TabIndex = 26;
             this.cbFrame.Text = "Avg";
             this.cbFrame.UseVisualStyleBackColor = true;
+            this.cbFrame.CheckedChanged += new System.EventHandler(this.cbFrame_CheckedChanged);
             // 
             // nudFrame
             // 
