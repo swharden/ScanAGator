@@ -64,14 +64,23 @@ namespace ScanAGator
         /// A linescan folder holds data for an experiment at a single position.
         /// Repeated sequences (multiple frames)
         /// </summary>
-        public LineScanFolder(string pathFolder, bool analyzeImmediately = true)
+        public LineScanFolder(string pathFolder, bool analyzeFirstFrameImmediately = true)
         {
             this.pathFolder = System.IO.Path.GetFullPath(pathFolder);
             if (!System.IO.Directory.Exists(this.pathFolder))
                 throw new ArgumentException($"folder does not exist: {this.pathFolder}");
 
-            ScanForFiles();
-            ReadValuesFromXML();
+            try
+            {
+                ScanForFiles(pathFolder);
+                ReadValuesFromXML(pathXml);
+                isValid = true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                isValid = false;
+            }
 
             if (isValid)
             {
@@ -83,7 +92,7 @@ namespace ScanAGator
                 AutoStructure();
                 AutoFilter();
                 LoadSettingsINI();
-                if (analyzeImmediately)
+                if (analyzeFirstFrameImmediately)
                     GenerateAnalysisCurves();
             }
         }
@@ -94,102 +103,23 @@ namespace ScanAGator
         public void GenerateAnalysisCurves()
         {
             // determine mean pixel intensity over time between the structure markers
-            var (structureIndex1, structureIndex2) = GetValidStructure(structure1, structure2);
-            curveG = ImageDataTools.GetAverageTopdown(imgG, structureIndex1, structureIndex2);
-            curveR = ImageDataTools.GetAverageTopdown(imgR, structureIndex1, structureIndex2);
+            (int s1, int s2) = Operations.GetValidStructure(structure1, structure2);
+            PixelRange structure = new(s1, s2, micronsPerPx);
+
+            curveG = ImageDataTools.GetAverageTopdown(imgG, structure);
+            curveR = ImageDataTools.GetAverageTopdown(imgR, structure);
 
             // create a dG channel by baseline subtracting just the green channel
-            var (baselineIndex1, baselineIndex2) = GetValidBaseline(baseline1, baseline2);
-            curveDeltaG = CreateBaselineSubtractedCurve(curveG, baselineIndex1, baselineIndex2);
+            (int b1, int b2) = Operations.GetValidBaseline(baseline1, baseline2);
+            PixelRange baseline = new(b1, b2, scanLinePeriod);
+            curveDeltaG = Operations.SubtractBaseline(curveG, baseline);
 
             // create a d(G/R) curve by finding the G/R ratio then baseline subtracting that
             if (isRatiometric)
             {
-                curveGoR = CreateRatioCurve(curveG, curveR);
-                curveDeltaGoR = CreateBaselineSubtractedCurve(curveGoR, baselineIndex1, baselineIndex2);
+                curveGoR = Operations.CreateRatioCurve(curveG, curveR);
+                curveDeltaGoR = Operations.SubtractBaseline(curveGoR, baseline);
             }
-        }
-
-        /// <summary>
-        /// Return structure indexes in the proper order and separated by at least 1px
-        /// </summary>
-        private static (int s1, int s2) GetValidStructure(int structure1, int structure2)
-        {
-            int s1 = structure1;
-            int s2 = structure2;
-
-            if (s1 > s2)
-            {
-                int tmp = s1;
-                s1 = s2;
-                s2 = tmp;
-            }
-
-            if (s1 == s2)
-            {
-                if (s1 == 0)
-                    s2 += 1;
-                else
-                    s1 -= 1;
-            }
-
-            return (s1, s2);
-        }
-
-        /// <summary>
-        /// Return baseline indexes in the proper order and separated by at least 1px
-        /// </summary>
-        private static (int s1, int s2) GetValidBaseline(int baseline1, int baseline2)
-        {
-            int b1 = baseline1;
-            int b2 = baseline2;
-
-            if (b1 > b2)
-            {
-                int tmp = b1;
-                b1 = b2;
-                b2 = tmp;
-            }
-
-            if (b1 == b2)
-            {
-                if (b1 == 0)
-                    b2 += 1;
-                else
-                    b1 -= 1;
-            }
-
-            return (b1, b2);
-        }
-
-        /// <summary>
-        /// Return a new array representing numerator / denomenator in % units
-        /// </summary>
-        private static double[] CreateRatioCurve(double[] numerator, double[] denomenator)
-        {
-            if (numerator.Length != denomenator.Length)
-                throw new ArgumentException("numerator and denomenator must have the same length");
-
-            return Enumerable.Range(0, numerator.Length)
-                             .Select(i => numerator[i] / denomenator[i] * 100)
-                             .ToArray();
-        }
-
-        /// <summary>
-        /// Return a copy of the source array where every point was subtracted by the mean value between the baseline indexes
-        /// </summary>
-        private static double[] CreateBaselineSubtractedCurve(double[] source, int baselineIndex1, int baselineIndex2)
-        {
-            double baselineSum = 0;
-            for (int i = baselineIndex1; i < baselineIndex2; i++)
-                baselineSum += source[i];
-            double baselineG = baselineSum / (baselineIndex2 - baselineIndex1);
-
-            double[] delta = new double[source.Length];
-            for (int i = 0; i < delta.Length; i++)
-                delta[i] = source[i] - baselineG;
-
-            return delta;
         }
 
         /// <summary>
@@ -275,124 +205,21 @@ namespace ScanAGator
             Log($"Automatic filter: {filterPx}px ({filterPx * scanLinePeriod}ms)");
         }
 
-        private void ScanForFiles()
+        private void ScanForFiles(string folderPath)
         {
-
-            // ensure a reference folder exists
-            string pathRefFolder = System.IO.Path.Combine(pathFolder, "References");
-            if (!System.IO.Directory.Exists(pathRefFolder))
-            {
-                Error("no 'References' sub-folder");
-                return;
-            }
-
-            // scan for reference images
-            pathsRef = System.IO.Directory.GetFiles(pathRefFolder, "*.tif");
-            if (pathsRef.Length == 0)
-            {
-                Error("References sub-folder contains no TIF images");
-                return;
-            }
-            Log($"Reference image count: {pathsRef.Length}");
-
-            // scan for data image files
-            string[] pathsTif = System.IO.Directory.GetFiles(pathFolder, "LineScan*.tif");
-            Array.Sort(pathsTif);
-            List<string> dataImagesR = new List<string>();
-            List<string> dataImagesG = new List<string>();
-            foreach (string filePath in pathsTif)
-            {
-                string fileName = System.IO.Path.GetFileName(filePath);
-                if (fileName.Contains("Source.tif"))
-                    continue;
-                if (fileName.Contains("Ch1"))
-                    dataImagesR.Add(filePath);
-                if (fileName.Contains("Ch2"))
-                    dataImagesG.Add(filePath);
-            }
-            pathsDataG = dataImagesG.ToArray();
-            pathsDataR = dataImagesR.ToArray();
-            if (pathsDataG.Length == 0 && pathsDataG.Length == 0)
-            {
-                Error("No data images found");
-                return;
-            }
-            if (pathsDataG.Length > 0 && pathsDataR.Length > 0 && pathsDataG.Length != pathsDataR.Length)
-            {
-                Error("A different number of red and green images were found");
-                return;
-            }
-            Log($"Red image count: {pathsDataR.Length}");
-            Log($"Green image count: {pathsDataG.Length}");
-            Log($"Ratiometric: {isRatiometric}");
-
-            // scan for the XML configuration file
-            string[] pathsXml = System.IO.Directory.GetFiles(pathFolder, "LineScan*.xml");
-            if (pathsXml.Length == 0)
-            {
-                Error("Linescan XML file could not be found");
-                return;
-            }
-            pathXml = pathsXml[0];
-            Log($"XML File: {System.IO.Path.GetFileName(pathXml)}");
+            Prairie.FolderContents scanner = new(folderPath);
+            pathsRef = scanner.ReferenceTifPaths;
+            pathsDataG = scanner.ImageFilesG;
+            pathsDataR = scanner.ImageFilesR;
+            pathXml = scanner.XmlFilePath;
         }
 
-        public void ReadValuesFromXML()
+        public void ReadValuesFromXML(string xmlFilePath)
         {
-            // error checking
-            if (!isValid)
-                return;
-
-            // WARNING: PrarieView has version-specific XML structures, so discrete string parsing is simplest
-            string[] xmlLines = System.IO.File.ReadAllLines(pathXml);
-
-            // date
-            if (xmlLines[1].Contains("date="))
-            {
-                string dateString = xmlLines[1].Split('\"')[3];
-                acquisitionDate = DateTime.Parse(dateString);
-            }
-
-            // scan line period
-            // WARNING: XML files can have multiple scan line periods. Take the last one.
-            scanLinePeriod = -1;
-            foreach (string line in xmlLines)
-            {
-                if ((line.Contains("scanLinePeriod") || line.Contains("scanlinePeriod")) && line.Contains("value="))
-                {
-                    string split1 = "value=\"";
-                    string split2 = "\"";
-                    string valStr = line.Substring(line.IndexOf(split1) + split1.Length);
-                    valStr = valStr.Substring(0, valStr.IndexOf(split2));
-                    scanLinePeriod = double.Parse(valStr) * 1000;
-                    Log($"Scan line period: {scanLinePeriod} ms");
-                }
-            }
-            if (scanLinePeriod == -1)
-                Error($"Scan line period could not be found in: {pathXml}");
-
-            // microns per pixel
-            micronsPerPx = double.NaN;
-            for (int i = 0; i < xmlLines.Length - 1; i++)
-            {
-                string line = xmlLines[i];
-                if (line.Contains("micronsPerPixel_XAxis"))
-                {
-                    Error("unsupported (old) version of PrairieView");
-                    return;
-                }
-
-                if (line.Contains("micronsPerPixel"))
-                {
-                    string value = xmlLines[i + 1];
-                    string[] values = value.Split('"');
-                    micronsPerPx = double.Parse(values[3]);
-                    Log($"Microns per pixel: {micronsPerPx} µm");
-                    break;
-                }
-            }
-            if (micronsPerPx == double.NaN)
-                Error($"Microns per pixel could not be found in: {pathXml}");
+            Prairie.ParirieXmlFile x = new(xmlFilePath);
+            acquisitionDate = x.AcquisitionDate;
+            scanLinePeriod = x.MsecPerPixel;
+            micronsPerPx = x.MicronsPerPixel;
         }
 
         /// <summary>

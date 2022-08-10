@@ -50,7 +50,7 @@ namespace ScanAGator
                 return;
             }
 
-            lsFolder = new LineScanFolder(path, analyzeImmediately: false);
+            lsFolder = new LineScanFolder(path, analyzeFirstFrameImmediately: false);
             UpdateGuiFromLinescanFirst();
             UpdateGuiFromLinescan();
             if (!lsFolder.isValid)
