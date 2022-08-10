@@ -1,6 +1,6 @@
 ﻿using NUnit.Framework;
 
-namespace Tests
+namespace ScanAGator.Tests
 {
     class SampleData
     {
