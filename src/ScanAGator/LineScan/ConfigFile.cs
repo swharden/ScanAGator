@@ -54,7 +54,7 @@ namespace ScanAGator
 
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("; Scan-A-Gator Linescan Settings");
-            sb.AppendLine($"version={ls.Version}");
+            sb.AppendLine($"version={Versioning.GetVersionString()}");
             sb.AppendLine($"baseline1={ls.BaselineIndex1}");
             sb.AppendLine($"baseline2={ls.BaselineIndex2}");
             sb.AppendLine($"structure1={ls.StructureIndex1}");

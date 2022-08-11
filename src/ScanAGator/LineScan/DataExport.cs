@@ -113,7 +113,7 @@ namespace ScanAGator
             using Utf8JsonWriter writer = new(stream, options);
 
             writer.WriteStartObject();
-            writer.WriteString("version", ls.Version);
+            writer.WriteString("version", Versioning.GetVersionString());
             writer.WriteString("acquisitionDate", ls.AcquisitionDate.ToString("s"));
             writer.WriteString("analysisDate", DateTime.Now.ToString("s"));
             writer.WriteString("folderPV", ls.FolderPath);

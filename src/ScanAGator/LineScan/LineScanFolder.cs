@@ -47,8 +47,6 @@ namespace ScanAGator
         public double[] CurveGoR;
         public double[] CurveDeltaGoR;
 
-        private Version ThisVersion => typeof(LineScanFolder).Assembly.GetName().Version;
-        public string Version => $"Scan-A-Gator v{ThisVersion.Major}.{ThisVersion.Minor}";
         public string IniFilePath => Path.Combine(FolderPath, "ScanAGator/LineScanSettings.ini");
         public string SaveFolderPath => Path.GetDirectoryName(IniFilePath);
         public string ProgramSettingsPath => Path.GetFullPath("Defaults.ini");
