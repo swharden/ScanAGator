@@ -9,6 +9,7 @@ public class RatiometricLinescan
     public readonly double BaselineG;
     public readonly double MsecPerPixel;
     public double SecPerPixel => MsecPerPixel / 1000;
+    public int Samples => G.Values.Length;
     public readonly PixelRange Baseline;
     public readonly PixelRange Structure;
     public double PointsPerSecond => 1.0 / SecPerPixel;
@@ -18,7 +19,7 @@ public class RatiometricLinescan
     public RatiometricLinescan(ImageData green, ImageData red, double msPerPx, LineScanSettings settings)
     {
         MsecPerPixel = msPerPx;
-        FilterSizePixels = settings.FilterSizePx;
+        FilterSizePixels = settings.FilterSizePixels;
         Baseline = settings.Baseline;
         Structure = settings.Structure;
 
@@ -39,11 +40,15 @@ public class RatiometricLinescan
 
     public void SaveCsv(string filePath)
     {
-        System.IO.File.WriteAllText(filePath, "test");
-    }
+        System.Text.StringBuilder sb = new();
+        sb.AppendLine("Time, G, R, ΔG/R");
+        sb.AppendLine("ms, AFU, AFU, %");
 
-    public void SaveJson(string filePath)
-    {
-        System.IO.File.WriteAllText(filePath, "test");
+        for (int i = 0; i < Samples; i++)
+        {
+            sb.AppendLine($"{i * MsecPerPixel:0.000}, {G.Values[i]:0.000}, {R.Values[i]:0.000}, {DGR.Values[i]:0.000}");
+        }
+
+        System.IO.File.WriteAllText(filePath, sb.ToString());
     }
 }

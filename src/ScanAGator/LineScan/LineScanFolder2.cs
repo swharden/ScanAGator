@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Text.Json;
 
 namespace ScanAGator.LineScan;
 
@@ -67,5 +68,32 @@ public class LineScanFolder2
                 red: ImageOperations.Average(RedImages),
                 msPerPx: XmlFile.MsecPerPixel,
                 settings: settings);
+    }
+
+    public void SaveJsonMetadata(string saveAs, LineScanSettings settings)
+    {
+        using MemoryStream stream = new();
+        JsonWriterOptions options = new() { Indented = true };
+        using Utf8JsonWriter writer = new(stream, options);
+
+        writer.WriteStartObject();
+        writer.WriteString("version", Versioning.GetVersionString());
+        writer.WriteString("acquisitionDate", XmlFile.AcquisitionDate.ToString("s"));
+        writer.WriteString("analysisDate", DateTime.Now.ToString("s"));
+        writer.WriteString("folderPV", FolderPath);
+        writer.WriteNumber("scanLinePeriod", XmlFile.MsecPerPixel);
+        writer.WriteNumber("micronsPerPixel", XmlFile.MicronsPerPixel);
+        writer.WriteNumber("baselinePixel1", settings.Baseline.FirstPixel);
+        writer.WriteNumber("baselinePixel2", settings.Baseline.LastPixel);
+        writer.WriteNumber("structurePixel1", settings.Structure.FirstPixel);
+        writer.WriteNumber("structurePixel2", settings.Structure.LastPixel);
+        writer.WriteNumber("filterPixels", settings.FilterSizePixels);
+
+        writer.WriteEndObject();
+
+        writer.Flush();
+        string json = Encoding.UTF8.GetString(stream.ToArray());
+
+        File.WriteAllText(saveAs, json);
     }
 }
