@@ -6,12 +6,15 @@ namespace ScanAGator;
 
 public static class Plot
 {
-    public static void RatiometricCurves(LineScan.LineScanFolder2 lsFolder, string saveFolder = "./")
+    public static void RatiometricCurves(LineScan.LineScanFolder2 lsFolder, bool average, string saveFolder = "./", int filterSizePixels = 20)
     {
         PixelRange baseline = new(0, 80);
         PixelRange structure = StructureDetection.GetBrightestStructure(lsFolder.GreenImages[0]);
 
-        RatiometricLinescan[] linescans = lsFolder.GetRatiometricLinescanFrames(baseline, structure, filterSizePixels: 20);
+        RatiometricLinescan[] linescans = average
+            ? new RatiometricLinescan[] { lsFolder.GetRatiometricLinescanAverage(baseline, structure, filterSizePixels) }
+            : lsFolder.GetRatiometricLinescanFrames(baseline, structure, filterSizePixels: 20);
+
         PlotRaw(linescans, Path.GetFileName(lsFolder.FolderPath), saveFolder);
         PlotDeltaGreen(linescans, Path.GetFileName(lsFolder.FolderPath), saveFolder);
         PlotDGoR(linescans, Path.GetFileName(lsFolder.FolderPath), saveFolder);

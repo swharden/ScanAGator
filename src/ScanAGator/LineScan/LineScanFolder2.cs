@@ -27,8 +27,6 @@ public class LineScanFolder2
     public int LineScanImageWidth => GreenImages[0].width;
     public int LineScanImageHeight => GreenImages[0].height;
 
-    private bool IsRatiometric => GreenImages.Length == RedImages.Length;
-
     public LineScanFolder2(string folderPath)
     {
         FolderPath = Path.GetFullPath(folderPath);
@@ -40,13 +38,14 @@ public class LineScanFolder2
 
         GreenImages = FolderContents.ImageFilesG.Select(x => new ImageData(x)).ToArray();
         RedImages = FolderContents.ImageFilesR.Select(x => new ImageData(x)).ToArray();
+
+        bool IsRatiometric = GreenImages.Length == RedImages.Length;
+        if (!IsRatiometric)
+            throw new InvalidOperationException("not ratiometric");
     }
 
     public RatiometricLinescan[] GetRatiometricLinescanFrames(PixelRange baseline, PixelRange structure, int filterSizePixels)
     {
-        if (!IsRatiometric)
-            throw new InvalidOperationException("not ratiometric");
-
         RatiometricLinescan[] linescans = new RatiometricLinescan[FrameCount];
 
         for (int i = 0; i < FrameCount; i++)
@@ -61,5 +60,16 @@ public class LineScanFolder2
         }
 
         return linescans;
+    }
+
+    public RatiometricLinescan GetRatiometricLinescanAverage(PixelRange baseline, PixelRange structure, int filterSizePixels)
+    {
+        return new RatiometricLinescan(
+                green: ImageOperations.Average(GreenImages),
+                red: ImageOperations.Average(RedImages),
+                msPerPx: XmlFile.MsecPerPixel,
+                baseline: baseline,
+                structure: structure,
+                filterSizePixels: filterSizePixels);
     }
 }
