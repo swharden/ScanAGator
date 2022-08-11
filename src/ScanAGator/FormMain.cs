@@ -518,22 +518,33 @@ namespace ScanAGator
 
         private void SaveAnalysis(bool launch = false)
         {
-            if (!System.IO.Directory.Exists(LineScanFolder.SaveFolderPath))
-                System.IO.Directory.CreateDirectory(LineScanFolder.SaveFolderPath);
-
-            string csvFilePath = System.IO.Path.Combine(LineScanFolder.SaveFolderPath, "LineScanAnalysis.csv");
-
-            LineScanFolder.SaveSettingsINI(); // TODO: collapse INI and JSON metadata file into one
-            System.IO.File.WriteAllText(csvFilePath, LineScanFolder.GetCsvAllData());
-            System.IO.File.WriteAllText(csvFilePath + ".json", LineScanFolder.GetMetadataJson());
+            SaveAnalysisOLD();
+            SaveAnalysisNEW();
 
             if (launch)
-            {
                 System.Diagnostics.Process.Start("explorer.exe", LineScanFolder.SaveFolderPath);
-            }
 
             UpdateGuiFromLinescan();
             SaveNeeded(false);
+        }
+
+        private void SaveAnalysisOLD()
+        {
+            if (!System.IO.Directory.Exists(LineScanFolder.SaveFolderPath))
+                System.IO.Directory.CreateDirectory(LineScanFolder.SaveFolderPath);
+            string csvFilePath = System.IO.Path.Combine(LineScanFolder.SaveFolderPath, "LineScanAnalysis.csv");
+            LineScanFolder.SaveSettingsINI();
+            System.IO.File.WriteAllText(csvFilePath, LineScanFolder.GetCsvAllData());
+            System.IO.File.WriteAllText(csvFilePath + ".json", LineScanFolder.GetMetadataJson());
+        }
+
+        private void SaveAnalysisNEW()
+        {
+            LineScan.LineScanFolder2 lsFolder = new(LineScanFolder.FolderPath);
+            PixelRange baseline = new(LineScanFolder.BaselineIndex1, LineScanFolder.BaselineIndex2);
+            PixelRange structure = StructureDetection.GetBrightestStructure(lsFolder.GreenImages[0]);
+            LineScanSettings settings = new(baseline, structure, filterSizePx: 20);
+            Reporting.AnalyzeLinescanFolder(lsFolder, settings);
         }
 
         private void btnReload_Click(object sender, EventArgs e)

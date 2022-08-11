@@ -45,20 +45,20 @@ public class LineScanFolder2
             throw new InvalidOperationException("not ratiometric");
     }
 
+    public RatiometricLinescan GetRatiometricLinescanFrame(int frame, LineScanSettings settings)
+    {
+        return new RatiometricLinescan(
+            green: GreenImages[frame],
+            red: RedImages[frame],
+            msPerPx: XmlFile.MsecPerPixel,
+            settings: settings);
+    }
+
     public RatiometricLinescan[] GetRatiometricLinescanFrames(LineScanSettings settings)
     {
-        RatiometricLinescan[] linescans = new RatiometricLinescan[FrameCount];
-
-        for (int i = 0; i < FrameCount; i++)
-        {
-            linescans[i] = new RatiometricLinescan(
-                green: GreenImages[i],
-                red: RedImages[i],
-                msPerPx: XmlFile.MsecPerPixel,
-                settings: settings);
-        }
-
-        return linescans;
+        return Enumerable.Range(0, FrameCount)
+            .Select(x => GetRatiometricLinescanFrame(x, settings))
+            .ToArray();
     }
 
     public RatiometricLinescan GetRatiometricLinescanAverage(LineScanSettings settings)
