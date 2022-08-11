@@ -143,41 +143,9 @@ namespace ScanAGator
         /// </summary>
         public void AutoStructure()
         {
-            // determine the brightest column
-            double[] columnIntensities = ImageDataTools.GetAverageLeftright(imgG);
-            double brightestValue = 0;
-            int brightestIndex = 0;
-            for (int i = 0; i < columnIntensities.Length; i++)
-            {
-                if (columnIntensities[i] > brightestValue)
-                {
-                    brightestValue = columnIntensities[i];
-                    brightestIndex = i;
-                }
-            }
-            Log($"Brightest structure (G): {brightestValue} AFU at {brightestIndex}px");
-
-            // determine the 20-percentile brightness (background fluorescence)
-            double[] sortedIntensities = new double[columnIntensities.Length];
-            Array.Copy(columnIntensities, sortedIntensities, columnIntensities.Length);
-            Array.Sort(sortedIntensities);
-            double noiseFloor = sortedIntensities[(int)(sortedIntensities.Length * .2)];
-            Log($"Noise floor (G): {noiseFloor} AFU");
-
-            // intensity cut-off is half-way to the noise floor
-            double peakAboveNoise = brightestValue - noiseFloor;
-            double cutOff = (peakAboveNoise * .5) + noiseFloor;
-            Log($"Cut-off (G): {cutOff} AFU");
-
-            // start both structures at the brighest point, then walk away
-            structure1 = brightestIndex;
-            structure2 = brightestIndex;
-            while (columnIntensities[structure1] > cutOff && structure1 > 0)
-                structure1--;
-            while (columnIntensities[structure2] > cutOff && structure2 < columnIntensities.Length - 1)
-                structure2++;
-
-            Log($"Automatic structure: {structure1}px - {structure2}px");
+            PixelRange structure = StructureDetection.GetBrightestStructure(imgG);
+            structure1 = structure.FirstPixel;
+            structure2 = structure.LastPixel;
         }
 
         /// <summary>
