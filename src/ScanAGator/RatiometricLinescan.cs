@@ -15,25 +15,35 @@ public class RatiometricLinescan
     public readonly int FilterSizePixels;
     public int FilterSpanPixels => FilterSizePixels * 2 + 1;
 
-    public RatiometricLinescan(ImageData green, ImageData red, double msPerPx, PixelRange baseline, PixelRange structure, int filterSizePixels)
+    public RatiometricLinescan(ImageData green, ImageData red, double msPerPx, LineScanSettings settings)
     {
         MsecPerPixel = msPerPx;
-        FilterSizePixels = filterSizePixels;
-        Baseline = baseline;
-        Structure = structure;
-        G = new(ImageDataTools.GetAverageTopdown(green, structure), msPerPx);
-        R = new(ImageDataTools.GetAverageTopdown(red, structure), msPerPx);
+        FilterSizePixels = settings.FilterSizePx;
+        Baseline = settings.Baseline;
+        Structure = settings.Structure;
 
-        // calculate the mean from pre-filtered data
-        BaselineG = G.BaselineMean(baseline);
+        G = new(ImageDataTools.GetAverageTopdown(green, Structure), msPerPx);
+        R = new(ImageDataTools.GetAverageTopdown(red, Structure), msPerPx);
 
-        if (filterSizePixels > 0)
+        BaselineG = G.BaselineMean(Baseline); // calculate the mean from pre-filtered data
+
+        if (FilterSizePixels > 0)
         {
-            G = G.LowPassFiltered(filterSizePixels);
-            R = R.LowPassFiltered(filterSizePixels);
+            G = G.LowPassFiltered(FilterSizePixels);
+            R = R.LowPassFiltered(FilterSizePixels);
         }
 
         DG = G.SubtractedBy(BaselineG);
         DGR = DG.DividedBy(R);
+    }
+
+    public void SaveCsv(string filePath)
+    {
+        System.IO.File.WriteAllText(filePath, "test");
+    }
+
+    public void SaveJson(string filePath)
+    {
+        System.IO.File.WriteAllText(filePath, "test");
     }
 }

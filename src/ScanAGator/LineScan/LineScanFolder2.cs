@@ -44,7 +44,7 @@ public class LineScanFolder2
             throw new InvalidOperationException("not ratiometric");
     }
 
-    public RatiometricLinescan[] GetRatiometricLinescanFrames(PixelRange baseline, PixelRange structure, int filterSizePixels)
+    public RatiometricLinescan[] GetRatiometricLinescanFrames(LineScanSettings settings)
     {
         RatiometricLinescan[] linescans = new RatiometricLinescan[FrameCount];
 
@@ -54,22 +54,18 @@ public class LineScanFolder2
                 green: GreenImages[i],
                 red: RedImages[i],
                 msPerPx: XmlFile.MsecPerPixel,
-                baseline: baseline,
-                structure: structure,
-                filterSizePixels: filterSizePixels);
+                settings: settings);
         }
 
         return linescans;
     }
 
-    public RatiometricLinescan GetRatiometricLinescanAverage(PixelRange baseline, PixelRange structure, int filterSizePixels)
+    public RatiometricLinescan GetRatiometricLinescanAverage(LineScanSettings settings)
     {
         return new RatiometricLinescan(
                 green: ImageOperations.Average(GreenImages),
                 red: ImageOperations.Average(RedImages),
                 msPerPx: XmlFile.MsecPerPixel,
-                baseline: baseline,
-                structure: structure,
-                filterSizePixels: filterSizePixels);
+                settings: settings);
     }
 }

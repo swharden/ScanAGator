@@ -10,8 +10,11 @@ namespace ScanAGator.Tests
         public static ScanAGator.LineScanFolder GreenOnly() =>
              new ScanAGator.LineScanFolder(TestContext.CurrentContext.TestDirectory +
                  "/../../../../../data/linescans/LineScan-02132019-1317-2775");
-        public static ScanAGator.LineScanFolder MultipleGreenOverRed() =>
-             new ScanAGator.LineScanFolder(TestContext.CurrentContext.TestDirectory +
-                 "/../../../../../data/linescans/LineScan-08092022-1225-528");
+
+        public static LineScanFolder MultipleGreenOverRed() => new(MultipleGreenOverRedFolder);
+
+        public static string MultipleGreenOverRedFolder => System.IO.Path.Combine(
+            TestContext.CurrentContext.TestDirectory,
+            "../../../../../data/linescans/LineScan-08092022-1225-528");
     }
 }

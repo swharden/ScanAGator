@@ -2,7 +2,7 @@
 
 namespace ScanAGator;
 
-internal static class StructureDetection
+public static class StructureDetection
 {
     /// <summary>
     /// Returns the range of pixels that spans the brightest structure in the image.
