@@ -75,7 +75,6 @@ namespace ScanAGator
         public Bitmap GetBitmapIndexed()
         {
             // create and fill a pixel array for the 8-bit final image
-            Console.WriteLine($"Creating BMP from data with extremes: {data.Min()} {data.Max()}");
 
             byte[] pixelsOutput = GetDisplayBytes();
 

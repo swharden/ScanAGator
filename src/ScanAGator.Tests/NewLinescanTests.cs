@@ -12,7 +12,9 @@ namespace ScanAGator.Tests
         [Test]
         public void Test()
         {
-
+            string folderPath = SampleData.MultipleGreenOverRed().FolderPath;
+            LineScan.LineScanFolder2 lsFolder = new(folderPath);
+            Plot.RatiometricCurves(lsFolder);
         }
     }
 }

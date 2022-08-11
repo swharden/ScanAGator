@@ -8,8 +8,8 @@ namespace ScanAGator;
 
 public class IntensityCurve
 {
-    readonly double[] Values;
-    readonly double MsPerPixel;
+    public readonly double[] Values;
+    public readonly double MsPerPixel;
 
     public IntensityCurve(double[] values, double msPerPixel)
     {
@@ -32,7 +32,7 @@ public class IntensityCurve
         {
             sum += Values[i];
         }
-        return sum / (i2 - i1);
+        return sum / (i2 - i1 + 1);
     }
 
     public IntensityCurve SubtractedBy(double value)
@@ -49,8 +49,24 @@ public class IntensityCurve
         double[] newValues = new double[Values.Length];
         for (int i = 0; i < Values.Length; i++)
         {
-            newValues[i] = Values[i] * multiplier;
+            newValues[i] = Values[i] / otherCurve.Values[i] * multiplier;
         }
         return new IntensityCurve(newValues, MsPerPixel);
+    }
+
+    public IntensityCurve LowPassFiltered(int filterSizePixels)
+    {
+        double[] smooth = ImageDataTools.GaussianFilter1d(Values, filterSizePixels);
+        int padPoints = filterSizePixels * 2 + 1;
+
+        for (int i = 0; i < padPoints; i++)
+        {
+            smooth[i] = smooth[padPoints];
+            smooth[smooth.Length - 1 - i] = smooth[smooth.Length - 1 - padPoints];
+        }
+
+        if (Values.Length != smooth.Length)
+            throw new InvalidOperationException("Array size changed after filtering");
+        return new IntensityCurve(smooth, MsPerPixel);
     }
 }

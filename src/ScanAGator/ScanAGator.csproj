@@ -23,10 +23,10 @@
         </EmbeddedResource>
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.639" />
-        <PackageReference Include="ScottPlot" Version="4.0.47" />
-        <PackageReference Include="ScottPlot.WinForms" Version="4.0.47" />
-        <PackageReference Include="System.Drawing.Common" Version="5.0.0" />
+        <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.649" />
+        <PackageReference Include="ScottPlot" Version="4.1.52" />
+        <PackageReference Include="ScottPlot.WinForms" Version="4.1.52" />
+        <PackageReference Include="System.Drawing.Common" Version="6.0.0" />
         <PackageReference Include="System.Resources.Extensions" Version="6.0.0" />
         <PackageReference Include="System.Text.Json" Version="6.0.5" />
     </ItemGroup>
