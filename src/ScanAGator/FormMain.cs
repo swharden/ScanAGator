@@ -53,9 +53,9 @@ namespace ScanAGator
             lsFolder = new LineScanFolder(path, analyzeFirstFrameImmediately: false);
             UpdateGuiFromLinescanFirst();
             UpdateGuiFromLinescan();
-            if (!lsFolder.isValid)
+            if (!lsFolder.IsValid)
                 SaveNeeded(false);
-            if (lsFolder.isValid && System.IO.File.Exists(lsFolder.pathIniFile))
+            if (lsFolder.IsValid && System.IO.File.Exists(lsFolder.IniFilePath))
                 SaveNeeded(false);
 
             // unlock the treeview
@@ -69,28 +69,28 @@ namespace ScanAGator
             ignoreGuiUpdates = true;
 
             // reference image
-            if (lsFolder.pathsRef != null && lsFolder.pathsRef.Length > 0)
+            if (lsFolder.IsValid)
             {
                 pbRef.BackgroundImage = lsFolder.GetRefImage(0);
-                hScrollRef.Maximum = lsFolder.pathsRef.Length - 1;
+                hScrollRef.Maximum = lsFolder.ReferenceImagePaths.Length - 1;
             }
 
             // lock or unlock settings
-            gbDisplay.Enabled = lsFolder.isValid;
-            gbFrame.Enabled = lsFolder.isValid;
-            gbFilter.Enabled = lsFolder.isValid;
-            gbBaseline.Enabled = lsFolder.isValid;
-            gbStructure.Enabled = lsFolder.isValid;
-            gbSettings.Enabled = lsFolder.isValid;
-            gbAuto.Enabled = lsFolder.isValid;
-            gbDisplayType.Enabled = lsFolder.isValid;
-            gbPeak.Enabled = lsFolder.isValid;
-            cbRatio.Enabled = lsFolder.isRatiometric;
-            formsPlot1.Visible = lsFolder.isValid;
-            formsPlot2.Visible = lsFolder.isValid;
-            dataToolStripMenuItem.Enabled = lsFolder.isValid;
+            gbDisplay.Enabled = lsFolder.IsValid;
+            gbFrame.Enabled = lsFolder.IsValid;
+            gbFilter.Enabled = lsFolder.IsValid;
+            gbBaseline.Enabled = lsFolder.IsValid;
+            gbStructure.Enabled = lsFolder.IsValid;
+            gbSettings.Enabled = lsFolder.IsValid;
+            gbAuto.Enabled = lsFolder.IsValid;
+            gbDisplayType.Enabled = lsFolder.IsValid;
+            gbPeak.Enabled = lsFolder.IsValid;
+            cbRatio.Enabled = lsFolder.IsValid && lsFolder.IsRatiometric;
+            formsPlot1.Visible = lsFolder.IsValid;
+            formsPlot2.Visible = lsFolder.IsValid;
+            dataToolStripMenuItem.Enabled = lsFolder.IsValid;
 
-            if (lsFolder.isRatiometric)
+            if (lsFolder.IsRatiometric)
             {
                 cbRatio.Checked = true;
                 cbR.Checked = true;
@@ -101,12 +101,12 @@ namespace ScanAGator
                 cbG.Checked = true;
             }
 
-            if (lsFolder.isValid)
+            if (lsFolder.IsValid)
             {
-                cbG.Enabled = (lsFolder.pathsDataG.Length > 0) ? true : false;
-                cbR.Enabled = (lsFolder.pathsDataR.Length > 0) ? true : false;
+                cbG.Enabled = (lsFolder.DataImagePathsG.Length > 0) ? true : false;
+                cbR.Enabled = (lsFolder.DataImagePathsR.Length > 0) ? true : false;
 
-                if (lsFolder.isRatiometric)
+                if (lsFolder.IsRatiometric)
                 {
                     cbRatio.Checked = true;
                     cbDelta.Checked = true;
@@ -117,24 +117,24 @@ namespace ScanAGator
                 }
 
                 nudFrame.Minimum = 1;
-                nudFrame.Maximum = lsFolder.pathsDataG.Length;
-                gbFrame.Text = $"Frame (of {lsFolder.pathsDataG.Length})";
-                if (lsFolder.pathsDataG.Length == 1)
+                nudFrame.Maximum = lsFolder.DataImagePathsG.Length;
+                gbFrame.Text = $"Frame (of {lsFolder.DataImagePathsG.Length})";
+                if (lsFolder.DataImagePathsG.Length == 1)
                     nudFrame.Enabled = false;
                 else
                     nudFrame.Enabled = true;
 
-                nudFilter.Maximum = (int)(lsFolder.bmpDataG.Height / 3.0);
+                nudFilter.Maximum = (int)(lsFolder.BmpDataG.Height / 3.0);
 
-                nudBaseline1.Maximum = lsFolder.bmpDataG.Height;
-                nudBaseline2.Maximum = lsFolder.bmpDataG.Height;
-                tbBaseline1.Maximum = lsFolder.bmpDataG.Height;
-                tbBaseline2.Maximum = lsFolder.bmpDataG.Height;
+                nudBaseline1.Maximum = lsFolder.BmpDataG.Height;
+                nudBaseline2.Maximum = lsFolder.BmpDataG.Height;
+                tbBaseline1.Maximum = lsFolder.BmpDataG.Height;
+                tbBaseline2.Maximum = lsFolder.BmpDataG.Height;
 
-                nudStructure1.Maximum = lsFolder.bmpDataG.Width;
-                nudStructure2.Maximum = lsFolder.bmpDataG.Width;
-                tbStructure1.Maximum = lsFolder.bmpDataG.Width;
-                tbStructure2.Maximum = lsFolder.bmpDataG.Width;
+                nudStructure1.Maximum = lsFolder.BmpDataG.Width;
+                nudStructure2.Maximum = lsFolder.BmpDataG.Width;
+                tbStructure1.Maximum = lsFolder.BmpDataG.Width;
+                tbStructure2.Maximum = lsFolder.BmpDataG.Width;
             }
             ignoreGuiUpdates = false;
         }
@@ -149,25 +149,25 @@ namespace ScanAGator
 
             // linescan image
             if ((cbR.Checked && cbR.Enabled) && (cbG.Checked && cbG.Enabled))
-                pbLinescan.BackgroundImage = lsFolder.MarkLinescan(lsFolder.bmpDataM);
+                pbLinescan.BackgroundImage = lsFolder.MarkLinescan(lsFolder.BmpDataMerge);
             else if (cbR.Checked && cbR.Enabled)
-                pbLinescan.BackgroundImage = lsFolder.MarkLinescan(lsFolder.bmpDataR);
+                pbLinescan.BackgroundImage = lsFolder.MarkLinescan(lsFolder.BmpDataR);
             else if (cbG.Checked && cbG.Enabled)
-                pbLinescan.BackgroundImage = lsFolder.MarkLinescan(lsFolder.bmpDataG);
+                pbLinescan.BackgroundImage = lsFolder.MarkLinescan(lsFolder.BmpDataG);
             else
                 pbLinescan.BackgroundImage = null;
 
             // update sliders and NUDs
-            tbBaseline1.Value = tbBaseline1.Maximum - lsFolder.baseline1;
-            tbBaseline2.Value = tbBaseline2.Maximum - lsFolder.baseline2;
-            tbStructure1.Value = lsFolder.structure1;
-            tbStructure2.Value = lsFolder.structure2;
-            nudBaseline1.Value = lsFolder.baseline1;
-            nudBaseline2.Value = lsFolder.baseline2;
-            nudStructure1.Value = lsFolder.structure1;
-            nudStructure2.Value = lsFolder.structure2;
-            nudFilter.Value = lsFolder.filterPx;
-            lblFilterMs.Text = $"{Math.Round(lsFolder.filterPx * lsFolder.scanLinePeriod, 2)} ms";
+            tbBaseline1.Value = tbBaseline1.Maximum - lsFolder.BaselineIndex1;
+            tbBaseline2.Value = tbBaseline2.Maximum - lsFolder.BaselineIndex2;
+            tbStructure1.Value = lsFolder.StructureIndex1;
+            tbStructure2.Value = lsFolder.StructureIndex2;
+            nudBaseline1.Value = lsFolder.BaselineIndex1;
+            nudBaseline2.Value = lsFolder.BaselineIndex2;
+            nudStructure1.Value = lsFolder.StructureIndex1;
+            nudStructure2.Value = lsFolder.StructureIndex2;
+            nudFilter.Value = lsFolder.FilterSizePixels;
+            lblFilterMs.Text = lsFolder.IsValid ? $"{Math.Round(lsFolder.FilterSizePixels * lsFolder.ScanLinePeriodMsec, 2)} ms" : "None";
 
             // generate and plot curves
             UpdateGraphs();
@@ -190,7 +190,7 @@ namespace ScanAGator
             Color colorPeak = System.Drawing.ColorTranslator.FromHtml("#d62728");
             Color colorZero = System.Drawing.ColorTranslator.FromHtml("#000000");
 
-            if (!lsFolder.isValid)
+            if (!lsFolder.IsValid)
                 return;
 
             if (skipUpdatesIfBusy && busyUpdating)
@@ -202,23 +202,23 @@ namespace ScanAGator
             lsFolder.GenerateAnalysisCurves();
 
             // update the structure profile plot
-            double[] columnPixelIndices = new double[lsFolder.imgG.width];
+            double[] columnPixelIndices = new double[lsFolder.ImgG.width];
             for (int i = 0; i < columnPixelIndices.Length; i++)
                 columnPixelIndices[i] = i;
             formsPlot2.plt.Clear();
             if ((cbR.Enabled && cbR.Checked))
             {
-                double[] columnBrightnessR = ImageDataTools.GetAverageLeftright(lsFolder.imgR);
+                double[] columnBrightnessR = ImageDataTools.GetAverageLeftright(lsFolder.ImgR);
                 formsPlot2.plt.PlotScatter(columnPixelIndices, columnBrightnessR, markerSize: 0, color: red);
             }
             if ((cbG.Enabled && cbG.Checked))
             {
-                double[] columnBrightnessG = ImageDataTools.GetAverageLeftright(lsFolder.imgG);
+                double[] columnBrightnessG = ImageDataTools.GetAverageLeftright(lsFolder.ImgG);
                 formsPlot2.plt.PlotScatter(columnPixelIndices, columnBrightnessG, markerSize: 0, color: green);
             }
             formsPlot2.plt.AxisAuto(0, .1);
-            formsPlot2.plt.PlotVLine(lsFolder.structure1, color: Color.Black);
-            formsPlot2.plt.PlotVLine(lsFolder.structure2, color: Color.Black);
+            formsPlot2.plt.PlotVLine(lsFolder.StructureIndex1, color: Color.Black);
+            formsPlot2.plt.PlotVLine(lsFolder.StructureIndex2, color: Color.Black);
 
             // update styling before the render
             formsPlot2.plt.YLabel("Intensity");
@@ -232,12 +232,12 @@ namespace ScanAGator
             {
                 if (cbDelta.Enabled && cbDelta.Checked)
                 {
-                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveDeltaGoR);
-                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveDeltaGoR, color: lightBlue, lineWidth: 0, markerSize: 2);
+                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.CurveDeltaGoR);
+                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.CurveDeltaGoR, color: lightBlue, lineWidth: 0, markerSize: 2);
                     formsPlot1.plt.PlotScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, color: blue, lineWidth: 2);
 
-                    formsPlot1.plt.PlotVLine(lsFolder.baseline1 * lsFolder.scanLinePeriod, color: colorBaselineMarks, lineWidth: 2);
-                    formsPlot1.plt.PlotVLine(lsFolder.baseline2 * lsFolder.scanLinePeriod, color: colorBaselineMarks, lineWidth: 2);
+                    formsPlot1.plt.PlotVLine(lsFolder.BaselineIndex1 * lsFolder.ScanLinePeriodMsec, color: colorBaselineMarks, lineWidth: 2);
+                    formsPlot1.plt.PlotVLine(lsFolder.BaselineIndex2 * lsFolder.ScanLinePeriodMsec, color: colorBaselineMarks, lineWidth: 2);
                     formsPlot1.plt.PlotHLine(0, color: colorZero, lineWidth: 2);
                     formsPlot1.plt.PlotHLine(curveToCopy.Max(), color: colorPeak, lineWidth: 2);
 
@@ -246,8 +246,8 @@ namespace ScanAGator
                 }
                 else
                 {
-                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveGoR);
-                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveGoR, color: lightBlue, lineWidth: 0, markerSize: 2);
+                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.CurveGoR);
+                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.CurveGoR, color: lightBlue, lineWidth: 0, markerSize: 2);
                     formsPlot1.plt.PlotScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, color: blue, lineWidth: 2);
                     formsPlot1.plt.YLabel("G/R (%)");
                     formsPlot1.plt.PlotHLine(curveToCopy.Max(), color: colorPeak, lineWidth: 2);
@@ -255,25 +255,25 @@ namespace ScanAGator
             }
             else if ((cbR.Checked && cbR.Enabled) && (cbG.Checked && cbG.Enabled))
             {
-                formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveG, markerSize: 0, color: green);
-                formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, color: red);
+                formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.CurveG, markerSize: 0, color: green);
+                formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.CurveR, markerSize: 0, color: red);
                 formsPlot1.plt.YLabel("G and R (AFU)");
             }
             else if (cbR.Checked && cbR.Enabled)
             {
-                formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveR, markerSize: 0, color: red);
+                formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.CurveR, markerSize: 0, color: red);
                 formsPlot1.plt.YLabel("R (AFU)");
             }
             else if (cbG.Checked && cbG.Enabled)
             {
                 if (cbDelta.Enabled && cbDelta.Checked)
                 {
-                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveDeltaG);
-                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveDeltaG, lineWidth: 0, color: lightGreen, markerSize: 2);
+                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.CurveDeltaG);
+                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.CurveDeltaG, lineWidth: 0, color: lightGreen, markerSize: 2);
                     formsPlot1.plt.PlotScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, color: green, lineWidth: 2);
 
-                    formsPlot1.plt.PlotVLine(lsFolder.baseline1 * lsFolder.scanLinePeriod, color: colorBaselineMarks, lineWidth: 2);
-                    formsPlot1.plt.PlotVLine(lsFolder.baseline2 * lsFolder.scanLinePeriod, color: colorBaselineMarks, lineWidth: 2);
+                    formsPlot1.plt.PlotVLine(lsFolder.BaselineIndex1 * lsFolder.ScanLinePeriodMsec, color: colorBaselineMarks, lineWidth: 2);
+                    formsPlot1.plt.PlotVLine(lsFolder.BaselineIndex2 * lsFolder.ScanLinePeriodMsec, color: colorBaselineMarks, lineWidth: 2);
                     formsPlot1.plt.PlotHLine(0, color: colorZero, lineWidth: 2);
                     formsPlot1.plt.PlotHLine(curveToCopy.Max(), color: colorPeak, lineWidth: 2);
 
@@ -281,8 +281,8 @@ namespace ScanAGator
                 }
                 else
                 {
-                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.curveG);
-                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.curveG, lineWidth: 0, color: lightGreen, markerSize: 2);
+                    curveToCopy = lsFolder.GetFilteredYs(lsFolder.CurveG);
+                    formsPlot1.plt.PlotScatter(lsFolder.timesMsec, lsFolder.CurveG, lineWidth: 0, color: lightGreen, markerSize: 2);
                     formsPlot1.plt.PlotScatter(lsFolder.GetFilteredXs(), curveToCopy, markerSize: 0, color: green, lineWidth: 2);
                     formsPlot1.plt.PlotHLine(curveToCopy.Max(), color: colorPeak, lineWidth: 2);
                     formsPlot1.plt.YLabel("G (AFU)");
@@ -348,7 +348,7 @@ namespace ScanAGator
 
         private void refreshFolderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SetFolder(lsFolder.pathFolder, true);
+            SetFolder(lsFolder.FolderPath, true);
         }
 
         #endregion
@@ -387,28 +387,28 @@ namespace ScanAGator
         private void tbStructure1_Scroll(object sender, EventArgs e)
         {
             if (!ignoreGuiUpdates)
-                lsFolder.structure1 = tbStructure1.Value;
+                lsFolder.StructureIndex1 = tbStructure1.Value;
             UpdateGuiFromLinescan();
         }
 
         private void tbStructure2_Scroll(object sender, EventArgs e)
         {
             if (!ignoreGuiUpdates)
-                lsFolder.structure2 = tbStructure2.Value;
+                lsFolder.StructureIndex2 = tbStructure2.Value;
             UpdateGuiFromLinescan();
         }
 
         private void tbBaseline1_Scroll(object sender, EventArgs e)
         {
             if (!ignoreGuiUpdates)
-                lsFolder.baseline1 = tbBaseline1.Maximum - tbBaseline1.Value;
+                lsFolder.BaselineIndex1 = tbBaseline1.Maximum - tbBaseline1.Value;
             UpdateGuiFromLinescan();
         }
 
         private void tbBaseline2_Scroll(object sender, EventArgs e)
         {
             if (!ignoreGuiUpdates)
-                lsFolder.baseline2 = tbBaseline2.Maximum - tbBaseline2.Value;
+                lsFolder.BaselineIndex2 = tbBaseline2.Maximum - tbBaseline2.Value;
             UpdateGuiFromLinescan();
         }
 
@@ -422,35 +422,35 @@ namespace ScanAGator
         private void nudBaseline1_ValueChanged(object sender, EventArgs e)
         {
             if (!ignoreGuiUpdates)
-                lsFolder.baseline1 = (int)nudBaseline1.Value;
+                lsFolder.BaselineIndex1 = (int)nudBaseline1.Value;
             UpdateGuiFromLinescan();
         }
 
         private void nudBaseline2_ValueChanged(object sender, EventArgs e)
         {
             if (!ignoreGuiUpdates)
-                lsFolder.baseline2 = (int)nudBaseline2.Value;
+                lsFolder.BaselineIndex2 = (int)nudBaseline2.Value;
             UpdateGuiFromLinescan();
         }
 
         private void nudStructure1_ValueChanged(object sender, EventArgs e)
         {
             if (!ignoreGuiUpdates)
-                lsFolder.structure1 = (int)nudStructure1.Value;
+                lsFolder.StructureIndex1 = (int)nudStructure1.Value;
             UpdateGuiFromLinescan();
         }
 
         private void nudStructure2_ValueChanged(object sender, EventArgs e)
         {
             if (!ignoreGuiUpdates)
-                lsFolder.structure2 = (int)nudStructure2.Value;
+                lsFolder.StructureIndex2 = (int)nudStructure2.Value;
             UpdateGuiFromLinescan();
         }
 
         private void nudFilter_ValueChanged(object sender, EventArgs e)
         {
             if (!ignoreGuiUpdates)
-                lsFolder.filterPx = (int)nudFilter.Value;
+                lsFolder.FilterSizePixels = (int)nudFilter.Value;
             UpdateGuiFromLinescan();
         }
 
@@ -499,7 +499,7 @@ namespace ScanAGator
         private void SaveCSV()
         {
             SaveFileDialog savefile = new SaveFileDialog();
-            savefile.FileName = $"{lsFolder.folderName}.csv";
+            savefile.FileName = $"{lsFolder.FolderName}.csv";
             savefile.Filter = "CSV Files (*.csv)|*.csv|All files (*.*)|*.*";
             if (savefile.ShowDialog() == DialogResult.OK)
             {
@@ -514,10 +514,10 @@ namespace ScanAGator
 
         private void SaveAnalysis(bool launch = false)
         {
-            if (!System.IO.Directory.Exists(lsFolder.pathSaveFolder))
-                System.IO.Directory.CreateDirectory(lsFolder.pathSaveFolder);
+            if (!System.IO.Directory.Exists(lsFolder.SaveFolderPath))
+                System.IO.Directory.CreateDirectory(lsFolder.SaveFolderPath);
 
-            string csvFilePath = System.IO.Path.Combine(lsFolder.pathSaveFolder, "LineScanAnalysis.csv");
+            string csvFilePath = System.IO.Path.Combine(lsFolder.SaveFolderPath, "LineScanAnalysis.csv");
 
             lsFolder.SaveSettingsINI(); // TODO: collapse INI and JSON metadata file into one
             System.IO.File.WriteAllText(csvFilePath, lsFolder.GetCsvAllData());
@@ -525,7 +525,7 @@ namespace ScanAGator
 
             if (launch)
             {
-                System.Diagnostics.Process.Start("explorer.exe", lsFolder.pathSaveFolder);
+                System.Diagnostics.Process.Start("explorer.exe", lsFolder.SaveFolderPath);
             }
 
             UpdateGuiFromLinescan();

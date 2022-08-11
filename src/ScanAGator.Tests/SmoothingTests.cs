@@ -18,17 +18,17 @@ namespace ScanAGator.Tests
         public void Test_SmoothExample_PlotCurves()
         {
             var lsFolder = SampleData.GreenOverRed();
-            double[] curve = lsFolder.curveDeltaGoR;
+            double[] curve = lsFolder.CurveDeltaGoR;
             double[] curveXs = ScottPlot.DataGen.Consecutive(curve.Length);
 
-            double[] curveSmooth = ScanAGator.ImageDataTools.GaussianFilter1d(curve, lsFolder.filterPx);
+            double[] curveSmooth = ScanAGator.ImageDataTools.GaussianFilter1d(curve, lsFolder.FilterSizePixels);
             double[] curveSmoothXs = ScottPlot.DataGen.Consecutive(curveSmooth.Length);
 
             var plt = new ScottPlot.Plot();
             plt.PlotScatter(curveXs, curve, lineWidth: 0);
             plt.PlotScatter(curveSmoothXs, curveSmooth);
-            plt.PlotVLine(lsFolder.filterPx * 2, Color.Red);
-            plt.PlotVLine(curve.Length - lsFolder.filterPx * 2, Color.Red);
+            plt.PlotVLine(lsFolder.FilterSizePixels * 2, Color.Red);
+            plt.PlotVLine(curve.Length - lsFolder.FilterSizePixels * 2, Color.Red);
             SaveFigure(plt, "smooth_curve.png");
         }
 
@@ -36,7 +36,7 @@ namespace ScanAGator.Tests
         public void Test_SmoothExample_PlotGaussianWindow()
         {
             var lsFolder = SampleData.GreenOverRed();
-            int windowSize = lsFolder.filterPx * 2 - 1;
+            int windowSize = lsFolder.FilterSizePixels * 2 - 1;
             double[] curve = ScanAGator.ImageDataTools.GetGaussianCurve(windowSize, half: true);
             double[] curveXs = ScottPlot.DataGen.Consecutive(curve.Length);
 

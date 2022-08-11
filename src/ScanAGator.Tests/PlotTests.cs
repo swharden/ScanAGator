@@ -15,19 +15,19 @@ namespace ScanAGator.Tests
             var plt = new ScottPlot.Plot(600, 400);
 
             // baseline
-            double baselineTime1 = lsFolder.timesMsec[lsFolder.baseline1];
-            double baselineTime2 = lsFolder.timesMsec[lsFolder.baseline2];
+            double baselineTime1 = lsFolder.timesMsec[lsFolder.BaselineIndex1];
+            double baselineTime2 = lsFolder.timesMsec[lsFolder.BaselineIndex2];
             plt.PlotHSpan(baselineTime1, baselineTime2, color: Color.Blue, alpha: .1);
             plt.PlotHLine(0, lineStyle: ScottPlot.LineStyle.Dash, color: Color.Black);
 
             // dGoR data points
             double[] xs = lsFolder.timesMsec;
-            double[] dGoR = lsFolder.curveDeltaGoR;
+            double[] dGoR = lsFolder.CurveDeltaGoR;
             plt.PlotScatter(xs, dGoR, lineWidth: 0, color: Color.FromArgb(50, Color.Black));
 
             // low-pass-filtered data points
             double[] filteredXs = lsFolder.GetFilteredXs();
-            double[] filteredDGoR = lsFolder.GetFilteredYs(lsFolder.curveDeltaGoR);
+            double[] filteredDGoR = lsFolder.GetFilteredYs(lsFolder.CurveDeltaGoR);
             plt.PlotScatter(filteredXs, filteredDGoR, markerSize: 0, lineWidth: 2, color: Color.Black);
 
             // peak dGoR
@@ -48,19 +48,19 @@ namespace ScanAGator.Tests
             var plt = new ScottPlot.Plot(600, 400);
 
             // baseline
-            double baselineTime1 = lsFolder.timesMsec[lsFolder.baseline1];
-            double baselineTime2 = lsFolder.timesMsec[lsFolder.baseline2];
+            double baselineTime1 = lsFolder.timesMsec[lsFolder.BaselineIndex1];
+            double baselineTime2 = lsFolder.timesMsec[lsFolder.BaselineIndex2];
             plt.PlotHSpan(baselineTime1, baselineTime2, color: Color.Blue, alpha: .1);
             plt.PlotHLine(0, lineStyle: ScottPlot.LineStyle.Dash, color: Color.Black);
 
             // green data points
             double[] xs = lsFolder.timesMsec;
-            double[] green = lsFolder.curveDeltaG;
+            double[] green = lsFolder.CurveDeltaG;
             plt.PlotScatter(xs, green, lineWidth: 0, color: Color.FromArgb(50, Color.Black));
 
             // low-pass-filtered data points
             double[] filteredXs = lsFolder.GetFilteredXs();
-            double[] filteredDeltaG = lsFolder.GetFilteredYs(lsFolder.curveDeltaG);
+            double[] filteredDeltaG = lsFolder.GetFilteredYs(lsFolder.CurveDeltaG);
             plt.PlotScatter(filteredXs, filteredDeltaG, markerSize: 0, lineWidth: 2, color: Color.Black);
 
             // customize the plot

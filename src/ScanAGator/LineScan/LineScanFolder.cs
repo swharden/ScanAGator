@@ -11,86 +11,89 @@ namespace ScanAGator
 {
     public class LineScanFolder
     {
-        public bool isValid { get; private set; } = true;
-        public bool isRatiometric => pathsDataG?.Length > 0 && pathsDataR?.Length > 0;
+        public bool IsValid { get; private set; } = true;
 
-        public readonly string pathFolder;
-        public string folderName => System.IO.Path.GetFileName(System.IO.Path.GetDirectoryName(pathFolder));
-        public string pathXml;
-        public string[] pathsRef;
-        public string[] pathsDataR;
-        public string[] pathsDataG;
+        public readonly string FolderPath;
 
-        public Bitmap bmpRef;
-        public Bitmap bmpDataG;
-        public Bitmap bmpDataR;
-        public Bitmap bmpDataM;
+        private readonly Prairie.FolderContents FolderContents;
 
-        public ImageData imgG;
-        public ImageData imgR;
-        public ImageData imgM;
+        private readonly Prairie.ParirieXmlFile XmlFile;
 
-        public double scanLinePeriod;
-        public double[] timesMsec;
-        public double micronsPerPx;
-        public DateTime acquisitionDate;
-        public double pixelsPerMicron { get { return 1.0 / micronsPerPx; } }
+        // Bitmaps for displaying
+        public Bitmap BmpReference;
+        public Bitmap BmpDataG;
+        public Bitmap BmpDataR;
+        public Bitmap BmpDataMerge;
 
-        public int baseline1;
-        public int baseline2;
-        public int structure1;
-        public int structure2;
-        public int filterPx;
+        // Bitmap data for analysis
+        public ImageData ImgG;
+        public ImageData ImgR;
+        public ImageData ImgM;
 
-        public double defaultBaselineEndFrac = 0.10;
-        public double defaultFilterTimeMs = 0;
+        public readonly double[] timesMsec;
 
-        public double[] curveG;
-        public double[] curveDeltaG;
-        public double[] curveR;
-        public double[] curveGoR;
-        public double[] curveDeltaGoR;
+        public int BaselineIndex1;
+        public int BaselineIndex2;
+        public int StructureIndex1;
+        public int StructureIndex2;
+        public int FilterSizePixels;
 
-        private Version ver => typeof(LineScanFolder).Assembly.GetName().Version;
-        public string version => $"Scan-A-Gator v{ver.Major}.{ver.Minor}";
-        public string pathIniFile => System.IO.Path.Combine(pathFolder, "ScanAGator/LineScanSettings.ini");
-        public string pathSaveFolder => System.IO.Path.GetDirectoryName(pathIniFile);
-        public string pathProgramSettings => System.IO.Path.GetFullPath("Defaults.ini");
+        public double DefaultBaselineFraction2 = 0.10;
+        public double DefaultFilterTimeMsec = 0;
 
-        private readonly StringBuilder logSB = new StringBuilder();
-        public string log => logSB.ToString();
+        public double[] CurveG;
+        public double[] CurveDeltaG;
+        public double[] CurveR;
+        public double[] CurveGoR;
+        public double[] CurveDeltaGoR;
+
+        private Version ThisVersion => typeof(LineScanFolder).Assembly.GetName().Version;
+        public string Version => $"Scan-A-Gator v{ThisVersion.Major}.{ThisVersion.Minor}";
+        public string IniFilePath => Path.Combine(FolderPath, "ScanAGator/LineScanSettings.ini");
+        public string SaveFolderPath => Path.GetDirectoryName(IniFilePath);
+        public string ProgramSettingsPath => Path.GetFullPath("Defaults.ini");
+        public bool IsRatiometric => IsValid && (DataImagePathsG.Any() && DataImagePathsR.Any());
+        public string FolderName => Path.GetFileName(Path.GetDirectoryName(FolderPath));
+        public string XmlFilePath => FolderContents.XmlFilePath;
+        public string[] ReferenceImagePaths => FolderContents.ReferenceTifPaths;
+        public string[] DataImagePathsR => FolderContents.ImageFilesR;
+        public string[] DataImagePathsG => FolderContents.ImageFilesG;
+        public double ScanLinePeriodMsec => XmlFile.MsecPerPixel;
+        public double MicronsPerPixel => XmlFile.MicronsPerPixel;
+        public DateTime AcquisitionDate => XmlFile.AcquisitionDate;
+        public double PixelsPerMicron => 1.0 / MicronsPerPixel;
 
         /// <summary>
         /// A linescan folder holds data for an experiment at a single position.
         /// Repeated sequences (multiple frames)
         /// </summary>
-        public LineScanFolder(string pathFolder, bool analyzeFirstFrameImmediately = true)
+        public LineScanFolder(string folderPath, bool analyzeFirstFrameImmediately = true)
         {
-            this.pathFolder = System.IO.Path.GetFullPath(pathFolder);
-            if (!System.IO.Directory.Exists(this.pathFolder))
-                throw new ArgumentException($"folder does not exist: {this.pathFolder}");
+            FolderPath = Path.GetFullPath(folderPath);
+            if (!Directory.Exists(FolderPath))
+                throw new DirectoryNotFoundException(folderPath);
 
             try
             {
-                ScanForFiles(pathFolder);
-                ReadValuesFromXML(pathXml);
-                isValid = true;
+                FolderContents = new Prairie.FolderContents(FolderPath);
+                XmlFile = new Prairie.ParirieXmlFile(FolderContents.XmlFilePath);
+                IsValid = true;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex);
-                isValid = false;
+                IsValid = false;
             }
 
-            if (isValid)
+            if (IsValid)
             {
-                bmpRef = GetRefImage();
+                BmpReference = GetRefImage();
                 SetFrame(0);
-                CreateTimePoints();
+                timesMsec = Enumerable.Range(0, ImgG.height).Select(x => x * ScanLinePeriodMsec).ToArray();
                 ConfigFile.LoadDefaultSettings(this);
                 AutoBaseline();
                 AutoStructure();
-                AutoFilter();
+                LoadDefaultFilterSettings();
                 LoadSettingsINI();
                 if (analyzeFirstFrameImmediately)
                     GenerateAnalysisCurves();
@@ -103,22 +106,22 @@ namespace ScanAGator
         public void GenerateAnalysisCurves()
         {
             // determine mean pixel intensity over time between the structure markers
-            (int s1, int s2) = Operations.GetValidStructure(structure1, structure2);
-            PixelRange structure = new(s1, s2, micronsPerPx);
+            (int s1, int s2) = Operations.GetValidStructure(StructureIndex1, StructureIndex2);
+            PixelRange structure = new(s1, s2, MicronsPerPixel);
 
-            curveG = ImageDataTools.GetAverageTopdown(imgG, structure);
-            curveR = ImageDataTools.GetAverageTopdown(imgR, structure);
+            CurveG = ImageDataTools.GetAverageTopdown(ImgG, structure);
+            CurveR = ImageDataTools.GetAverageTopdown(ImgR, structure);
 
             // create a dG channel by baseline subtracting just the green channel
-            (int b1, int b2) = Operations.GetValidBaseline(baseline1, baseline2);
-            PixelRange baseline = new(b1, b2, scanLinePeriod);
-            curveDeltaG = Operations.SubtractBaseline(curveG, baseline);
+            (int b1, int b2) = Operations.GetValidBaseline(BaselineIndex1, BaselineIndex2);
+            PixelRange baseline = new(b1, b2, ScanLinePeriodMsec);
+            CurveDeltaG = Operations.SubtractBaseline(CurveG, baseline);
 
             // create a d(G/R) curve by finding the G/R ratio then baseline subtracting that
-            if (isRatiometric)
+            if (IsRatiometric)
             {
-                curveGoR = Operations.CreateRatioCurve(curveG, curveR);
-                curveDeltaGoR = Operations.SubtractBaseline(curveGoR, baseline);
+                CurveGoR = Operations.CreateRatioCurve(CurveG, CurveR);
+                CurveDeltaGoR = Operations.SubtractBaseline(CurveGoR, baseline);
             }
         }
 
@@ -127,12 +130,11 @@ namespace ScanAGator
         /// </summary>
         public void AutoBaseline()
         {
-            if (!isValid)
+            if (!IsValid)
                 return;
 
-            baseline1 = 0;
-            baseline2 = (int)(imgG.height * defaultBaselineEndFrac);
-            Log($"Automatic baseline: {baseline1}px - {baseline1}px ({baseline1 * scanLinePeriod}ms = {baseline1 * scanLinePeriod}ms)");
+            BaselineIndex1 = 0;
+            BaselineIndex2 = (int)(ImgG.height * DefaultBaselineFraction2);
         }
 
         /// <summary>
@@ -143,70 +145,32 @@ namespace ScanAGator
         /// </summary>
         public void AutoStructure()
         {
-            PixelRange structure = StructureDetection.GetBrightestStructure(imgG);
-            structure1 = structure.FirstPixel;
-            structure2 = structure.LastPixel;
+            PixelRange structure = StructureDetection.GetBrightestStructure(ImgG);
+            StructureIndex1 = structure.FirstPixel;
+            StructureIndex2 = structure.LastPixel;
         }
 
         /// <summary>
         /// Determine the ideal low-pass filter size (pixels) based on the filter time (ms)
         /// </summary>
-        public void AutoFilter()
+        public void LoadDefaultFilterSettings()
         {
-            if (!isValid)
+            if (!IsValid)
                 return;
 
-            double filterTimeMs = defaultFilterTimeMs;
-            if (defaultFilterTimeMs == 0)
+            double filterTimeMs = DefaultFilterTimeMsec;
+            if (DefaultFilterTimeMsec == 0)
             {
-                double scanTimeMs = scanLinePeriod * imgG.height;
+                double scanTimeMs = ScanLinePeriodMsec * ImgG.height;
                 if (scanTimeMs > 1000)
                     filterTimeMs = 100;
                 else
                     filterTimeMs = 10;
             }
 
-            filterPx = (int)(filterTimeMs / scanLinePeriod);
+            FilterSizePixels = (int)(filterTimeMs / ScanLinePeriodMsec);
 
-            filterPx = Math.Min(filterPx, imgG.height); // limit max filter size to 1/5 of the duration
-
-            Log($"Automatic filter: {filterPx}px ({filterPx * scanLinePeriod}ms)");
-        }
-
-        private void ScanForFiles(string folderPath)
-        {
-            Prairie.FolderContents scanner = new(folderPath);
-            pathsRef = scanner.ReferenceTifPaths;
-            pathsDataG = scanner.ImageFilesG;
-            pathsDataR = scanner.ImageFilesR;
-            pathXml = scanner.XmlFilePath;
-        }
-
-        public void ReadValuesFromXML(string xmlFilePath)
-        {
-            Prairie.ParirieXmlFile x = new(xmlFilePath);
-            acquisitionDate = x.AcquisitionDate;
-            scanLinePeriod = x.MsecPerPixel;
-            micronsPerPx = x.MicronsPerPixel;
-        }
-
-        /// <summary>
-        /// Populate timesMsec based on scanLinePeriod
-        /// </summary>
-        public void CreateTimePoints()
-        {
-            // error checking
-            if (!isValid)
-                return;
-
-            timesMsec = new double[imgG.height];
-            for (int i = 0; i < timesMsec.Length; i++)
-            {
-                if (scanLinePeriod > 0)
-                    timesMsec[i] = i * scanLinePeriod;
-                else
-                    timesMsec[i] = i;
-            }
+            FilterSizePixels = Math.Min(FilterSizePixels, ImgG.height); // limit max filter size to 1/5 of the duration
         }
 
         /// <summary>
@@ -216,55 +180,36 @@ namespace ScanAGator
         public void SetFrame(int frameNumber)
         {
             // error checking
-            if (!isValid)
+            if (!IsValid)
                 return;
-            int frameCount = Math.Max(pathsDataG.Length, pathsDataR.Length);
+            int frameCount = Math.Max(DataImagePathsG.Length, DataImagePathsR.Length);
             if (frameNumber >= frameCount)
             {
-                Log($"frame {frameNumber} cannot be called (max frame {frameCount - 1})");
                 return;
             }
 
             // load data bitmaps and create ratio if needed
-            if (pathsDataG.Length > 0)
+            if (DataImagePathsG.Length > 0)
             {
-                imgG = new ImageData(pathsDataG[frameNumber]);
-                bmpDataG = imgG.GetBmpDisplay();
+                ImgG = new ImageData(DataImagePathsG[frameNumber]);
+                BmpDataG = ImgG.GetBmpDisplay();
             }
 
-            if (pathsDataR.Length > 0)
+            if (DataImagePathsR.Length > 0)
             {
-                imgR = new ImageData(pathsDataR[frameNumber]);
-                bmpDataR = imgR.GetBmpDisplay();
+                ImgR = new ImageData(DataImagePathsR[frameNumber]);
+                BmpDataR = ImgR.GetBmpDisplay();
             }
 
-            if (bmpDataG != null && bmpDataR != null)
+            if (BmpDataG != null && BmpDataR != null)
             {
-                bmpDataM = ImageDataTools.Merge(imgR, imgG, imgR);
+                BmpDataMerge = ImageDataTools.Merge(ImgR, ImgG, ImgR);
 
-                double[] dataM = new double[imgG.data.Length];
+                double[] dataM = new double[ImgG.data.Length];
                 for (int i = 0; i < dataM.Length; i++)
-                    dataM[i] = imgG.data[i] / imgR.data[i];
-                imgM = new ImageData(dataM, imgG.width, imgG.height);
+                    dataM[i] = ImgG.data[i] / ImgR.data[i];
+                ImgM = new ImageData(dataM, ImgG.width, ImgG.height);
             }
-        }
-
-        /// <summary>
-        /// Mark the linescan invalid and provide a reason
-        /// </summary>
-        private void Error(string message)
-        {
-            isValid = false;
-            logSB.AppendLine("CRITICAL ERROR: " + message);
-        }
-
-        /// <summary>
-        /// Record details about the linescan analysis procedure
-        /// </summary>
-        private void Log(string message)
-        {
-            logSB.AppendLine(message);
-            Debug.WriteLine(message);
         }
 
         /// <summary>
@@ -272,9 +217,9 @@ namespace ScanAGator
         /// </summary>
         public Bitmap GetRefImage(int number = 0)
         {
-            if (number >= pathsRef.Length)
+            if (number >= ReferenceImagePaths.Length)
                 return null;
-            ImageData imgRef = new ImageData(pathsRef[number]);
+            ImageData imgRef = new ImageData(ReferenceImagePaths[number]);
             return imgRef.GetBmpDisplay();
         }
 
@@ -287,10 +232,10 @@ namespace ScanAGator
             using (Graphics gfx = Graphics.FromImage(bmp))
             using (Pen pen = new Pen(new SolidBrush(Color.Yellow)))
             {
-                gfx.DrawLine(pen, new Point(0, baseline1), new Point(bmp.Width, baseline1));
-                gfx.DrawLine(pen, new Point(0, baseline2), new Point(bmp.Width, baseline2));
-                gfx.DrawLine(pen, new Point(structure1, 0), new Point(structure1, bmp.Height));
-                gfx.DrawLine(pen, new Point(structure2, 0), new Point(structure2, bmp.Height));
+                gfx.DrawLine(pen, new Point(0, BaselineIndex1), new Point(bmp.Width, BaselineIndex1));
+                gfx.DrawLine(pen, new Point(0, BaselineIndex2), new Point(bmp.Width, BaselineIndex2));
+                gfx.DrawLine(pen, new Point(StructureIndex1, 0), new Point(StructureIndex1, bmp.Height));
+                gfx.DrawLine(pen, new Point(StructureIndex2, 0), new Point(StructureIndex2, bmp.Height));
             }
             return bmp;
         }
@@ -302,8 +247,8 @@ namespace ScanAGator
         {
             if (curve == null)
                 return null;
-            double[] filteredValues = ImageDataTools.GaussianFilter1d(curve, filterPx);
-            int padPoints = filterPx * 2 + 1;
+            double[] filteredValues = ImageDataTools.GaussianFilter1d(curve, FilterSizePixels);
+            int padPoints = FilterSizePixels * 2 + 1;
             double[] filteredYs = new double[curve.Length - 2 * padPoints];
             Array.Copy(filteredValues, padPoints, filteredYs, 0, filteredYs.Length);
             return filteredYs;
@@ -314,10 +259,10 @@ namespace ScanAGator
         /// </summary>
         public double[] GetFilteredXs()
         {
-            if (curveG == null)
+            if (CurveG == null)
                 return null;
-            int padPoints = filterPx * 2 + 1;
-            double[] filteredXs = new double[curveG.Length - 2 * padPoints];
+            int padPoints = FilterSizePixels * 2 + 1;
+            double[] filteredXs = new double[CurveG.Length - 2 * padPoints];
             Array.Copy(timesMsec, padPoints, filteredXs, 0, filteredXs.Length);
             return filteredXs;
         }

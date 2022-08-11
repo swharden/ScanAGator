@@ -11,89 +11,89 @@ namespace ScanAGator
         public static string GetCSV(LineScanFolder ls)
         {
             // name, unit, comment, data...
-            int dataPoints = ls.imgG.height;
+            int dataPoints = ls.ImgG.height;
             string[] csvLines = new string[dataPoints + 3];
 
             // times (ms)
             csvLines[0] = "Time, ";
             csvLines[1] = "ms, ";
-            csvLines[2] = ls.folderName + ", ";
+            csvLines[2] = ls.FolderName + ", ";
             for (int i = 0; i < dataPoints; i++)
                 csvLines[i + 3] = Math.Round(ls.timesMsec[i], 3).ToString() + ", ";
 
             // raw PMT values (R)
-            if (ls.curveR != null)
+            if (ls.CurveR != null)
             {
                 csvLines[0] += "R, ";
                 csvLines[1] += "AFU, ";
                 csvLines[2] += ", ";
                 for (int i = 0; i < dataPoints; i++)
-                    csvLines[i + 3] += Math.Round(ls.curveR[i], 3).ToString() + ", ";
+                    csvLines[i + 3] += Math.Round(ls.CurveR[i], 3).ToString() + ", ";
             }
 
             // raw PMT values (G)
-            if (ls.curveG != null)
+            if (ls.CurveG != null)
             {
                 csvLines[0] += "G, ";
                 csvLines[1] += "AFU, ";
                 csvLines[2] += ", ";
                 for (int i = 0; i < dataPoints; i++)
-                    csvLines[i + 3] += Math.Round(ls.curveG[i], 3).ToString() + ", ";
+                    csvLines[i + 3] += Math.Round(ls.CurveG[i], 3).ToString() + ", ";
             }
 
             // delta raw PMT values (G)
-            if (ls.curveDeltaG != null)
+            if (ls.CurveDeltaG != null)
             {
                 csvLines[0] += "dG, ";
                 csvLines[1] += "AFU, ";
                 csvLines[2] += ", ";
                 for (int i = 0; i < dataPoints; i++)
-                    csvLines[i + 3] += Math.Round(ls.curveDeltaG[i], 3).ToString() + ", ";
+                    csvLines[i + 3] += Math.Round(ls.CurveDeltaG[i], 3).ToString() + ", ";
 
                 csvLines[0] += "f(dG), ";
                 csvLines[1] += "AFU, ";
                 csvLines[2] += "filtered, ";
-                double[] filteredChopped = ls.GetFilteredYs(ls.curveDeltaG);
+                double[] filteredChopped = ls.GetFilteredYs(ls.CurveDeltaG);
                 double[] filtered = new double[dataPoints];
                 for (int i = 0; i < dataPoints; i++)
                     filtered[i] = 0;
-                Array.Copy(filteredChopped, 0, filtered, ls.filterPx * 2, filteredChopped.Length);
+                Array.Copy(filteredChopped, 0, filtered, ls.FilterSizePixels * 2, filteredChopped.Length);
                 for (int i = 0; i < dataPoints; i++)
-                    if (i < ls.filterPx * 2 || i > (dataPoints - ls.filterPx * 2 * 2))
+                    if (i < ls.FilterSizePixels * 2 || i > (dataPoints - ls.FilterSizePixels * 2 * 2))
                         csvLines[i + 3] += ", ";
                     else
                         csvLines[i + 3] += Math.Round(filtered[i], 3).ToString() + ", ";
             }
 
             // Green over Red
-            if (ls.curveGoR != null)
+            if (ls.CurveGoR != null)
             {
                 csvLines[0] += "G/R, ";
                 csvLines[1] += "%, ";
                 csvLines[2] += ", ";
                 for (int i = 0; i < dataPoints; i++)
-                    csvLines[i + 3] += Math.Round(ls.curveGoR[i], 3).ToString() + ", ";
+                    csvLines[i + 3] += Math.Round(ls.CurveGoR[i], 3).ToString() + ", ";
             }
 
             // Delta Green over Red
-            if (ls.curveDeltaGoR != null)
+            if (ls.CurveDeltaGoR != null)
             {
                 csvLines[0] += "dG/R, ";
                 csvLines[1] += "%, ";
                 csvLines[2] += ", ";
                 for (int i = 0; i < dataPoints; i++)
-                    csvLines[i + 3] += Math.Round(ls.curveDeltaGoR[i], 3).ToString() + ", ";
+                    csvLines[i + 3] += Math.Round(ls.CurveDeltaGoR[i], 3).ToString() + ", ";
 
                 csvLines[0] += "f(dG/R), ";
                 csvLines[1] += "AFU, ";
                 csvLines[2] += "filtered, ";
-                double[] filteredChopped = ls.GetFilteredYs(ls.curveDeltaGoR);
+                double[] filteredChopped = ls.GetFilteredYs(ls.CurveDeltaGoR);
                 double[] filtered = new double[dataPoints];
                 for (int i = 0; i < dataPoints; i++)
                     filtered[i] = 0;
-                Array.Copy(filteredChopped, 0, filtered, ls.filterPx * 2, filteredChopped.Length);
+                Array.Copy(filteredChopped, 0, filtered, ls.FilterSizePixels * 2, filteredChopped.Length);
                 for (int i = 0; i < dataPoints; i++)
-                    if (i < ls.filterPx * 2 || i > (dataPoints - ls.filterPx * 2 * 2))
+                    if (i < ls.FilterSizePixels * 2 || i > (dataPoints - ls.FilterSizePixels * 2 * 2))
                         csvLines[i + 3] += ", ";
                     else
                         csvLines[i + 3] += Math.Round(filtered[i], 3).ToString() + ", ";
@@ -113,18 +113,18 @@ namespace ScanAGator
             using Utf8JsonWriter writer = new(stream, options);
 
             writer.WriteStartObject();
-            writer.WriteString("version", ls.version);
-            writer.WriteString("acquisitionDate", ls.acquisitionDate.ToString("s"));
+            writer.WriteString("version", ls.Version);
+            writer.WriteString("acquisitionDate", ls.AcquisitionDate.ToString("s"));
             writer.WriteString("analysisDate", DateTime.Now.ToString("s"));
-            writer.WriteString("folderPV", ls.pathFolder);
-            writer.WriteString("folderSAG", ls.pathSaveFolder);
-            writer.WriteNumber("scanLinePeriod", ls.scanLinePeriod);
-            writer.WriteNumber("micronsPerPixel", ls.micronsPerPx);
-            writer.WriteNumber("baselinePixel1", ls.baseline1);
-            writer.WriteNumber("baselinePixel2", ls.baseline2);
-            writer.WriteNumber("structurePixel1", ls.structure1);
-            writer.WriteNumber("structurePixel2", ls.structure2);
-            writer.WriteNumber("filterPixels", ls.filterPx);
+            writer.WriteString("folderPV", ls.FolderPath);
+            writer.WriteString("folderSAG", ls.SaveFolderPath);
+            writer.WriteNumber("scanLinePeriod", ls.ScanLinePeriodMsec);
+            writer.WriteNumber("micronsPerPixel", ls.MicronsPerPixel);
+            writer.WriteNumber("baselinePixel1", ls.BaselineIndex1);
+            writer.WriteNumber("baselinePixel2", ls.BaselineIndex2);
+            writer.WriteNumber("structurePixel1", ls.StructureIndex1);
+            writer.WriteNumber("structurePixel2", ls.StructureIndex2);
+            writer.WriteNumber("filterPixels", ls.FilterSizePixels);
 
             writer.WriteEndObject();
 
