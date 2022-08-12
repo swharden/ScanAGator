@@ -61,7 +61,12 @@ public class LineScanFolder2
             .ToArray();
     }
 
-    public RatiometricLinescan GetRatiometricLinescanAverage(LineScanSettings settings)
+    /// <summary>
+    /// This function creates average images across all frames, then measures G and R from those images to calculate dG/R.
+    /// This method is not recommended because movement results in a sub-ideal average image.
+    /// Instead, calculate independent dG/R curves, then average those.
+    /// </summary>
+    public RatiometricLinescan GetRatiometricLinescanFromAverageImage(LineScanSettings settings)
     {
         return new RatiometricLinescan(
                 green: ImageOperations.Average(GreenImages),

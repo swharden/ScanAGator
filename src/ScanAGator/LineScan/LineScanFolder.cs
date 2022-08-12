@@ -9,6 +9,11 @@ using System.Text.Json;
 
 namespace ScanAGator
 {
+    /* This class provides the original linescan analysis used by ScanAGator.
+     * It is included for backup purposes, but the newer version should be used wherever possible.
+     * This was designed to be manipulated by a GUI and requires lots of lifetime state management.
+     * Newer designs use a simpler functional workflow with immutabile state.
+     */
     public class LineScanFolder
     {
         public bool IsValid { get; private set; } = true;
@@ -265,12 +270,12 @@ namespace ScanAGator
             return filteredXs;
         }
 
-        public string GetCsvAllData() => DataExport.GetCSV(this);
+        public string GetCsvAllData() => DataExportOld.GetCSV(this);
 
         public void LoadSettingsINI() => ConfigFile.LoadINI(this);
 
         public void SaveSettingsINI() => ConfigFile.SaveINI(this);
 
-        public string GetMetadataJson() => DataExport.GetMetadataJson(this);
+        public string GetMetadataJson() => DataExportOld.GetMetadataJson(this);
     }
 }

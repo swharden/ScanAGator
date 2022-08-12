@@ -6,7 +6,7 @@ using System.Text.Json;
 
 namespace ScanAGator
 {
-    public static class DataExport
+    public static class DataExportOld
     {
         public static string GetCSV(LineScanFolder ls)
         {
