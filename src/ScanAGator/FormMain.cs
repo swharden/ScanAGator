@@ -48,15 +48,22 @@ namespace ScanAGator
 
         private void FormMain_Load(object sender, EventArgs e)
         {
-            string developerStartupFolder1 = @"X:\Data\OT-Cre\calcium-mannitol\2020-02-13 puff MT 2P\20218000\distal_MT_1sp_2";
-            string developerStartupFolder2 = @"X:\Data\OTR-Cre\GCaMP6f PFC injection patch and linescan\2019-02-20\slice1";
+            string[] initialFolders =
+            {
+                @"X:\Data\zProjects\Oxytocin Biosensor\experiments\2P bpAP NMDA\2022-08-09\2p",
+                @"X:\Data\OT-Cre\calcium-mannitol\2020-02-13 puff MT 2P\20218000\distal_MT_1sp_2",
+                @"X:\Data\OTR-Cre\GCaMP6f PFC injection patch and linescan\2019-02-20\slice1",
+                "./"
+            };
 
-            if (System.IO.Directory.Exists(developerStartupFolder1))
-                SetFolder(developerStartupFolder1);
-            else if (System.IO.Directory.Exists(developerStartupFolder2))
-                SetFolder(developerStartupFolder2);
-            else
-                SetFolder("./");
+            foreach (string folderPath in initialFolders)
+            {
+                if (System.IO.Directory.Exists(folderPath))
+                {
+                    SetFolder(folderPath);
+                    return;
+                }
+            }
         }
 
         private void SetFolder(string path, bool updateTree = true)
