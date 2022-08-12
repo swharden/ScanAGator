@@ -10,7 +10,7 @@ namespace ScanAGator.Tests
     internal class ReportingTests
     {
         [Test]
-        public void Test()
+        public void Test_Report_MultiFrameLinescan()
         {
             LineScan.LineScanFolder2 lsFolder = new(SampleData.MultipleGreenOverRedFolder);
 
@@ -18,6 +18,7 @@ namespace ScanAGator.Tests
             PixelRange structure = StructureDetection.GetBrightestStructure(lsFolder.GreenImages[0]);
             LineScanSettings settings = new(baseline, structure, filterSizePx: 20);
 
+            Console.WriteLine(lsFolder.FolderPath);
             Reporting.AnalyzeLinescanFolder(lsFolder, settings);
         }
     }
