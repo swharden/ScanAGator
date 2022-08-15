@@ -156,6 +156,35 @@ namespace ScanAGator
             return bmpM;
         }
 
+        public static ImageData Average(IEnumerable<ImageData> images)
+        {
+            int length = images.First().data.Length;
+            int width = images.First().width;
+            int height = images.First().height;
+            foreach (ImageData img in images)
+            {
+                if ((img.data.Length != length) || (img.width != width) || (img.height != height))
+                    throw new InvalidOperationException("all images must be same size");
+            }
+
+            double[] output = new double[length];
+
+            foreach (ImageData img in images)
+            {
+                for (int i = 0; i < output.Length; i++)
+                {
+                    output[i] += img.data[i];
+                }
+            }
+
+            for (int i = 0; i < output.Length; i++)
+            {
+                output[i] /= images.Count();
+            }
+
+            return new ImageData(output, width, height);
+        }
+
         /// <summary>
         /// Given a 2D image return the mean pixel value of each row (between left and right columns) from top to bottom
         /// </summary>

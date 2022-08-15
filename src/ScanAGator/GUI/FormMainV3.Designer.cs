@@ -1,6 +1,6 @@
-﻿namespace ScanAGator
+﻿namespace ScanAGator.GUI
 {
-    partial class FormMain
+    partial class FormMainV3
     {
         /// <summary>
         /// Required designer variable.

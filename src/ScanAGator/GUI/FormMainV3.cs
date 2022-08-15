@@ -8,9 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ScanAGator
+namespace ScanAGator.GUI
 {
-    public partial class FormMain : Form
+    public partial class FormMainV3 : Form
     {
         /// <summary>
         /// The currently selected folder contents and analyzed data
@@ -32,7 +32,7 @@ namespace ScanAGator
         /// </summary>
         public bool IsUpdating { get; set; } = false;
 
-        public FormMain()
+        public FormMainV3()
         {
             InitializeComponent();
             InitializeProgramIcon();
