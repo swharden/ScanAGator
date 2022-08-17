@@ -24,7 +24,7 @@ namespace ScanAGator
         /// <returns></returns>
         public static double[] GaussianFilter1d(double[] data, int degree = 5, bool forward = true)
         {
-            if (degree < 2 || data == null)
+            if (degree < 2)
                 return data;
 
             int windowSize = degree * 2 - 1;
@@ -235,9 +235,6 @@ namespace ScanAGator
         /// </summary>
         public static double[] GetAverageTopdown(ImageData img, PixelRange structure)
         {
-            if (img == null)
-                return null;
-
             structure = structure.Clamp(0, img.Width);
 
             // Return an array with length the same as the image height.
@@ -261,9 +258,6 @@ namespace ScanAGator
         /// </summary>
         public static double[] GetAverageLeftright(ImageData img)
         {
-            if (img == null)
-                return null;
-
             // Return an array with length the same as image width.
             double[] avgByCol = new double[img.Width];
 

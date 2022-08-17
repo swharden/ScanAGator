@@ -13,7 +13,7 @@ namespace ScanAGator.GUI
 {
     public partial class FolderSelectControl : UserControl
     {
-        public Action<string> LinescanFolderSelected;
+        public Action<string?>? LinescanFolderSelected;
 
         public FolderSelectControl()
         {
@@ -37,11 +37,11 @@ namespace ScanAGator.GUI
             string clickedItemPath = clickedItem.ImageKey;
             if (IsLinescanFolder(clickedItemPath))
             {
-                LinescanFolderSelected.Invoke(clickedItemPath);
+                LinescanFolderSelected?.Invoke(clickedItemPath);
             }
             else
             {
-                LinescanFolderSelected.Invoke(null);
+                LinescanFolderSelected?.Invoke(null);
             }
         }
 

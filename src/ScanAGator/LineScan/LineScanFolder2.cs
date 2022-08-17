@@ -20,10 +20,6 @@ public class LineScanFolder2
 
     public readonly ImageData[] RedImages;
 
-    public readonly ImageData AverageGreenImage;
-
-    public readonly ImageData AveageRedImage;
-
     public int FrameCount => GreenImages.Count();
     public int LineScanImageWidth => GreenImages[0].Width;
     public int LineScanImageHeight => GreenImages[0].Height;

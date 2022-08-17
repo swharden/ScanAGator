@@ -7,6 +7,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 
+#pragma warning disable CS8618 // Non-nullable field must contain a non-null value when exiting constructor
+
 namespace ScanAGator
 {
     /* This class provides the original linescan analysis used by ScanAGator.
@@ -25,10 +27,10 @@ namespace ScanAGator
         private readonly Prairie.ParirieXmlFile XmlFile;
 
         // Bitmaps for displaying
-        public Bitmap BmpReference;
-        public Bitmap BmpDataG;
-        public Bitmap BmpDataR;
-        public Bitmap BmpDataMerge;
+        public Bitmap? BmpReference;
+        public Bitmap? BmpDataG;
+        public Bitmap? BmpDataR;
+        public Bitmap? BmpDataMerge;
 
         // Bitmap data for analysis
         public ImageData ImgG;
@@ -88,7 +90,7 @@ namespace ScanAGator
                 IsValid = false;
             }
 
-            if (IsValid)
+            if (IsValid && ImgG is not null)
             {
                 BmpReference = GetRefImage();
                 SetFrame(0);
@@ -218,7 +220,7 @@ namespace ScanAGator
         /// <summary>
         /// Return a copy of the reference image
         /// </summary>
-        public Bitmap GetRefImage(int number = 0)
+        public Bitmap? GetRefImage(int number = 0)
         {
             if (number >= ReferenceImagePaths.Length)
                 return null;
@@ -248,8 +250,6 @@ namespace ScanAGator
         /// </summary>
         public double[] GetFilteredYs(double[] curve)
         {
-            if (curve == null)
-                return null;
             double[] filteredValues = ImageDataTools.GaussianFilter1d(curve, FilterSizePixels);
             int padPoints = FilterSizePixels * 2 + 1;
             double[] filteredYs = new double[curve.Length - 2 * padPoints];
@@ -262,8 +262,6 @@ namespace ScanAGator
         /// </summary>
         public double[] GetFilteredXs()
         {
-            if (CurveG == null)
-                return null;
             int padPoints = FilterSizePixels * 2 + 1;
             double[] filteredXs = new double[CurveG.Length - 2 * padPoints];
             Array.Copy(timesMsec, padPoints, filteredXs, 0, filteredXs.Length);
