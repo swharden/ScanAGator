@@ -44,6 +44,8 @@ namespace ScanAGator.GUI
             tbFrame.Value = 0;
             tbFrame.Maximum = Images.FrameCount - 1;
             OnLinescanImageChanged();
+            AutoBaseline();
+            AutoStructure();
         }
 
         private void EnableDoubleBuffering(Panel target)
@@ -57,23 +59,30 @@ namespace ScanAGator.GUI
         private void TbFrame_ValueChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void TrackBar_ValueChanged(object sender, EventArgs e) => OnTrackbarChanged();
 
-        private void btnAutoBaseline_Click(object sender, EventArgs e) => OnResetBaseline();
+        private void btnAutoBaseline_Click(object sender, EventArgs e) => AutoBaseline();
 
-        private void btnAutoStructure_Click(object sender, EventArgs e) => OnResetStructure();
+        private void btnAutoStructure_Click(object sender, EventArgs e) => AutoStructure();
 
-        private void OnResetBaseline()
+        private void AutoBaseline(double b1Frac = .02, double b2Frac = .08)
         {
-            // TODO: better logic
-            tbBaseline1.Value = tbBaseline1.Maximum - 0;
-            tbBaseline2.Value = tbBaseline2.Maximum - 50;
+            Imaging.RatiometricImage? img = GetRatiometricImage();
+            if (img is null)
+                return;
+
+            tbBaseline1.Value = tbBaseline1.Maximum - (int)(img.Green.Height * b1Frac);
+            tbBaseline2.Value = tbBaseline2.Maximum - (int)(img.Green.Height * b2Frac);
             OnTrackbarChanged();
         }
 
-        private void OnResetStructure()
+        private void AutoStructure()
         {
-            // TODO: better logic
-            tbStructure1.Value = 20;
-            tbStructure2.Value = 26;
+            Imaging.RatiometricImage? img = GetRatiometricImage();
+            if (img is null)
+                return;
+
+            StructureRange structure = StructureDetection.GetBrightestStructure(img.GreenData);
+            tbStructure1.Value = structure.Min;
+            tbStructure2.Value = structure.Max;
             OnTrackbarChanged();
         }
 
@@ -204,7 +213,7 @@ namespace ScanAGator.GUI
                 filterPx: (int)nudFilterPx.Value,
                 xml: PVXml);
 
-            Recalculate?.Invoke(settings);
+            //Recalculate?.Invoke(settings);
         }
 
         private void Panel1_Paint(object sender, PaintEventArgs e)
