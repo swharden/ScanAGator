@@ -15,10 +15,11 @@ namespace ScanAGator.GUI
 {
     public partial class ScanSettings : UserControl
     {
-        public Action<AnalysisInput> Recalculate;
-        private Imaging.RatiometricImages Images;
-        private Bitmap DisplayBitmap;
-        private Prairie.ParirieXmlFile PVXml;
+        public Action<AnalysisInput>? Recalculate;
+
+        private Imaging.RatiometricImages? Images;
+        private Bitmap? DisplayBitmap;
+        private Prairie.ParirieXmlFile? PVXml;
 
         public ScanSettings()
         {
@@ -37,7 +38,9 @@ namespace ScanAGator.GUI
 
         public void SetFolder()
         {
-            this.Visible = false;
+            Visible = false;
+            PVXml = null;
+            Images = null;
         }
 
         public void SetFolder(Prairie.ParirieXmlFile xml, Imaging.RatiometricImages images)
@@ -51,7 +54,7 @@ namespace ScanAGator.GUI
             tbFrame.Maximum = Images.FrameCount - 1;
             OnLinescanImageChanged();
 
-            this.Visible = true;
+            Visible = true;
         }
 
         private void EnableDoubleBuffering(Panel target)
@@ -85,14 +88,20 @@ namespace ScanAGator.GUI
             OnTrackbarChanged();
         }
 
-        private Imaging.RatiometricImage GetRatiometricImage()
+        private Imaging.RatiometricImage? GetRatiometricImage()
         {
+            if (Images is null)
+                return null;
+
             return cbAverage.Checked ? Images.Average : Images.Frames[tbFrame.Value];
         }
 
         private void OnLinescanImageChanged()
         {
-            Imaging.RatiometricImage img = GetRatiometricImage();
+            Imaging.RatiometricImage? img = GetRatiometricImage();
+
+            if (img is null)
+                return;
 
             DisplayBitmap = cbDisplay.Text switch
             {
@@ -194,8 +203,13 @@ namespace ScanAGator.GUI
         /// </summary>
         private void Recalculte()
         {
+            Imaging.RatiometricImage? ratioImage = GetRatiometricImage();
+
+            if (ratioImage is null || PVXml is null)
+                return;
+
             AnalysisInput analysis = new(
-                image: GetRatiometricImage(),
+                image: ratioImage,
                 baseline: new PixelRange(tbBaseline1.Value, tbBaseline2.Value),
                 structure: new PixelRange(tbBaseline1.Value, tbBaseline2.Value),
                 filterPx: (int)nudFilterPx.Value,
@@ -206,6 +220,9 @@ namespace ScanAGator.GUI
 
         private void Panel1_Paint(object sender, PaintEventArgs e)
         {
+            if (DisplayBitmap is null)
+                return;
+
             Graphics gfx = e.Graphics;
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 

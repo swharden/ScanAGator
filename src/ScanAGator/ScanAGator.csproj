@@ -8,6 +8,7 @@
         <ApplicationIcon>icon64.ico</ApplicationIcon>
         <LangVersion>latest</LangVersion>
         <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+        <nullable>enable</nullable>
     </PropertyGroup>
     <ItemGroup>
         <Compile Update="TreeViewDirUC.cs">
