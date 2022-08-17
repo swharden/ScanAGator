@@ -16,22 +16,30 @@ namespace ScanAGator.GUI
         {
             InitializeComponent();
             folderSelector1.LinescanFolderSelected = OnLinescanFolderSelected;
+            analysisSettingsControl.Recalculate += OnNewCalculation;
+            OnLinescanFolderSelected(null);
         }
 
-        public void OnLinescanFolderSelected(string folderPath)
+        public void OnLinescanFolderSelected(string? folderPath)
         {
-            if (folderPath is null)
-            {
-                imageRangeSelector1.SetFolder();
-            }
-            else
+            if (folderPath is not null)
             {
                 Prairie.FolderContents pvFolder = new(folderPath);
                 Prairie.ParirieXmlFile xml = new(pvFolder.XmlFilePath);
                 Imaging.RatiometricImages images = new(pvFolder);
-
-                imageRangeSelector1.SetFolder(xml, images);
+                analysisSettingsControl.SetLinescan(xml, images);
             }
+
+            analysisSettingsControl.Visible = folderPath is not null;
+            analysisResultsControl.Visible = folderPath is not null;
+        }
+
+        public void OnNewCalculation(Analysis.AnalysisSettings settings)
+        {
+            Analysis.AnalysisResult results = new(settings);
+            //analysisResultsControl.Visible = results.IsValid;
+            //if (results.IsValid)
+                analysisResultsControl.ShowResult(results);
         }
     }
 }

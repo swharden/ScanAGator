@@ -13,20 +13,18 @@ using ScanAGator.Analysis;
 
 namespace ScanAGator.GUI
 {
-    public partial class ScanSettings : UserControl
+    public partial class AnalysisSettingsControl : UserControl
     {
-        public Action<AnalysisInput>? Recalculate;
+        public Action<Analysis.AnalysisSettings>? Recalculate;
 
         private Imaging.RatiometricImages? Images;
         private Bitmap? DisplayBitmap;
         private Prairie.ParirieXmlFile? PVXml;
 
-        public ScanSettings()
+        public AnalysisSettingsControl()
         {
             InitializeComponent();
             cbDisplay.SelectedIndex = 0;
-
-            SetFolder(); // start with nothing loaded
 
             tbFrame.ValueChanged += TbFrame_ValueChanged;
             cbAverage.CheckedChanged += CbAverage_CheckedChanged;
@@ -36,14 +34,7 @@ namespace ScanAGator.GUI
             panel1.Paint += Panel1_Paint;
         }
 
-        public void SetFolder()
-        {
-            Visible = false;
-            PVXml = null;
-            Images = null;
-        }
-
-        public void SetFolder(Prairie.ParirieXmlFile xml, Imaging.RatiometricImages images)
+        public void SetLinescan(Prairie.ParirieXmlFile xml, Imaging.RatiometricImages images)
         {
             SetMaxValues(9999, 9999);
 
@@ -53,8 +44,6 @@ namespace ScanAGator.GUI
             tbFrame.Value = 0;
             tbFrame.Maximum = Images.FrameCount - 1;
             OnLinescanImageChanged();
-
-            Visible = true;
         }
 
         private void EnableDoubleBuffering(Panel target)
@@ -75,7 +64,7 @@ namespace ScanAGator.GUI
         private void OnResetBaseline()
         {
             // TODO: better logic
-            tbBaseline1.Value = tbBaseline2.Maximum - 0;
+            tbBaseline1.Value = tbBaseline1.Maximum - 0;
             tbBaseline2.Value = tbBaseline2.Maximum - 50;
             OnTrackbarChanged();
         }
@@ -182,19 +171,19 @@ namespace ScanAGator.GUI
 
         private void OnTrackbarChanged()
         {
-            nudBaseline1.Value = tbBaseline1.Value;
-            nudBaseline2.Value = tbBaseline2.Value;
-            nudStructure1.Value = tbStructure1.Value;
-            nudStructure2.Value = tbStructure2.Value;
+            nudBaseline1.Value = tbBaseline1.Maximum - tbBaseline1.Value;
+            nudBaseline2.Value = tbBaseline2.Maximum - tbBaseline2.Value;
+            nudStructure1.Value = tbStructure1.Maximum - tbStructure1.Value;
+            nudStructure2.Value = tbStructure2.Maximum - tbStructure2.Value;
             Recalculte();
         }
 
         private void OnNudChanged()
         {
-            tbBaseline1.Value = (int)nudBaseline1.Value;
-            tbBaseline2.Value = (int)nudBaseline2.Value;
-            tbStructure1.Value = (int)nudStructure1.Value;
-            tbStructure2.Value = (int)nudStructure2.Value;
+            tbBaseline1.Value = tbBaseline1.Maximum - (int)nudBaseline1.Value;
+            tbBaseline2.Value = tbBaseline2.Maximum - (int)nudBaseline2.Value;
+            tbStructure1.Value = tbStructure1.Maximum - (int)nudStructure1.Value;
+            tbStructure2.Value = tbStructure2.Maximum - (int)nudStructure2.Value;
             Recalculte();
         }
 
@@ -208,14 +197,14 @@ namespace ScanAGator.GUI
             if (ratioImage is null || PVXml is null)
                 return;
 
-            AnalysisInput analysis = new(
+            Analysis.AnalysisSettings settings = new(
                 image: ratioImage,
-                baseline: new PixelRange(tbBaseline1.Value, tbBaseline2.Value),
-                structure: new PixelRange(tbBaseline1.Value, tbBaseline2.Value),
+                baseline: new PixelRange((int)nudBaseline1.Value, (int)nudBaseline2.Value),
+                structure: new PixelRange((int)nudStructure1.Value, (int)nudStructure2.Value),
                 filterPx: (int)nudFilterPx.Value,
                 xml: PVXml);
 
-            Recalculate?.Invoke(analysis);
+            Recalculate?.Invoke(settings);
         }
 
         private void Panel1_Paint(object sender, PaintEventArgs e)

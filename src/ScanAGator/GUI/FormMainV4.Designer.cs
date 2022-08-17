@@ -28,19 +28,20 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.imageRangeSelector1 = new ScanAGator.GUI.ScanSettings();
-            this.folderSelector1 = new ScanAGator.GUI.FolderSelector();
+            this.analysisSettingsControl = new ScanAGator.GUI.AnalysisSettingsControl();
+            this.folderSelector1 = new ScanAGator.GUI.FolderSelectControl();
+            this.analysisResultsControl = new ScanAGator.GUI.AnalysisResultsControl();
             this.SuspendLayout();
             // 
-            // imageRangeSelector1
+            // analysisSettingsControl
             // 
-            this.imageRangeSelector1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.analysisSettingsControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
-            this.imageRangeSelector1.Location = new System.Drawing.Point(562, 20);
-            this.imageRangeSelector1.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
-            this.imageRangeSelector1.Name = "imageRangeSelector1";
-            this.imageRangeSelector1.Size = new System.Drawing.Size(584, 891);
-            this.imageRangeSelector1.TabIndex = 0;
+            this.analysisSettingsControl.Location = new System.Drawing.Point(562, 20);
+            this.analysisSettingsControl.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
+            this.analysisSettingsControl.Name = "analysisSettingsControl";
+            this.analysisSettingsControl.Size = new System.Drawing.Size(584, 891);
+            this.analysisSettingsControl.TabIndex = 0;
             // 
             // folderSelector1
             // 
@@ -52,15 +53,26 @@
             this.folderSelector1.Size = new System.Drawing.Size(539, 903);
             this.folderSelector1.TabIndex = 1;
             // 
-            // FormMain2
+            // analysisResultsControl
+            // 
+            this.analysisResultsControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.analysisResultsControl.Location = new System.Drawing.Point(1155, 12);
+            this.analysisResultsControl.Name = "analysisResultsControl";
+            this.analysisResultsControl.Size = new System.Drawing.Size(660, 907);
+            this.analysisResultsControl.TabIndex = 2;
+            // 
+            // FormMainV4
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1827, 931);
+            this.Controls.Add(this.analysisResultsControl);
             this.Controls.Add(this.folderSelector1);
-            this.Controls.Add(this.imageRangeSelector1);
+            this.Controls.Add(this.analysisSettingsControl);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.Name = "FormMain2";
+            this.Name = "FormMainV4";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Scan-A-Gator v4";
             this.ResumeLayout(false);
@@ -69,7 +81,8 @@
 
         #endregion
 
-        private ScanSettings imageRangeSelector1;
-        private FolderSelector folderSelector1;
+        private AnalysisSettingsControl analysisSettingsControl;
+        private FolderSelectControl folderSelector1;
+        private AnalysisResultsControl analysisResultsControl;
     }
 }

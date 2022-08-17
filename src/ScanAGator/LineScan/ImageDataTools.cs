@@ -190,35 +190,23 @@ namespace ScanAGator
         /// </summary>
         public static double[] GetAverageTopdown(ImageData img, PixelRange structure)
         {
-            return GetAverageTopdown(img, structure.FirstPixel, structure.LastPixel);
-        }
-
-        /// <summary>
-        /// Given a 2D image return the mean pixel value of each row (between left and right columns) from top to bottom
-        /// </summary>
-        public static double[] GetAverageTopdown(ImageData img, int leftPx = -1, int rightPx = -1)
-        {
             if (img == null)
                 return null;
 
+            structure = structure.Clamp(0, img.width);
+
             // Return an array with length the same as the image height.
             double[] avgByRow = new double[img.height];
-
-            // if pixels aren't given, default to full size
-            if (leftPx < 0)
-                leftPx = 0;
-            if (rightPx < 0)
-                rightPx = img.width;
 
             // perform the averages
             for (int row = 0; row < img.height; row++)
             {
                 double rowSum = 0;
-                for (int col = leftPx; col < rightPx; col++)
+                for (int col = structure.Min; col < structure.Max; col++)
                 {
                     rowSum += img.data[row * img.width + col];
                 }
-                avgByRow[row] = rowSum / (rightPx - leftPx);
+                avgByRow[row] = rowSum / (structure.SpanPixels + 1);
             }
             return avgByRow;
         }

@@ -10,10 +10,12 @@ public static class Operations
     /// </summary>
     public static double[] SubtractBaseline(double[] values, PixelRange baseline)
     {
+        baseline = baseline.Clamp(0, values.Length - 1);
+
         double baselineSum = 0;
-        for (int i = baseline.FirstPixel; i < baseline.LastPixel; i++)
+        for (int i = baseline.Min; i < baseline.Max; i++)
             baselineSum += values[i];
-        double baselineMean = baselineSum / baseline.SpanPixels;
+        double baselineMean = baselineSum / (baseline.SpanPixels + 1);
 
         double[] output = new double[values.Length];
         for (int i = 0; i < output.Length; i++)

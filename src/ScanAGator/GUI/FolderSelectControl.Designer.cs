@@ -1,6 +1,6 @@
 ﻿namespace ScanAGator.GUI
 {
-    partial class FolderSelector
+    partial class FolderSelectControl
     {
         /// <summary> 
         /// Required designer variable.

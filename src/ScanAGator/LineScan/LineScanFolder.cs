@@ -110,14 +110,14 @@ namespace ScanAGator
         {
             // determine mean pixel intensity over time between the structure markers
             (int s1, int s2) = Operations.GetValidStructure(StructureIndex1, StructureIndex2);
-            PixelRange structure = new(s1, s2, MicronsPerPixel);
+            PixelRange structure = new(s1, s2);
 
             CurveG = ImageDataTools.GetAverageTopdown(ImgG, structure);
             CurveR = ImageDataTools.GetAverageTopdown(ImgR, structure);
 
             // create a dG channel by baseline subtracting just the green channel
             (int b1, int b2) = Operations.GetValidBaseline(BaselineIndex1, BaselineIndex2);
-            PixelRange baseline = new(b1, b2, ScanLinePeriodMsec);
+            PixelRange baseline = new(b1, b2);
             CurveDeltaG = Operations.SubtractBaseline(CurveG, baseline);
 
             // create a d(G/R) curve by finding the G/R ratio then baseline subtracting that

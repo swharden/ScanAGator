@@ -11,11 +11,11 @@ using System.Windows.Forms;
 
 namespace ScanAGator.GUI
 {
-    public partial class FolderSelector : UserControl
+    public partial class FolderSelectControl : UserControl
     {
         public Action<string> LinescanFolderSelected;
 
-        public FolderSelector()
+        public FolderSelectControl()
         {
             InitializeComponent();
 

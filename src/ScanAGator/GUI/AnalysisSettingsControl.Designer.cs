@@ -1,6 +1,6 @@
 ﻿namespace ScanAGator.GUI
 {
-    partial class ScanSettings
+    partial class AnalysisSettingsControl
     {
         /// <summary> 
         /// Required designer variable.
