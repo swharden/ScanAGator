@@ -29,6 +29,7 @@ namespace ScanAGator.GUI
             tbFrame.ValueChanged += TbFrame_ValueChanged;
             cbAverage.CheckedChanged += CbAverage_CheckedChanged;
             cbDisplay.SelectedIndexChanged += CbDisplay_SelectedIndexChanged;
+            nudFilterPx.ValueChanged += NudFilterPx_ValueChanged;
 
             EnableDoubleBuffering(panel1);
             panel1.Paint += Panel1_Paint;
@@ -59,7 +60,7 @@ namespace ScanAGator.GUI
         private void CbAverage_CheckedChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void TbFrame_ValueChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void TrackBar_ValueChanged(object sender, EventArgs e) => OnTrackbarChanged();
-
+        private void NudFilterPx_ValueChanged(object sender, EventArgs e) => RecalculateNow();
         private void btnAutoBaseline_Click(object sender, EventArgs e) => AutoBaseline();
 
         private void btnAutoStructure_Click(object sender, EventArgs e) => AutoStructure();
@@ -123,7 +124,7 @@ namespace ScanAGator.GUI
                 tbFrame.Visible = true;
             }
 
-            Recalculte();
+            RecalculateNow();
         }
 
         private void Nud_ValueChanged(object sender, EventArgs e)
@@ -134,8 +135,8 @@ namespace ScanAGator.GUI
 
         private void SetMaxValues()
         {
-            int maxBaseline = DisplayBitmap is null ? 999999 : DisplayBitmap.Height;
-            int maxStructure = DisplayBitmap is null ? 999999 : DisplayBitmap.Width;
+            int maxBaseline = DisplayBitmap is null ? 999999 : DisplayBitmap.Height - 1;
+            int maxStructure = DisplayBitmap is null ? 999999 : DisplayBitmap.Width - 1;
 
             // un-wire event handlers
             tbBaseline1.ValueChanged -= TrackBar_ValueChanged;
@@ -188,7 +189,7 @@ namespace ScanAGator.GUI
             nudBaseline2.Value = tbBaseline2.Maximum - tbBaseline2.Value;
             nudStructure1.Value = tbStructure1.Value;
             nudStructure2.Value = tbStructure2.Value;
-            Recalculte();
+            RecalculateNow();
         }
 
         private void OnNudChanged()
@@ -197,13 +198,13 @@ namespace ScanAGator.GUI
             tbBaseline2.Value = tbBaseline2.Maximum - (int)nudBaseline2.Value;
             tbStructure1.Value = (int)nudStructure1.Value;
             tbStructure2.Value = (int)nudStructure2.Value;
-            Recalculte();
+            RecalculateNow();
         }
 
         /// <summary>
         /// Call this to force a redraw of the linescan image and regeneration of all plots
         /// </summary>
-        private void Recalculte()
+        private void RecalculateNow()
         {
             Imaging.RatiometricImage? ratioImage = GetRatiometricImage();
 
@@ -212,8 +213,11 @@ namespace ScanAGator.GUI
 
             BaselineRange baseline = new((int)nudBaseline1.Value, (int)nudBaseline2.Value);
             StructureRange structure = new((int)nudStructure1.Value, (int)nudStructure2.Value);
+            int filterPx = (int)nudFilterPx.Value;
+            double filterMs = filterPx * PVXml.MsecPerPixel;
+            lblFilterTime.Text = $"{filterMs:N2} ms";
 
-            AnalysisSettings settings = new(ratioImage, baseline, structure, (int)nudFilterPx.Value, PVXml);
+            AnalysisSettings settings = new(ratioImage, baseline, structure, filterPx, PVXml);
 
             ScottPlot.Plot plt = new(pbGraph.Width, pbGraph.Height);
             plt.Frameless();
@@ -235,10 +239,13 @@ namespace ScanAGator.GUI
             Graphics gfx = e.Graphics;
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
-            int b1 = (DisplayBitmap.Height - tbBaseline1.Value) * panel1.Height / DisplayBitmap.Height;
-            int b2 = (DisplayBitmap.Height - tbBaseline2.Value) * panel1.Height / DisplayBitmap.Height;
-            int s1 = tbStructure1.Value * panel1.Width / DisplayBitmap.Width;
-            int s2 = tbStructure2.Value * panel1.Width / DisplayBitmap.Width;
+            BaselineRange baseline = new(DisplayBitmap.Height - tbBaseline1.Value, DisplayBitmap.Height - tbBaseline2.Value);
+            int b1 = baseline.Min * panel1.Height / DisplayBitmap.Height;
+            int b2 = (baseline.Max + 1) * panel1.Height / DisplayBitmap.Height;
+
+            StructureRange structure = new(tbStructure1.Value, tbStructure2.Value);
+            int s1 = structure.Min * panel1.Width / DisplayBitmap.Width;
+            int s2 = (structure.Max + 1) * panel1.Width / DisplayBitmap.Width;
 
             gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 

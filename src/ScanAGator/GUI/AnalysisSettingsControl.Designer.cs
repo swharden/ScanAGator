@@ -49,7 +49,7 @@
             this.lblFrame = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.nudFilterPx = new System.Windows.Forms.NumericUpDown();
-            this.label6 = new System.Windows.Forms.Label();
+            this.lblFilterTime = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline2)).BeginInit();
@@ -323,26 +323,26 @@
             this.nudFilterPx.Size = new System.Drawing.Size(75, 26);
             this.nudFilterPx.TabIndex = 38;
             this.nudFilterPx.Value = new decimal(new int[] {
-            42,
+            12,
             0,
             0,
             0});
             // 
-            // label6
+            // lblFilterTime
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(414, 850);
-            this.label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(83, 20);
-            this.label6.TabIndex = 39;
-            this.label6.Text = "123.45 ms";
+            this.lblFilterTime.AutoSize = true;
+            this.lblFilterTime.Location = new System.Drawing.Point(414, 850);
+            this.lblFilterTime.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblFilterTime.Name = "lblFilterTime";
+            this.lblFilterTime.Size = new System.Drawing.Size(83, 20);
+            this.lblFilterTime.TabIndex = 39;
+            this.lblFilterTime.Text = "123.45 ms";
             // 
-            // ScanSettings
+            // AnalysisSettingsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.label6);
+            this.Controls.Add(this.lblFilterTime);
             this.Controls.Add(this.nudFilterPx);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.lblFrame);
@@ -365,7 +365,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.Name = "ScanSettings";
+            this.Name = "AnalysisSettingsControl";
             this.Size = new System.Drawing.Size(574, 890);
             ((System.ComponentModel.ISupportInitialize)(this.pbGraph)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).EndInit();
@@ -405,6 +405,6 @@
         private System.Windows.Forms.Label lblFrame;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown nudFilterPx;
-        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label lblFilterTime;
     }
 }
