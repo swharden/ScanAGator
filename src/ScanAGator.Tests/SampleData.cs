@@ -5,18 +5,21 @@ namespace ScanAGator.Tests
 {
     class SampleData
     {
-        public static string Folder
+        public static string FolderPath
         {
             get
             {
-                string folderPath = Path.Combine(
+                string folderPath = System.IO.Path.Combine(
                     TestContext.CurrentContext.TestDirectory,
                     "../../../../../data/linescans/");
 
-                return Path.GetFullPath(folderPath);
+                return System.IO.Path.GetFullPath(folderPath);
             }
         }
-            
-        public static string MultiFrameRatiometric => Path.Combine(Folder, "LineScan-08092022-1225-528");
+
+        public static string MultiFrameRatiometricFolderPath => Path.Combine(FolderPath, "LineScan-08092022-1225-528");
+
+        public static string GreenLinescanImagePath => Path.Combine(FolderPath, "LineScan-08092022-1225-528/LineScan-08092022-1225-528_Cycle00001_Ch2_000001.ome.tif");
+        public static string RedLinescanImagePath => Path.Combine(FolderPath, "LineScan-08092022-1225-528/LineScan-08092022-1225-528_Cycle00001_Ch1_000001.ome.tif");
     }
 }
