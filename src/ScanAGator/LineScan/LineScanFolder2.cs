@@ -25,8 +25,8 @@ public class LineScanFolder2
     public readonly ImageData AveageRedImage;
 
     public int FrameCount => GreenImages.Count();
-    public int LineScanImageWidth => GreenImages[0].width;
-    public int LineScanImageHeight => GreenImages[0].height;
+    public int LineScanImageWidth => GreenImages[0].Width;
+    public int LineScanImageHeight => GreenImages[0].Height;
 
     public LineScanFolder2(string folderPath)
     {
@@ -37,8 +37,8 @@ public class LineScanFolder2
         FolderContents = new Prairie.FolderContents(FolderPath);
         XmlFile = new Prairie.ParirieXmlFile(FolderContents.XmlFilePath);
 
-        GreenImages = FolderContents.ImageFilesG.Select(x => new ImageData(x)).ToArray();
-        RedImages = FolderContents.ImageFilesR.Select(x => new ImageData(x)).ToArray();
+        GreenImages = FolderContents.ImageFilesG.Select(x => ImageDataTools.ReadTif(x)).ToArray();
+        RedImages = FolderContents.ImageFilesR.Select(x => ImageDataTools.ReadTif(x)).ToArray();
 
         bool IsRatiometric = GreenImages.Length == RedImages.Length;
         if (!IsRatiometric)

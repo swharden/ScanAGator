@@ -16,18 +16,18 @@ public class RatiometricImage
         GreenData = green;
         RedData = red;
 
-        Green = GreenData.GetBitmapIndexed();
-        Red = RedData.GetBitmapIndexed();
+        Green = ImageDataTools.GetBitmapIndexed(GreenData);
+        Red = ImageDataTools.GetBitmapIndexed(RedData);
         Merge = ImageDataTools.Merge(RedData, GreenData, RedData);
     }
 
     public RatiometricImage(string greenFilePath, string redFilePath)
     {
-        GreenData = new(greenFilePath);
-        RedData = new(redFilePath);
+        GreenData = ImageDataTools.ReadTif(greenFilePath);
+        RedData = ImageDataTools.ReadTif(redFilePath);
 
-        Green = GreenData.GetBitmapIndexed();
-        Red = RedData.GetBitmapIndexed();
+        Green = ImageDataTools.GetBitmapIndexed(GreenData);
+        Red = ImageDataTools.GetBitmapIndexed(RedData);
         Merge = ImageDataTools.Merge(RedData, GreenData, RedData);
     }
 }

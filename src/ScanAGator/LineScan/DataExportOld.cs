@@ -11,7 +11,7 @@ namespace ScanAGator
         public static string GetCSV(LineScanFolder ls)
         {
             // name, unit, comment, data...
-            int dataPoints = ls.ImgG.height;
+            int dataPoints = ls.ImgG.Height;
             string[] csvLines = new string[dataPoints + 3];
 
             // times (ms)

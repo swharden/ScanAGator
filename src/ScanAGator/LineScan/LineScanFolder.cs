@@ -92,7 +92,7 @@ namespace ScanAGator
             {
                 BmpReference = GetRefImage();
                 SetFrame(0);
-                timesMsec = Enumerable.Range(0, ImgG.height).Select(x => x * ScanLinePeriodMsec).ToArray();
+                timesMsec = Enumerable.Range(0, ImgG.Height).Select(x => x * ScanLinePeriodMsec).ToArray();
                 ConfigFile.LoadDefaultSettings(this);
                 AutoBaseline();
                 AutoStructure();
@@ -137,7 +137,7 @@ namespace ScanAGator
                 return;
 
             BaselineIndex1 = 0;
-            BaselineIndex2 = (int)(ImgG.height * DefaultBaselineFraction2);
+            BaselineIndex2 = (int)(ImgG.Height * DefaultBaselineFraction2);
         }
 
         /// <summary>
@@ -164,7 +164,7 @@ namespace ScanAGator
             double filterTimeMs = DefaultFilterTimeMsec;
             if (DefaultFilterTimeMsec == 0)
             {
-                double scanTimeMs = ScanLinePeriodMsec * ImgG.height;
+                double scanTimeMs = ScanLinePeriodMsec * ImgG.Height;
                 if (scanTimeMs > 1000)
                     filterTimeMs = 100;
                 else
@@ -173,7 +173,7 @@ namespace ScanAGator
 
             FilterSizePixels = (int)(filterTimeMs / ScanLinePeriodMsec);
 
-            FilterSizePixels = Math.Min(FilterSizePixels, ImgG.height); // limit max filter size to 1/5 of the duration
+            FilterSizePixels = Math.Min(FilterSizePixels, ImgG.Height); // limit max filter size to 1/5 of the duration
         }
 
         /// <summary>
@@ -194,24 +194,24 @@ namespace ScanAGator
             // load data bitmaps and create ratio if needed
             if (DataImagePathsG.Length > 0)
             {
-                ImgG = new ImageData(DataImagePathsG[frameNumber]);
-                BmpDataG = ImgG.GetBmpDisplay();
+                ImgG = ImageDataTools.ReadTif(DataImagePathsG[frameNumber]);
+                BmpDataG = ImageDataTools.GetBmpDisplay(ImgG);
             }
 
             if (DataImagePathsR.Length > 0)
             {
-                ImgR = new ImageData(DataImagePathsR[frameNumber]);
-                BmpDataR = ImgR.GetBmpDisplay();
+                ImgR = ImageDataTools.ReadTif(DataImagePathsR[frameNumber]);
+                BmpDataR = ImageDataTools.GetBmpDisplay(ImgR);
             }
 
             if (BmpDataG != null && BmpDataR != null)
             {
                 BmpDataMerge = ImageDataTools.Merge(ImgR, ImgG, ImgR);
 
-                double[] dataM = new double[ImgG.data.Length];
+                double[] dataM = new double[ImgG.Values.Length];
                 for (int i = 0; i < dataM.Length; i++)
-                    dataM[i] = ImgG.data[i] / ImgR.data[i];
-                ImgM = new ImageData(dataM, ImgG.width, ImgG.height);
+                    dataM[i] = ImgG.Values[i] / ImgR.Values[i];
+                ImgM = new ImageData(dataM, ImgG.Width, ImgG.Height);
             }
         }
 
@@ -222,8 +222,8 @@ namespace ScanAGator
         {
             if (number >= ReferenceImagePaths.Length)
                 return null;
-            ImageData imgRef = new ImageData(ReferenceImagePaths[number]);
-            return imgRef.GetBmpDisplay();
+            ImageData imgRef = ImageDataTools.ReadTif(ReferenceImagePaths[number]);
+            return ImageDataTools.GetBmpDisplay(imgRef);
         }
 
         /// <summary>
