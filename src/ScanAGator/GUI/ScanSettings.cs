@@ -24,7 +24,8 @@ namespace ScanAGator.GUI
         {
             InitializeComponent();
             cbDisplay.SelectedIndex = 0;
-            SetFolder(null); // start with nothing loaded
+
+            SetFolder(); // start with nothing loaded
 
             tbFrame.ValueChanged += TbFrame_ValueChanged;
             cbAverage.CheckedChanged += CbAverage_CheckedChanged;
@@ -34,23 +35,23 @@ namespace ScanAGator.GUI
             panel1.Paint += Panel1_Paint;
         }
 
-        public void SetFolder(string folderPath)
+        public void SetFolder()
         {
-            if (folderPath is null)
-            {
-                Visible = false;
-                return;
-            }
+            this.Visible = false;
+        }
 
+        public void SetFolder(Prairie.ParirieXmlFile xml, Imaging.RatiometricImages images)
+        {
             SetMaxValues(9999, 9999);
-            Prairie.FolderContents pvFolder = new(folderPath);
-            PVXml = new Prairie.ParirieXmlFile(pvFolder.XmlFilePath);
-            Images = pvFolder.GetRatiometricImages();
 
-            this.Visible = true;
+            PVXml = xml;
+            Images = images;
+
             tbFrame.Value = 0;
             tbFrame.Maximum = Images.FrameCount - 1;
             OnLinescanImageChanged();
+
+            this.Visible = true;
         }
 
         private void EnableDoubleBuffering(Panel target)

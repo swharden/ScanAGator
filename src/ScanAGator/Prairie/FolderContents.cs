@@ -58,16 +58,4 @@ public class FolderContents
             throw new InvalidOperationException("Linescan XML file could not be found");
         XmlFilePath = pathsXml.First();
     }
-
-    public Imaging.RatiometricImages GetRatiometricImages()
-    {
-        Imaging.RatiometricImage[] frames = new Imaging.RatiometricImage[Frames];
-
-        for (int i = 0; i < Frames; i++)
-        {
-            frames[i] = new Imaging.RatiometricImage(ImageFilesG[i], ImageFilesR[i]);
-        }
-
-        return new Imaging.RatiometricImages(frames);
-    }
 }

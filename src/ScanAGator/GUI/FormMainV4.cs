@@ -20,7 +20,18 @@ namespace ScanAGator.GUI
 
         public void OnLinescanFolderSelected(string folderPath)
         {
-            imageRangeSelector1.SetFolder(folderPath);
+            if (folderPath is null)
+            {
+                imageRangeSelector1.SetFolder();
+            }
+            else
+            {
+                Prairie.FolderContents pvFolder = new(folderPath);
+                Prairie.ParirieXmlFile xml = new(pvFolder.XmlFilePath);
+                Imaging.RatiometricImages images = new(pvFolder);
+
+                imageRangeSelector1.SetFolder(xml, images);
+            }
         }
     }
 }

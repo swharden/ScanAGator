@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 
 namespace ScanAGator.Imaging
 {
@@ -10,12 +8,26 @@ namespace ScanAGator.Imaging
         public int FrameCount => Frames.Length;
         public readonly RatiometricImage Average;
 
+        public RatiometricImages(Prairie.FolderContents pvFolder)
+        {
+            Frames = Enumerable.Range(0, pvFolder.Frames)
+                .Select(i=> new RatiometricImage(pvFolder.ImageFilesG[i], pvFolder.ImageFilesR[i]))
+                .ToArray();
+
+            Average = CreateAverage(Frames);
+        }
+
         public RatiometricImages(RatiometricImage[] frames)
         {
             Frames = frames;
-            ImageData avgGreen = ImageDataTools.Average(Frames.Select(x => x.GreenData));
-            ImageData avgRed = ImageDataTools.Average(Frames.Select(x => x.RedData));
-            Average = new(avgGreen, avgRed);
+            Average = CreateAverage(Frames);
+        }
+
+        private static RatiometricImage CreateAverage(RatiometricImage[] frames)
+        {
+            ImageData avgGreen = ImageDataTools.Average(frames.Select(x => x.GreenData));
+            ImageData avgRed = ImageDataTools.Average(frames.Select(x => x.RedData));
+            return new RatiometricImage(avgGreen, avgRed);
         }
     }
 }
