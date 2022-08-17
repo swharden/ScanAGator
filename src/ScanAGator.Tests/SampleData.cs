@@ -1,20 +1,22 @@
 ﻿using NUnit.Framework;
+using System.IO;
 
 namespace ScanAGator.Tests
 {
     class SampleData
     {
-        public static ScanAGator.LineScanFolder GreenOverRed() =>
-             new ScanAGator.LineScanFolder(TestContext.CurrentContext.TestDirectory +
-                 "/../../../../../data/linescans/LineScan-02052019-1234-2683");
-        public static ScanAGator.LineScanFolder GreenOnly() =>
-             new ScanAGator.LineScanFolder(TestContext.CurrentContext.TestDirectory +
-                 "/../../../../../data/linescans/LineScan-02132019-1317-2775");
+        public static string Folder
+        {
+            get
+            {
+                string folderPath = Path.Combine(
+                    TestContext.CurrentContext.TestDirectory,
+                    "../../../../../data/linescans/");
 
-        public static LineScanFolder MultipleGreenOverRed() => new(MultipleGreenOverRedFolder);
-
-        public static string MultipleGreenOverRedFolder => System.IO.Path.Combine(
-            TestContext.CurrentContext.TestDirectory,
-            "../../../../../data/linescans/LineScan-08092022-1225-528");
+                return Path.GetFullPath(folderPath);
+            }
+        }
+            
+        public static string MultiFrameRatiometric => Path.Combine(Folder, "LineScan-08092022-1225-528");
     }
 }

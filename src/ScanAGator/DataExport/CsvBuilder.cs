@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace ScanAGator.DataExport;
 
+/// <summary>
+/// This class generates CSV files that can be read by OriginLab
+/// </summary>
 public class CsvBuilder
 {
     private readonly List<Column> Columns = new();

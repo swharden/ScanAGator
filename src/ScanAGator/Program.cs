@@ -16,7 +16,7 @@ namespace ScanAGator.WinForms
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new GUI.FormMenu());
+            Application.Run(new GUI.FormMainV4());
         }
     }
 }
