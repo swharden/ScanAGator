@@ -19,7 +19,7 @@ public class IntensityCurve
         MsPerPixel = msPerPixel;
     }
 
-    public IntensityCurve(ImageData img, PixelRange structure)
+    public IntensityCurve(ImageData img, StructureRange structure)
     {
         Values = img.AverageByRow(structure.Min, structure.Max);
         MsPerPixel = double.NaN;
@@ -36,9 +36,9 @@ public class IntensityCurve
         return times;
     }
 
-    public double GetMean(PixelRange baseline)
+    public double GetMean(BaselineRange baseline)
     {
-        return GetMean(baseline.FirstPixel, baseline.LastPixel);
+        return GetMean(baseline.Min, baseline.Max);
     }
 
     /// <summary>

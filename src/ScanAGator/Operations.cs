@@ -8,14 +8,12 @@ public static class Operations
     /// <summary>
     /// Return a copy of the source array where every point was subtracted by the mean value between the baseline indexes
     /// </summary>
-    public static double[] SubtractBaseline(double[] values, PixelRange baseline)
+    public static double[] SubtractBaseline(double[] values, BaselineRange baseline)
     {
-        baseline = baseline.Clamp(0, values.Length - 1);
-
         double baselineSum = 0;
         for (int i = baseline.Min; i < baseline.Max; i++)
             baselineSum += values[i];
-        double baselineMean = baselineSum / (baseline.SpanPixels + 1);
+        double baselineMean = baselineSum / baseline.Size;
 
         double[] output = new double[values.Length];
         for (int i = 0; i < output.Length; i++)

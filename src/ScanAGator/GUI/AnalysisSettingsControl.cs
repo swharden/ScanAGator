@@ -199,8 +199,8 @@ namespace ScanAGator.GUI
 
             Analysis.AnalysisSettings settings = new(
                 image: ratioImage,
-                baseline: new PixelRange((int)nudBaseline1.Value, (int)nudBaseline2.Value),
-                structure: new PixelRange((int)nudStructure1.Value, (int)nudStructure2.Value),
+                baseline: new BaselineRange((int)nudBaseline1.Value, (int)nudBaseline2.Value),
+                structure: new StructureRange((int)nudStructure1.Value, (int)nudStructure2.Value),
                 filterPx: (int)nudFilterPx.Value,
                 xml: PVXml);
 

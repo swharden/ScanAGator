@@ -8,12 +8,12 @@ namespace ScanAGator.Analysis
     public class AnalysisSettings
     {
         public readonly RatiometricImage Image;
-        public readonly PixelRange Baseline;
-        public readonly PixelRange Structure;
+        public readonly BaselineRange Baseline;
+        public readonly StructureRange Structure;
         public readonly int FilterPx;
         public readonly Prairie.ParirieXmlFile Xml;
 
-        public AnalysisSettings(RatiometricImage image, PixelRange baseline, PixelRange structure, int filterPx, Prairie.ParirieXmlFile xml)
+        public AnalysisSettings(RatiometricImage image, BaselineRange baseline, StructureRange structure, int filterPx, Prairie.ParirieXmlFile xml)
         {
             Image = image;
             Baseline = baseline;

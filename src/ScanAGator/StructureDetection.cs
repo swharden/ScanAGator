@@ -8,7 +8,7 @@ public static class StructureDetection
     /// Returns the range of pixels that spans the brightest structure in the image.
     /// The range spans the brightest column down to 20% of its peak relative to the noise floor
     /// </summary>
-    public static PixelRange GetBrightestStructure(ImageData image)
+    public static StructureRange GetBrightestStructure(ImageData image)
     {
         double[] intensities = ImageDataTools.GetAverageLeftright(image);
         int brightestIndex = GetBrightestIndex(intensities);
@@ -41,7 +41,7 @@ public static class StructureDetection
     /// <summary>
     /// Given the index of a bright structure, return the bounds on each side at the edge of the noise floor
     /// </summary>
-    private static PixelRange GetStructureBounds(double[] columnIntensities, int brightestIndex, double noiseFloor)
+    private static StructureRange GetStructureBounds(double[] columnIntensities, int brightestIndex, double noiseFloor)
     {
         // intensity cut-off is half-way to the noise floor
         double brightestValue = columnIntensities[brightestIndex];
@@ -60,6 +60,6 @@ public static class StructureDetection
         while (columnIntensities[structure2] > cutOff && structure2 < columnIntensities.Length - 1)
             structure2++;
 
-        return new PixelRange(structure1, structure2);
+        return new StructureRange(structure1, structure2);
     }
 }

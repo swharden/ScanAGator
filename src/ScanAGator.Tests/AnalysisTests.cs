@@ -14,8 +14,8 @@ namespace ScanAGator.Tests
         public void Test_Analysis_Workflow()
         {
             // user defines settings
-            PixelRange baseline = new(20, 60);
-            PixelRange structure = new(21, 25);
+            BaselineRange baseline = new(20, 60);
+            StructureRange structure = new(21, 25);
             int lowpassFilterPixels = 20;
 
             // images loaded and turned into raw curves
@@ -53,7 +53,7 @@ namespace ScanAGator.Tests
             Console.WriteLine(plt.SaveFig("PlotGreenAndRed.png"));
         }
 
-        private void PlotDeltaGreenOverRed(IntensityCurve dgor, PixelRange baseline)
+        private void PlotDeltaGreenOverRed(IntensityCurve dgor, BaselineRange baseline)
         {
             ScottPlot.Plot plt = new();
             double[] xs = dgor.GetTimes();

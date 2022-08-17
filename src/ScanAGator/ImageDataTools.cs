@@ -235,10 +235,8 @@ public class ImageDataTools
     /// <summary>
     /// Given a 2D image return the mean pixel value of each row (between left and right columns) from top to bottom
     /// </summary>
-    public static double[] GetAverageTopdown(ImageData img, PixelRange structure)
+    public static double[] GetAverageTopdown(ImageData img, StructureRange structure)
     {
-        structure = structure.Clamp(0, img.Width);
-
         // Return an array with length the same as the image height.
         double[] avgByRow = new double[img.Height];
 
@@ -250,7 +248,7 @@ public class ImageDataTools
             {
                 rowSum += img.Values[row * img.Width + col];
             }
-            avgByRow[row] = rowSum / (structure.SpanPixels + 1);
+            avgByRow[row] = rowSum / structure.Size;
         }
         return avgByRow;
     }

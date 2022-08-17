@@ -20,10 +20,10 @@ public static class Metadata
         writer.WriteString("folderPV", settings.Xml.FolderPath);
         writer.WriteNumber("scanLinePeriod", settings.Xml.MsecPerPixel);
         writer.WriteNumber("micronsPerPixel", settings.Xml.MicronsPerPixel);
-        writer.WriteNumber("baselinePixel1", settings.Baseline.FirstPixel);
-        writer.WriteNumber("baselinePixel2", settings.Baseline.LastPixel);
-        writer.WriteNumber("structurePixel1", settings.Structure.FirstPixel);
-        writer.WriteNumber("structurePixel2", settings.Structure.LastPixel);
+        writer.WriteNumber("baselinePixel1", settings.Baseline.Min);
+        writer.WriteNumber("baselinePixel2", settings.Baseline.Max);
+        writer.WriteNumber("structurePixel1", settings.Structure.Min);
+        writer.WriteNumber("structurePixel2", settings.Structure.Max);
         writer.WriteNumber("filterPixels", settings.FilterPx);
 
         writer.WriteEndObject();
