@@ -111,4 +111,12 @@ public static class Plot
         plt.AddHorizontalSpan(baselineStart, baselineEnd, Color.FromArgb(20, Color.Black));
         plt.AddHorizontalLine(0, Color.Black, 1, ScottPlot.LineStyle.Dash);
     }
+
+    public static ScottPlot.Plot AFU(IntensityCurve curve)
+    {
+        ScottPlot.Plot plt = new();
+        double[] xs = curve.GetTimes();
+        plt.AddScatter(xs, curve.Values);
+        return plt;
+    }
 }

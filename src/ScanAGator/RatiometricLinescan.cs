@@ -26,7 +26,7 @@ public class RatiometricLinescan
         G = new(ImageDataTools.GetAverageTopdown(green, Structure), msPerPx);
         R = new(ImageDataTools.GetAverageTopdown(red, Structure), msPerPx);
 
-        BaselineG = G.BaselineMean(Baseline); // calculate the mean from pre-filtered data
+        BaselineG = G.GetMean(Baseline); // calculate the mean from pre-filtered data
 
         if (FilterSizePixels > 0)
         {
@@ -34,8 +34,8 @@ public class RatiometricLinescan
             R = R.LowPassFiltered(FilterSizePixels);
         }
 
-        DG = G.SubtractedBy(BaselineG);
-        DGR = DG.DividedBy(R);
+        DG = G - BaselineG;
+        DGR = DG / R;
     }
 
     public void SaveCsv(string filePath)

@@ -149,4 +149,88 @@ public class ImageData
 
         return avg;
     }
+
+    public static ImageData operator -(ImageData a, ImageData b)
+    {
+        if (a.Width != b.Width || a.Height != b.Height)
+            throw new InvalidOperationException("images must have the same dimensions");
+
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] - b.Values[i];
+
+        return new ImageData(values, a.Width, a.Height);
+    }
+
+    public static ImageData operator +(ImageData a, ImageData b)
+    {
+        if (a.Width != b.Width || a.Height != b.Height)
+            throw new InvalidOperationException("images must have the same dimensions");
+
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] + b.Values[i];
+
+        return new ImageData(values, a.Width, a.Height);
+    }
+
+    public static ImageData operator *(ImageData a, ImageData b)
+    {
+        if (a.Width != b.Width || a.Height != b.Height)
+            throw new InvalidOperationException("images must have the same dimensions");
+
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] * b.Values[i];
+
+        return new ImageData(values, a.Width, a.Height);
+    }
+
+    public static ImageData operator /(ImageData a, ImageData b)
+    {
+        if (a.Width != b.Width || a.Height != b.Height)
+            throw new InvalidOperationException("images must have the same dimensions");
+
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] / b.Values[i];
+
+        return new ImageData(values, a.Width, a.Height);
+    }
+
+    public static ImageData operator -(ImageData a, double b)
+    {
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] - b;
+
+        return new ImageData(values, a.Width, a.Height);
+    }
+
+    public static ImageData operator +(ImageData a, double b)
+    {
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] + b;
+
+        return new ImageData(values, a.Width, a.Height);
+    }
+
+    public static ImageData operator *(ImageData a, double b)
+    {
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] * b;
+
+        return new ImageData(values, a.Width, a.Height);
+    }
+
+    public static ImageData operator /(ImageData a, double b)
+    {
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] / b;
+
+        return new ImageData(values, a.Width, a.Height);
+    }
 }

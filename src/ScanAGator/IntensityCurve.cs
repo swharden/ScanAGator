@@ -11,21 +11,44 @@ public class IntensityCurve
     public readonly double[] Values;
     public readonly double MsPerPixel;
 
+    public IntensityCurve(double[] values)
+    {
+        Values = values;
+        MsPerPixel = double.NaN;
+    }
+
     public IntensityCurve(double[] values, double msPerPixel)
     {
         Values = values;
         MsPerPixel = msPerPixel;
     }
 
-    public double BaselineMean(PixelRange baseline)
+    public IntensityCurve(ImageData img, PixelRange structure)
     {
-        return BaselineMean(baseline.FirstPixel, baseline.LastPixel);
+        Values = img.AverageByRow(structure.Min, structure.Max);
+        MsPerPixel = double.NaN;
+    }
+
+    public double[] GetTimes()
+    {
+        double[] times = new double[Values.Length];
+        double period = double.IsNaN(MsPerPixel) ? 1 : MsPerPixel;
+        for (int i = 0; i < times.Length; i++)
+        {
+            times[i] = i * period;
+        }
+        return times;
+    }
+
+    public double GetMean(PixelRange baseline)
+    {
+        return GetMean(baseline.FirstPixel, baseline.LastPixel);
     }
 
     /// <summary>
     /// Return the mean of the range (inclusive)
     /// </summary>
-    public double BaselineMean(int i1, int i2)
+    public double GetMean(int i1, int i2)
     {
         double sum = 0;
         for (int i = i1; i <= i2; i++)
@@ -33,25 +56,6 @@ public class IntensityCurve
             sum += Values[i];
         }
         return sum / (i2 - i1 + 1);
-    }
-
-    public IntensityCurve SubtractedBy(double value)
-    {
-        double[] newValues = new double[Values.Length];
-        for (int i = 0; i < Values.Length; i++)
-            newValues[i] = Values[i] - value;
-        return new IntensityCurve(newValues, MsPerPixel);
-    }
-
-    public IntensityCurve DividedBy(IntensityCurve otherCurve, bool percent = true)
-    {
-        double multiplier = percent ? 100 : 1;
-        double[] newValues = new double[Values.Length];
-        for (int i = 0; i < Values.Length; i++)
-        {
-            newValues[i] = Values[i] / otherCurve.Values[i] * multiplier;
-        }
-        return new IntensityCurve(newValues, MsPerPixel);
     }
 
     public IntensityCurve LowPassFiltered(int filterSizePixels)
@@ -68,5 +72,89 @@ public class IntensityCurve
         if (Values.Length != smooth.Length)
             throw new InvalidOperationException("Array size changed after filtering");
         return new IntensityCurve(smooth, MsPerPixel);
+    }
+
+    public static IntensityCurve operator +(IntensityCurve a, IntensityCurve b)
+    {
+        if (a.Values.Length != b.Values.Length)
+            throw new InvalidOperationException("curves must have the same length");
+
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] + b.Values[i];
+
+        return new IntensityCurve(values);
+    }
+
+    public static IntensityCurve operator -(IntensityCurve a, IntensityCurve b)
+    {
+        if (a.Values.Length != b.Values.Length)
+            throw new InvalidOperationException("curves must have the same length");
+
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] - b.Values[i];
+
+        return new IntensityCurve(values);
+    }
+
+    public static IntensityCurve operator *(IntensityCurve a, IntensityCurve b)
+    {
+        if (a.Values.Length != b.Values.Length)
+            throw new InvalidOperationException("curves must have the same length");
+
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] * b.Values[i];
+
+        return new IntensityCurve(values);
+    }
+
+    public static IntensityCurve operator /(IntensityCurve a, IntensityCurve b)
+    {
+        if (a.Values.Length != b.Values.Length)
+            throw new InvalidOperationException("curves must have the same length");
+
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] / b.Values[i];
+
+        return new IntensityCurve(values);
+    }
+
+    public static IntensityCurve operator +(IntensityCurve a, double b)
+    {
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] + b;
+
+        return new IntensityCurve(values);
+    }
+
+    public static IntensityCurve operator -(IntensityCurve a, double b)
+    {
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] - b;
+
+        return new IntensityCurve(values);
+    }
+
+    public static IntensityCurve operator *(IntensityCurve a, double b)
+    {
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] * b;
+
+        return new IntensityCurve(values);
+    }
+
+    public static IntensityCurve operator /(IntensityCurve a, double b)
+    {
+        double[] values = new double[a.Values.Length];
+        for (int i = 0; i < values.Length; i++)
+            values[i] = a.Values[i] / b;
+
+        return new IntensityCurve(values);
     }
 }

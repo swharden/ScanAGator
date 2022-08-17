@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using FluentAssertions;
+using System.Linq;
 
 namespace ScanAGator.Tests;
 
@@ -103,5 +104,23 @@ internal class ImageDataTests
 
         // known values were measured using ImageJ (draw selection, multi-measure)
         img.Average(21, 25, 3, 11).Should().BeApproximately(2077.911, .01);
+    }
+
+    [Test]
+    public void Test_Image_Operators()
+    {
+        double[] data = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+        ImageData source = new(data, 3, 4);
+        source.Values.Max().Should().Be(12);
+
+        (source - 3).Values.Max().Should().Be(9);
+        (source + 3).Values.Max().Should().Be(15);
+        (source * 3).Values.Max().Should().Be(36);
+        (source / 3).Values.Max().Should().Be(4);
+
+        (source - source).Values.Max().Should().Be(0);
+        (source + source).Values.Max().Should().Be(24);
+        (source * source).Values.Max().Should().Be(144);
+        (source / source).Values.Max().Should().Be(1);
     }
 }
