@@ -213,7 +213,7 @@ namespace ScanAGator.GUI
                 filterPx: (int)nudFilterPx.Value,
                 xml: PVXml);
 
-            //Recalculate?.Invoke(settings);
+            Recalculate?.Invoke(settings);
         }
 
         private void Panel1_Paint(object sender, PaintEventArgs e)

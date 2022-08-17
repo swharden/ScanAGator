@@ -12,12 +12,27 @@ namespace ScanAGator.GUI
 {
     public partial class FormMainV4 : Form
     {
+        Timer Timer = new() { Interval = 20, Enabled = true };
+        Analysis.AnalysisSettings? SettingsToAnalyze = null;
+
         public FormMainV4()
         {
             InitializeComponent();
             folderSelector1.LinescanFolderSelected = OnLinescanFolderSelected;
-            analysisSettingsControl.Recalculate += OnNewCalculation;
+            analysisSettingsControl.Recalculate += OnRecalculate;
             OnLinescanFolderSelected(null);
+            Timer.Tick += Timer_Tick;
+        }
+
+        private void Timer_Tick(object sender, EventArgs e)
+        {
+            if (SettingsToAnalyze is not null)
+            {
+                Analysis.AnalysisSettings settings = SettingsToAnalyze;
+                SettingsToAnalyze = null;
+                Analysis.AnalysisResult results = new(settings);
+                analysisResultsControl.ShowResult(results);
+            }
         }
 
         public void OnLinescanFolderSelected(string? folderPath)
@@ -34,12 +49,11 @@ namespace ScanAGator.GUI
             analysisResultsControl.Visible = folderPath is not null;
         }
 
-        public void OnNewCalculation(Analysis.AnalysisSettings settings)
+        public void OnRecalculate(Analysis.AnalysisSettings settings)
         {
-            Analysis.AnalysisResult results = new(settings);
-            //analysisResultsControl.Visible = results.IsValid;
-            //if (results.IsValid)
-                analysisResultsControl.ShowResult(results);
+            // We got new settings, but don't analyze them immediately.
+            // Instead store them and we will analyze them when the GUI thread is free.
+            SettingsToAnalyze = settings;
         }
     }
 }
