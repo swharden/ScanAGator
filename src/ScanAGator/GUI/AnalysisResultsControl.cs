@@ -22,6 +22,7 @@ namespace ScanAGator.GUI
             formsPlot1.Plot.Clear();
             formsPlot1.Plot.AddScatter(result.Xs, result.Green, Color.Green);
             formsPlot1.Plot.AddScatter(result.Xs, result.Red, Color.Red);
+            formsPlot1.Plot.SetAxisLimits(yMin: 0);
             formsPlot1.Refresh();
 
             formsPlot2.Plot.Clear();

@@ -36,7 +36,7 @@ namespace ScanAGator.GUI
 
         public void SetLinescan(Prairie.ParirieXmlFile xml, Imaging.RatiometricImages images)
         {
-            SetMaxValues(9999, 9999);
+            SetMaxValues();
 
             PVXml = xml;
             Images = images;
@@ -44,6 +44,7 @@ namespace ScanAGator.GUI
             tbFrame.Value = 0;
             tbFrame.Maximum = Images.FrameCount - 1;
             OnLinescanImageChanged();
+            SetMaxValues();
             AutoBaseline();
             AutoStructure();
         }
@@ -90,7 +91,6 @@ namespace ScanAGator.GUI
         {
             if (Images is null)
                 return null;
-
             return cbAverage.Checked ? Images.Average : Images.Frames[tbFrame.Value];
         }
 
@@ -110,7 +110,6 @@ namespace ScanAGator.GUI
             };
 
             panel1.Invalidate();
-            SetMaxValues(DisplayBitmap.Height, DisplayBitmap.Width);
 
             if (cbAverage.Checked)
             {
@@ -123,6 +122,8 @@ namespace ScanAGator.GUI
                 lblFrame.Visible = true;
                 tbFrame.Visible = true;
             }
+
+            Recalculte();
         }
 
         private void Nud_ValueChanged(object sender, EventArgs e)
@@ -131,8 +132,11 @@ namespace ScanAGator.GUI
             panel1.Invalidate();
         }
 
-        private void SetMaxValues(int maxBaseline, int maxStructure)
+        private void SetMaxValues()
         {
+            int maxBaseline = DisplayBitmap is null ? 999999 : DisplayBitmap.Height;
+            int maxStructure = DisplayBitmap is null ? 999999 : DisplayBitmap.Width;
+
             // un-wire event handlers
             tbBaseline1.ValueChanged -= TrackBar_ValueChanged;
             tbBaseline2.ValueChanged -= TrackBar_ValueChanged;
@@ -182,8 +186,8 @@ namespace ScanAGator.GUI
         {
             nudBaseline1.Value = tbBaseline1.Maximum - tbBaseline1.Value;
             nudBaseline2.Value = tbBaseline2.Maximum - tbBaseline2.Value;
-            nudStructure1.Value = tbStructure1.Maximum - tbStructure1.Value;
-            nudStructure2.Value = tbStructure2.Maximum - tbStructure2.Value;
+            nudStructure1.Value = tbStructure1.Value;
+            nudStructure2.Value = tbStructure2.Value;
             Recalculte();
         }
 
@@ -191,8 +195,8 @@ namespace ScanAGator.GUI
         {
             tbBaseline1.Value = tbBaseline1.Maximum - (int)nudBaseline1.Value;
             tbBaseline2.Value = tbBaseline2.Maximum - (int)nudBaseline2.Value;
-            tbStructure1.Value = tbStructure1.Maximum - (int)nudStructure1.Value;
-            tbStructure2.Value = tbStructure2.Maximum - (int)nudStructure2.Value;
+            tbStructure1.Value = (int)nudStructure1.Value;
+            tbStructure2.Value = (int)nudStructure2.Value;
             Recalculte();
         }
 
@@ -206,12 +210,19 @@ namespace ScanAGator.GUI
             if (ratioImage is null || PVXml is null)
                 return;
 
-            Analysis.AnalysisSettings settings = new(
-                image: ratioImage,
-                baseline: new BaselineRange((int)nudBaseline1.Value, (int)nudBaseline2.Value),
-                structure: new StructureRange((int)nudStructure1.Value, (int)nudStructure2.Value),
-                filterPx: (int)nudFilterPx.Value,
-                xml: PVXml);
+            BaselineRange baseline = new((int)nudBaseline1.Value, (int)nudBaseline2.Value);
+            StructureRange structure = new((int)nudStructure1.Value, (int)nudStructure2.Value);
+
+            AnalysisSettings settings = new(ratioImage, baseline, structure, (int)nudFilterPx.Value, PVXml);
+
+            ScottPlot.Plot plt = new(pbGraph.Width, pbGraph.Height);
+            plt.Frameless();
+            plt.AddSignal(ratioImage.GreenData.AverageByColumn(), 1, Color.Green);
+            plt.AddSignal(ratioImage.RedData.AverageByColumn(), 1, Color.Red);
+            plt.AddHorizontalSpan(structure.Min, structure.Max, Color.FromArgb(20, Color.Blue));
+            plt.AxisAutoX(0);
+            pbGraph.Image?.Dispose();
+            pbGraph.Image = plt.GetBitmap();
 
             Recalculate?.Invoke(settings);
         }
