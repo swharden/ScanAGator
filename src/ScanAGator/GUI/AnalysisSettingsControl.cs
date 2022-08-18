@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScanAGator.Analysis;
+using ScanAGator.Imaging;
 
 namespace ScanAGator.GUI
 {
@@ -29,6 +30,7 @@ namespace ScanAGator.GUI
             tbFrame.ValueChanged += TbFrame_ValueChanged;
             cbAverage.CheckedChanged += CbAverage_CheckedChanged;
             cbDisplay.SelectedIndexChanged += CbDisplay_SelectedIndexChanged;
+            cbFloor.CheckedChanged += CbFloor_CheckedChanged;
             nudFilterPx.ValueChanged += NudFilterPx_ValueChanged;
 
             EnableDoubleBuffering(panel1);
@@ -56,6 +58,7 @@ namespace ScanAGator.GUI
             typeof(Panel).InvokeMember("DoubleBuffered", flags, null, target, new object[] { true });
         }
 
+        private void CbFloor_CheckedChanged(object sender, EventArgs e) => RecalculateNow();
         private void CbDisplay_SelectedIndexChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void CbAverage_CheckedChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void TbFrame_ValueChanged(object sender, EventArgs e) => OnLinescanImageChanged();
@@ -210,6 +213,22 @@ namespace ScanAGator.GUI
 
             if (ratioImage is null || PVXml is null)
                 return;
+
+            if (cbFloor.Checked)
+            {
+                ImageData g = ratioImage.GreenData;
+                ImageData r = ratioImage.RedData;
+
+                double gFloor = g.Percentile(20);
+                double rFloor = r.Percentile(20);
+                Console.WriteLine($"Green noise floor: {gFloor}");
+                Console.WriteLine($"Red noise floor: {rFloor}");
+
+                g -= gFloor;
+                r -= rFloor;
+
+                ratioImage = new Imaging.RatiometricImage(g, r);
+            }
 
             BaselineRange baseline = new((int)nudBaseline1.Value, (int)nudBaseline2.Value);
             StructureRange structure = new((int)nudStructure1.Value, (int)nudStructure2.Value);

@@ -50,6 +50,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.nudFilterPx = new System.Windows.Forms.NumericUpDown();
             this.lblFilterTime = new System.Windows.Forms.Label();
+            this.cbFloor = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline2)).BeginInit();
@@ -338,10 +339,23 @@
             this.lblFilterTime.TabIndex = 39;
             this.lblFilterTime.Text = "123.45 ms";
             // 
+            // cbFloor
+            // 
+            this.cbFloor.AutoSize = true;
+            this.cbFloor.Checked = true;
+            this.cbFloor.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbFloor.Location = new System.Drawing.Point(285, 859);
+            this.cbFloor.Name = "cbFloor";
+            this.cbFloor.Size = new System.Drawing.Size(71, 24);
+            this.cbFloor.TabIndex = 40;
+            this.cbFloor.Text = "Floor";
+            this.cbFloor.UseVisualStyleBackColor = true;
+            // 
             // AnalysisSettingsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.cbFloor);
             this.Controls.Add(this.lblFilterTime);
             this.Controls.Add(this.nudFilterPx);
             this.Controls.Add(this.label5);
@@ -406,5 +420,6 @@
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.NumericUpDown nudFilterPx;
         private System.Windows.Forms.Label lblFilterTime;
+        private System.Windows.Forms.CheckBox cbFloor;
     }
 }
