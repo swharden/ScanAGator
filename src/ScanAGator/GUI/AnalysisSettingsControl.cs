@@ -27,13 +27,15 @@ namespace ScanAGator.GUI
             InitializeComponent();
             cbDisplay.SelectedIndex = 0;
 
+            cbDisplay.SelectedIndexChanged += CbDisplay_SelectedIndexChanged;
             tbFrame.ValueChanged += TbFrame_ValueChanged;
             cbAverage.CheckedChanged += CbAverage_CheckedChanged;
-            cbDisplay.SelectedIndexChanged += CbDisplay_SelectedIndexChanged;
             cbFloor.CheckedChanged += CbFloor_CheckedChanged;
             nudFilterPx.ValueChanged += NudFilterPx_ValueChanged;
 
-            EnableDoubleBuffering(panel1);
+            // enable double buffering (reflection required to mutate this private field)
+            BindingFlags flags = BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic;
+            typeof(Panel).InvokeMember("DoubleBuffered", flags, null, panel1, new object[] { true });
             panel1.Paint += Panel1_Paint;
         }
 
@@ -50,12 +52,6 @@ namespace ScanAGator.GUI
             SetMaxValues();
             AutoBaseline();
             AutoStructure();
-        }
-
-        private void EnableDoubleBuffering(Panel target)
-        {
-            BindingFlags flags = BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic;
-            typeof(Panel).InvokeMember("DoubleBuffered", flags, null, target, new object[] { true });
         }
 
         private void CbFloor_CheckedChanged(object sender, EventArgs e) => RecalculateNow();
