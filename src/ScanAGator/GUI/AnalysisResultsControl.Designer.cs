@@ -31,10 +31,8 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.formsPlot1 = new ScottPlot.FormsPlot();
             this.formsPlot2 = new ScottPlot.FormsPlot();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.button1 = new System.Windows.Forms.Button();
+            this.dataExportControl1 = new ScanAGator.GUI.DataExportControl();
             this.tableLayoutPanel1.SuspendLayout();
-            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -43,14 +41,14 @@
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.formsPlot1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.formsPlot2, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.groupBox1, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.dataExportControl1, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 200F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(786, 890);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
@@ -60,37 +58,25 @@
             this.formsPlot1.Location = new System.Drawing.Point(5, 4);
             this.formsPlot1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.formsPlot1.Name = "formsPlot1";
-            this.formsPlot1.Size = new System.Drawing.Size(776, 387);
+            this.formsPlot1.Size = new System.Drawing.Size(776, 337);
             this.formsPlot1.TabIndex = 0;
             // 
             // formsPlot2
             // 
             this.formsPlot2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.formsPlot2.Location = new System.Drawing.Point(5, 399);
+            this.formsPlot2.Location = new System.Drawing.Point(5, 349);
             this.formsPlot2.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.formsPlot2.Name = "formsPlot2";
-            this.formsPlot2.Size = new System.Drawing.Size(776, 387);
+            this.formsPlot2.Size = new System.Drawing.Size(776, 337);
             this.formsPlot2.TabIndex = 1;
             // 
-            // groupBox1
+            // dataExportControl1
             // 
-            this.groupBox1.Controls.Add(this.button1);
-            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.groupBox1.Location = new System.Drawing.Point(3, 793);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(780, 94);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Results";
-            // 
-            // button1
-            // 
-            this.button1.Location = new System.Drawing.Point(6, 25);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(177, 40);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Copy to OriginLab";
-            this.button1.UseVisualStyleBackColor = true;
+            this.dataExportControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataExportControl1.Location = new System.Drawing.Point(3, 693);
+            this.dataExportControl1.Name = "dataExportControl1";
+            this.dataExportControl1.Size = new System.Drawing.Size(780, 194);
+            this.dataExportControl1.TabIndex = 2;
             // 
             // AnalysisResultsControl
             // 
@@ -100,7 +86,6 @@
             this.Name = "AnalysisResultsControl";
             this.Size = new System.Drawing.Size(786, 890);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -109,7 +94,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private ScottPlot.FormsPlot formsPlot1;
         private ScottPlot.FormsPlot formsPlot2;
-        private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.Button button1;
+        private DataExportControl dataExportControl1;
     }
 }

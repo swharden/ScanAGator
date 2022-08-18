@@ -47,6 +47,8 @@ namespace ScanAGator.GUI
             formsPlot2.Plot.AddHorizontalLine(0, Color.Black, 0, ScottPlot.LineStyle.Dash);
             formsPlot2.Plot.YLabel("ΔF/F (%)");
             formsPlot2.Refresh();
+
+            dataExportControl1.ShowResult(result);
         }
     }
 }

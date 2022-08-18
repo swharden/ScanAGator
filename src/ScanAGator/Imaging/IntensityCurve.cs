@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace ScanAGator.Imaging;
 
@@ -52,6 +53,11 @@ public class IntensityCurve
             sum += Values[i];
         }
         return sum / (i2 - i1 + 1);
+    }
+
+    public double GetPeak()
+    {
+        return Values.Max();
     }
 
     public IntensityCurve LowPassFiltered(int filterSizePixels)

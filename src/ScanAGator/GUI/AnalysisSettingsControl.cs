@@ -210,6 +210,7 @@ namespace ScanAGator.GUI
             if (ratioImage is null || PVXml is null)
                 return;
 
+            // TODO: move this into analysis because it is too slow to generate every time
             if (cbFloor.Checked)
             {
                 ImageData g = ratioImage.GreenData;
