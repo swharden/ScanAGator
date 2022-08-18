@@ -10,6 +10,7 @@ namespace ScanAGator.Imaging;
 public class ImageData
 {
     public readonly double[] Values;
+    private double[]? SortedValues;
     public readonly int Width;
     public readonly int Height;
 
@@ -123,6 +124,27 @@ public class ImageData
         }
 
         return avg;
+    }
+
+    /// <summary>
+    /// Return the first value above the given percentile (0-100)
+    /// </summary>
+    public double Percentile(double percent)
+    {
+        if (percent < 0 || percent > 100)
+            throw new ArgumentOutOfRangeException(nameof(percent));
+
+        if (SortedValues is null)
+        {
+            SortedValues = new double[Values.Length];
+            Array.Copy(Values, SortedValues, Values.Length);
+            Array.Sort(SortedValues);
+        }
+
+        int index = (int)(percent / 100 * Values.Length);
+        index = Math.Max(0, index);
+        index = Math.Min(Values.Length - 1, index);
+        return SortedValues[index];
     }
 
     /// <summary>

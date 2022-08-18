@@ -2,6 +2,7 @@
 using FluentAssertions;
 using System.Linq;
 using ScanAGator.Imaging;
+using System;
 
 namespace ScanAGator.Tests;
 
@@ -123,5 +124,29 @@ internal class ImageDataTests
         (source + source).Values.Max().Should().Be(24);
         (source * source).Values.Max().Should().Be(144);
         (source / source).Values.Max().Should().Be(1);
+    }
+
+    [Test]
+    public void Test_Image_Percentile()
+    {
+        ImageData imgGreen = ImageDataTools.ReadTif(SampleData.GreenLinescanImagePath);
+        ImageData imgRed = ImageDataTools.ReadTif(SampleData.RedLinescanImagePath);
+
+        double[] xs = ScottPlot.DataGen.Range(0, 100, .1, true);
+        double[] ysGreen = xs.Select(x => System.Math.Log10(imgGreen.Percentile(x))).ToArray();
+        double[] ysRed = xs.Select(x => System.Math.Log10(imgRed.Percentile(x))).ToArray();
+
+        ScottPlot.Plot plt = new(600, 400);
+        plt.AddScatter(xs, ysGreen, System.Drawing.Color.Green, 2);
+        plt.AddScatter(xs, ysRed, System.Drawing.Color.Red, 2);
+        plt.XLabel("Percentile");
+        plt.YLabel("Fluorescence (AFU)");
+        plt.YAxis.MinorLogScale(true);
+        plt.YAxis.MinorGrid(true);
+
+        Func<double, string> tickFormatter = (x) => Math.Pow(10, x).ToString();
+        plt.YAxis.TickLabelFormat(tickFormatter);
+
+        TestTools.SaveFig(plt, "percentile.png");
     }
 }
