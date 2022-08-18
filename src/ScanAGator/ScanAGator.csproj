@@ -5,21 +5,26 @@
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
         <UseWindowsForms>true</UseWindowsForms>
         <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
-        <ApplicationIcon>icon64.ico</ApplicationIcon>
+        <ApplicationIcon>Resources/icon64.ico</ApplicationIcon>
         <LangVersion>latest</LangVersion>
         <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
         <nullable>enable</nullable>
     </PropertyGroup>
     <ItemGroup>
+        <Compile Update="Properties\Resources.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Resources.resx</DependentUpon>
+        </Compile>
         <Compile Update="TreeViewDirUC.cs">
             <SubType>UserControl</SubType>
         </Compile>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="icon32.ico">
+        <EmbeddedResource Include="Resources\icon32.ico">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
-        <EmbeddedResource Include="icon64.ico">
+        <EmbeddedResource Include="Resources\icon64.ico">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </EmbeddedResource>
     </ItemGroup>
@@ -32,6 +37,12 @@
         <PackageReference Include="System.Text.Json" Version="6.0.5" />
     </ItemGroup>
     <ItemGroup>
-      <Folder Include="Prairie\" />
+        <Folder Include="Prairie\" />
+    </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Update="Properties\Resources.resx">
+            <Generator>ResXFileCodeGenerator</Generator>
+            <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
     </ItemGroup>
 </Project>

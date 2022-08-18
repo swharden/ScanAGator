@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ScanAGator;
+namespace ScanAGator.Imaging;
 
 public class IntensityCurve
 {
@@ -56,7 +56,7 @@ public class IntensityCurve
 
     public IntensityCurve LowPassFiltered(int filterSizePixels)
     {
-        double[] smooth = ImageDataTools.GaussianFilter1d(Values, filterSizePixels);
+        double[] smooth = Filtering.GaussianFilter1d(Values, filterSizePixels);
         int padPoints = filterSizePixels * 2 + 1;
 
         for (int i = 0; i < padPoints; i++)

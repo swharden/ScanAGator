@@ -18,6 +18,7 @@ namespace ScanAGator.GUI
         public FormMainV4()
         {
             InitializeComponent();
+            Text = Analysis.AnalysisResult.VersionString;
             folderSelector1.LinescanFolderSelected = OnLinescanFolderSelected;
             analysisSettingsControl.Recalculate += OnRecalculate;
             OnLinescanFolderSelected(null);

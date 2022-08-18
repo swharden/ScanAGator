@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using ScanAGator.Imaging;
+using System.Linq;
 
 namespace ScanAGator;
 

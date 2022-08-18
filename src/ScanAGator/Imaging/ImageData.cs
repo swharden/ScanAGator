@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace ScanAGator;
+namespace ScanAGator.Imaging;
 
 /// <summary>
 /// This object holds data values for a single-channel 2D image.

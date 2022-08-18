@@ -1,11 +1,11 @@
-﻿namespace ScanAGator;
+﻿namespace ScanAGator.Analysis;
 
 public struct LineScanSettings
 {
     public readonly BaselineRange Baseline;
     public readonly StructureRange Structure;
     public readonly int FilterSizePixels;
-    
+
     public LineScanSettings(BaselineRange baseline, StructureRange structure, int filterSizePx)
     {
         Baseline = baseline;

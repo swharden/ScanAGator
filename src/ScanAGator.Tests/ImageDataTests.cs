@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 using FluentAssertions;
 using System.Linq;
+using ScanAGator.Imaging;
 
 namespace ScanAGator.Tests;
 

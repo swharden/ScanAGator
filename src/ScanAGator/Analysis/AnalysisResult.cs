@@ -1,4 +1,8 @@
-﻿namespace ScanAGator.Analysis;
+﻿using ScanAGator.Imaging;
+using System;
+using System.Reflection;
+
+namespace ScanAGator.Analysis;
 
 /// <summary>
 /// This class contains logic for calculating ΔG/R from analysis settings containing a single ratiometric image
@@ -15,6 +19,10 @@ public class AnalysisResult
     public IntensityCurve SmoothDeltaGreenCurve;
     public IntensityCurve SmoothDeltaGreenOverRedCurve;
 
+    public static Version Version => new Version(4, 0); // EDIT THIS MANUALLY
+
+    public static string VersionString => $"Scan-A-Gator v{Version.Major}.{Version.Minor}";
+
     public AnalysisResult(AnalysisSettings settings)
     {
         Settings = settings;
@@ -27,14 +35,12 @@ public class AnalysisResult
         GreenCurve = new IntensityCurve(GreenImageData, settings.Structure);
         RedCurve = new IntensityCurve(RedImageData, settings.Structure);
 
-        // green baseline calculated from raw green curve
-        double greenCurveBaseline = GreenCurve.GetMean(settings.Baseline);
-
         // calculate smooth curves
         SmoothGreenCurve = GreenCurve.LowPassFiltered(settings.FilterPx);
         SmoothRedCurve = RedCurve.LowPassFiltered(settings.FilterPx);
 
         // calculate ratios from smoothed curves
+        double greenCurveBaseline = GreenCurve.GetMean(settings.Baseline);
         SmoothDeltaGreenCurve = SmoothGreenCurve - greenCurveBaseline;
         SmoothDeltaGreenOverRedCurve = SmoothDeltaGreenCurve / SmoothRedCurve * 100;
     }

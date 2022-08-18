@@ -18,10 +18,9 @@ namespace ScanAGator.GUI
         public FolderSelectControl()
         {
             InitializeComponent();
-
             FullSizeFirstColumn(lvFolders);
 
-            string initialFolderPath = @"X:\Data\zProjects\Oxytocin Biosensor\experiments\2P bpAP NMDA\2022-08-09\2p";
+            string initialFolderPath = @"X:\Data\zProjects\OT-Tom NMDA signaling\2P bpAP NMDA\2022-08-16\cell4";
             SetFolder(initialFolderPath);
 
             lvFolders.DoubleClick += LvFolders_DoubleClick;
@@ -61,6 +60,10 @@ namespace ScanAGator.GUI
 
         public void SetFolder(string folderPath)
         {
+            lvFolders.Items.Clear();
+            if (!Directory.Exists(folderPath))
+                return;
+
             lvFolders.Items.Clear();
             string indentation = "";
             foreach (string path in GetParentPaths(folderPath))

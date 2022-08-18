@@ -15,6 +15,13 @@ namespace ScanAGator.GUI
         public AnalysisResultsControl()
         {
             InitializeComponent();
+            formsPlot2.AxesChanged += FormsPlot2_AxesChanged;
+        }
+
+        private void FormsPlot2_AxesChanged(object sender, EventArgs e)
+        {
+            formsPlot1.Plot.MatchAxis(formsPlot2.Plot, horizontal: true, vertical: false);
+            formsPlot1.Refresh();
         }
 
         public void ShowResult(Analysis.AnalysisResult result)
