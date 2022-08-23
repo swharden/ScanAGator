@@ -20,11 +20,42 @@ namespace ScanAGator.GUI
             InitializeComponent();
             FullSizeFirstColumn(lvFolders);
 
-            string initialFolderPath = @"X:\Data\zProjects\OT-Tom NMDA signaling\2P bpAP NMDA\2022-08-16\cell4";
+            string initialFolderPath = @"X:\Data\zProjects\OT-Tom NMDA signaling\2P bpAP NMDA\2022-08-22 1mM Mg\cell3";
             SetFolder(initialFolderPath);
 
             lvFolders.DoubleClick += LvFolders_DoubleClick;
             lvFolders.SelectedIndexChanged += LvFolders_SelectedIndexChanged;
+
+            AllowDrop = true;
+            DragEnter += FolderSelectControl_DragEnter;
+            DragDrop += FolderSelectControl_DragDrop;
+        }
+
+        private void FolderSelectControl_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+                e.Effect = DragDropEffects.Copy;
+        }
+
+        private void FolderSelectControl_DragDrop(object sender, DragEventArgs e)
+        {
+            string path = ((string[])e.Data.GetData(DataFormats.FileDrop)).First();
+            if (!File.GetAttributes(path).HasFlag(FileAttributes.Directory))
+                path = Path.GetDirectoryName(path);
+
+            if (IsLinescanFolder(path))
+            {
+                SetFolder(Path.GetDirectoryName(path));
+                int i = Enumerable.Range(0, lvFolders.Items.Count)
+                    .Where(x => lvFolders.Items[x].ImageKey == path)
+                    .Single();
+                lvFolders.Items[i].Selected = true;
+                lvFolders.Select();
+            }
+            else
+            {
+                SetFolder(path);
+            }
         }
 
         private void LvFolders_SelectedIndexChanged(object sender, EventArgs e)
