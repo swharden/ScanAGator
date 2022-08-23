@@ -23,12 +23,23 @@ public class AnalysisResult
         Curves = new(settings.PrimaryImage, settings.Baseline, settings.Structure, settings.FilterPx, settings.Xml.MsecPerPixel);
     }
 
-    public string Save()
+    public string GetOutputFolder(bool create = true)
     {
         string outputFolder = Path.Combine(Settings.Xml.FolderPath, "ScanAGator");
-        if (!Directory.Exists(outputFolder))
+        if (create && !Directory.Exists(outputFolder))
             Directory.CreateDirectory(outputFolder);
+        return outputFolder;
+    }
 
+    public void ClearOutputFolder()
+    {
+        string outputFolder = GetOutputFolder();
+        foreach (string path in Directory.GetFiles(outputFolder, "*.*"))
+            File.Delete(path);
+    }
+
+    public string Save()
+    {
         CsvBuilder csv = new();
         csv.Add("Time", "ms", "", Curves.SmoothDeltaGreenOverRedCurve.Times);
         csv.Add("Green", "AFU", "average", Curves.SmoothGreenCurve.Values);
@@ -45,6 +56,7 @@ public class AnalysisResult
             csv.Add("ΔG/R", "AFU", $"frame {i + 1}", curves.SmoothDeltaGreenOverRedCurve.Values);
         }
 
+        string outputFolder = GetOutputFolder();
         string csvFilePath = Path.Combine(outputFolder, "curves.csv");
         csv.SaveAs(csvFilePath);
 

@@ -29,43 +29,81 @@
         private void InitializeComponent()
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.btnSaveAndCopy = new System.Windows.Forms.Button();
+            this.btnSave = new System.Windows.Forms.Button();
             this.btnCopyPeak = new System.Windows.Forms.Button();
             this.btnCopyXs = new System.Windows.Forms.Button();
             this.btnCopyGoR = new System.Windows.Forms.Button();
             this.lblPeak = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.btnSave = new System.Windows.Forms.Button();
-            this.btnSaveAndCopy = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
+            this.btnDelete = new System.Windows.Forms.Button();
+            this.btnOpen = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.btnOpen);
+            this.groupBox1.Controls.Add(this.btnDelete);
             this.groupBox1.Controls.Add(this.btnSaveAndCopy);
             this.groupBox1.Controls.Add(this.btnSave);
             this.groupBox1.Controls.Add(this.btnCopyPeak);
             this.groupBox1.Controls.Add(this.btnCopyXs);
             this.groupBox1.Controls.Add(this.btnCopyGoR);
+            this.groupBox1.Controls.Add(this.label4);
+            this.groupBox1.Controls.Add(this.label3);
             this.groupBox1.Controls.Add(this.lblPeak);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
-            this.groupBox1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Margin = new System.Windows.Forms.Padding(2);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Padding = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.groupBox1.Padding = new System.Windows.Forms.Padding(2);
             this.groupBox1.Size = new System.Drawing.Size(535, 130);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Data Export";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(192, 21);
+            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(55, 13);
+            this.label3.TabIndex = 22;
+            this.label3.Text = "CSV Files:";
+            // 
+            // btnSaveAndCopy
+            // 
+            this.btnSaveAndCopy.Location = new System.Drawing.Point(195, 74);
+            this.btnSaveAndCopy.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSaveAndCopy.Name = "btnSaveAndCopy";
+            this.btnSaveAndCopy.Size = new System.Drawing.Size(96, 31);
+            this.btnSaveAndCopy.TabIndex = 21;
+            this.btnSaveAndCopy.Text = "Save and Copy";
+            this.btnSaveAndCopy.UseVisualStyleBackColor = true;
+            this.btnSaveAndCopy.Click += new System.EventHandler(this.btnSaveAndCopy_Click);
+            // 
+            // btnSave
+            // 
+            this.btnSave.Location = new System.Drawing.Point(195, 39);
+            this.btnSave.Margin = new System.Windows.Forms.Padding(2);
+            this.btnSave.Name = "btnSave";
+            this.btnSave.Size = new System.Drawing.Size(96, 31);
+            this.btnSave.TabIndex = 20;
+            this.btnSave.Text = "Save";
+            this.btnSave.UseVisualStyleBackColor = true;
+            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            // 
             // btnCopyPeak
             // 
             this.btnCopyPeak.Location = new System.Drawing.Point(10, 74);
-            this.btnCopyPeak.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCopyPeak.Margin = new System.Windows.Forms.Padding(2);
             this.btnCopyPeak.Name = "btnCopyPeak";
             this.btnCopyPeak.Size = new System.Drawing.Size(77, 31);
             this.btnCopyPeak.TabIndex = 19;
@@ -76,7 +114,7 @@
             // btnCopyXs
             // 
             this.btnCopyXs.Location = new System.Drawing.Point(100, 39);
-            this.btnCopyXs.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCopyXs.Margin = new System.Windows.Forms.Padding(2);
             this.btnCopyXs.Name = "btnCopyXs";
             this.btnCopyXs.Size = new System.Drawing.Size(77, 31);
             this.btnCopyXs.TabIndex = 14;
@@ -87,7 +125,7 @@
             // btnCopyGoR
             // 
             this.btnCopyGoR.Location = new System.Drawing.Point(100, 74);
-            this.btnCopyGoR.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.btnCopyGoR.Margin = new System.Windows.Forms.Padding(2);
             this.btnCopyGoR.Name = "btnCopyGoR";
             this.btnCopyGoR.Size = new System.Drawing.Size(77, 31);
             this.btnCopyGoR.TabIndex = 13;
@@ -126,44 +164,44 @@
             this.label1.TabIndex = 11;
             this.label1.Text = "Peak ΔG/R";
             // 
-            // btnSave
+            // btnDelete
             // 
-            this.btnSave.Location = new System.Drawing.Point(195, 39);
-            this.btnSave.Margin = new System.Windows.Forms.Padding(2);
-            this.btnSave.Name = "btnSave";
-            this.btnSave.Size = new System.Drawing.Size(96, 31);
-            this.btnSave.TabIndex = 20;
-            this.btnSave.Text = "Save All Files";
-            this.btnSave.UseVisualStyleBackColor = true;
-            this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+            this.btnDelete.Location = new System.Drawing.Point(309, 74);
+            this.btnDelete.Margin = new System.Windows.Forms.Padding(2);
+            this.btnDelete.Name = "btnDelete";
+            this.btnDelete.Size = new System.Drawing.Size(96, 31);
+            this.btnDelete.TabIndex = 23;
+            this.btnDelete.Text = "Delete Analyses";
+            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
-            // btnSaveAndCopy
+            // btnOpen
             // 
-            this.btnSaveAndCopy.Location = new System.Drawing.Point(195, 74);
-            this.btnSaveAndCopy.Margin = new System.Windows.Forms.Padding(2);
-            this.btnSaveAndCopy.Name = "btnSaveAndCopy";
-            this.btnSaveAndCopy.Size = new System.Drawing.Size(96, 31);
-            this.btnSaveAndCopy.TabIndex = 21;
-            this.btnSaveAndCopy.Text = "Save and Copy";
-            this.btnSaveAndCopy.UseVisualStyleBackColor = true;
-            this.btnSaveAndCopy.Click += new System.EventHandler(this.btnSaveAndCopy_Click);
+            this.btnOpen.Location = new System.Drawing.Point(309, 39);
+            this.btnOpen.Margin = new System.Windows.Forms.Padding(2);
+            this.btnOpen.Name = "btnOpen";
+            this.btnOpen.Size = new System.Drawing.Size(96, 31);
+            this.btnOpen.TabIndex = 24;
+            this.btnOpen.Text = "Open";
+            this.btnOpen.UseVisualStyleBackColor = true;
+            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
             // 
-            // label3
+            // label4
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(192, 21);
-            this.label3.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(55, 13);
-            this.label3.TabIndex = 22;
-            this.label3.Text = "CSV Files:";
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(306, 21);
+            this.label4.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(74, 13);
+            this.label4.TabIndex = 25;
+            this.label4.Text = "Output Folder:";
             // 
             // DataExportControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.groupBox1);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "DataExportControl";
             this.Size = new System.Drawing.Size(535, 130);
             this.groupBox1.ResumeLayout(false);
@@ -184,5 +222,8 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnSaveAndCopy;
         private System.Windows.Forms.Button btnSave;
+        private System.Windows.Forms.Button btnDelete;
+        private System.Windows.Forms.Button btnOpen;
+        private System.Windows.Forms.Label label4;
     }
 }

@@ -1,14 +1,5 @@
-﻿using BitMiracle.LibTiff.Classic;
-using ScanAGator.Analysis;
-using ScottPlot.Drawing.Colormaps;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
+﻿using System;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ScanAGator.GUI
@@ -74,6 +65,28 @@ namespace ScanAGator.GUI
             string csvPath = Result.Save();
 
             Clipboard.SetText($"LoadLinescanCSV \"{csvPath}\";");
+        }
+
+        private void btnDelete_Click(object sender, EventArgs e)
+        {
+            DialogResult result = MessageBox.Show(
+                "Delete all old analysis files?", 
+                "Delete Files", 
+                MessageBoxButtons.YesNo, 
+                MessageBoxIcon.Warning);
+
+            if (result == DialogResult.Yes)
+            {
+                Result?.ClearOutputFolder();
+            }
+        }
+
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+            if (Result is null)
+                return;
+
+            System.Diagnostics.Process.Start("explorer.exe", Result.GetOutputFolder());
         }
     }
 }
