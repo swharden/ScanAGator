@@ -17,6 +17,8 @@ namespace ScanAGator.GUI
     public partial class AnalysisSettingsControl : UserControl
     {
         public Action<Analysis.AnalysisSettings>? Recalculate;
+        public Timer RecalculateTimer = new() { Interval = 20, Enabled = true };
+        private bool NeedsRecalculation;
 
         private Imaging.RatiometricImages? Images;
         private Bitmap? DisplayBitmap;
@@ -32,6 +34,18 @@ namespace ScanAGator.GUI
             cbAverage.CheckedChanged += CbAverage_CheckedChanged;
             cbFloor.CheckedChanged += CbFloor_CheckedChanged;
             nudFilterPx.ValueChanged += NudFilterPx_ValueChanged;
+
+            tbBaseline1.ValueChanged += TrackBar_ValueChanged;
+            tbBaseline2.ValueChanged += TrackBar_ValueChanged;
+            tbStructure1.ValueChanged += TrackBar_ValueChanged;
+            tbStructure2.ValueChanged += TrackBar_ValueChanged;
+
+            nudBaseline1.ValueChanged += Nud_ValueChanged;
+            nudBaseline2.ValueChanged += Nud_ValueChanged;
+            nudStructure1.ValueChanged += Nud_ValueChanged;
+            nudStructure2.ValueChanged += Nud_ValueChanged;
+
+            RecalculateTimer.Tick += (e, a) => RecalculateIfNeeded();
 
             // enable double buffering (reflection required to mutate this private field)
             BindingFlags flags = BindingFlags.SetProperty | BindingFlags.Instance | BindingFlags.NonPublic;
@@ -54,12 +68,12 @@ namespace ScanAGator.GUI
             AutoStructure();
         }
 
-        private void CbFloor_CheckedChanged(object sender, EventArgs e) => RecalculateNow();
+        private void CbFloor_CheckedChanged(object sender, EventArgs e) => RecalculateSoon();
         private void CbDisplay_SelectedIndexChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void CbAverage_CheckedChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void TbFrame_ValueChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void TrackBar_ValueChanged(object sender, EventArgs e) => OnTrackbarChanged();
-        private void NudFilterPx_ValueChanged(object sender, EventArgs e) => RecalculateNow();
+        private void NudFilterPx_ValueChanged(object sender, EventArgs e) => RecalculateSoon();
         private void btnAutoBaseline_Click(object sender, EventArgs e) => AutoBaseline();
 
         private void btnAutoStructure_Click(object sender, EventArgs e) => AutoStructure();
@@ -123,7 +137,7 @@ namespace ScanAGator.GUI
                 tbFrame.Visible = true;
             }
 
-            RecalculateNow();
+            RecalculateSoon();
         }
 
         private void Nud_ValueChanged(object sender, EventArgs e)
@@ -137,72 +151,47 @@ namespace ScanAGator.GUI
             int maxBaseline = DisplayBitmap is null ? 999999 : DisplayBitmap.Height - 1;
             int maxStructure = DisplayBitmap is null ? 999999 : DisplayBitmap.Width - 1;
 
-            // un-wire event handlers
-            tbBaseline1.ValueChanged -= TrackBar_ValueChanged;
-            tbBaseline2.ValueChanged -= TrackBar_ValueChanged;
-            tbStructure1.ValueChanged -= TrackBar_ValueChanged;
-            tbStructure2.ValueChanged -= TrackBar_ValueChanged;
+            nudBaseline1.SetMax(maxBaseline);
+            nudBaseline2.SetMax(maxBaseline);
+            nudStructure1.SetMax(maxStructure);
+            nudStructure2.SetMax(maxStructure);
 
-            nudBaseline1.ValueChanged -= Nud_ValueChanged;
-            nudBaseline2.ValueChanged -= Nud_ValueChanged;
-            nudStructure1.ValueChanged -= Nud_ValueChanged;
-            nudStructure2.ValueChanged -= Nud_ValueChanged;
-
-            // reset the values conservatively
-            nudBaseline1.Value = 0;
-            nudBaseline2.Value = 0;
-            nudStructure1.Value = 0;
-            nudStructure2.Value = 0;
-
-            tbBaseline1.Value = 0;
-            tbBaseline2.Value = 0;
-            tbStructure1.Value = 0;
-            tbStructure2.Value = 0;
-
-            // set the max upper bounds
-            nudBaseline1.Maximum = maxBaseline;
-            nudBaseline2.Maximum = maxBaseline;
-            nudStructure1.Maximum = maxStructure;
-            nudStructure2.Maximum = maxStructure;
-
-            tbBaseline1.Maximum = maxBaseline;
-            tbBaseline2.Maximum = maxBaseline;
-            tbStructure1.Maximum = maxStructure;
-            tbStructure2.Maximum = maxStructure;
-
-            // wire-up the event handlers
-            tbBaseline1.ValueChanged += TrackBar_ValueChanged;
-            tbBaseline2.ValueChanged += TrackBar_ValueChanged;
-            tbStructure1.ValueChanged += TrackBar_ValueChanged;
-            tbStructure2.ValueChanged += TrackBar_ValueChanged;
-
-            nudBaseline1.ValueChanged += Nud_ValueChanged;
-            nudBaseline2.ValueChanged += Nud_ValueChanged;
-            nudStructure1.ValueChanged += Nud_ValueChanged;
-            nudStructure2.ValueChanged += Nud_ValueChanged;
+            tbBaseline1.SetMax(maxBaseline);
+            tbBaseline2.SetMax(maxBaseline);
+            tbStructure1.SetMax(maxStructure);
+            tbStructure2.SetMax(maxStructure);
         }
+
 
         private void OnTrackbarChanged()
         {
-            nudBaseline1.Value = tbBaseline1.Maximum - tbBaseline1.Value;
-            nudBaseline2.Value = tbBaseline2.Maximum - tbBaseline2.Value;
-            nudStructure1.Value = tbStructure1.Value;
-            nudStructure2.Value = tbStructure2.Value;
-            RecalculateNow();
+            nudBaseline1.SafeSet(tbBaseline1.Maximum - tbBaseline1.Value);
+            nudBaseline2.SafeSet(tbBaseline2.Maximum - tbBaseline2.Value);
+            nudStructure1.SafeSet(tbStructure1.Value);
+            nudStructure2.SafeSet(tbStructure2.Value);
+            RecalculateSoon();
         }
 
         private void OnNudChanged()
         {
-            tbBaseline1.Value = tbBaseline1.Maximum - (int)nudBaseline1.Value;
-            tbBaseline2.Value = tbBaseline2.Maximum - (int)nudBaseline2.Value;
-            tbStructure1.Value = (int)nudStructure1.Value;
-            tbStructure2.Value = (int)nudStructure2.Value;
-            RecalculateNow();
+            tbBaseline1.SafeSet(tbBaseline1.Maximum - (int)nudBaseline1.Value);
+            tbBaseline2.SafeSet(tbBaseline2.Maximum - (int)nudBaseline2.Value);
+            tbStructure1.SafeSet((int)nudStructure1.Value);
+            tbStructure2.SafeSet((int)nudStructure2.Value);
+            RecalculateSoon();
         }
 
-        /// <summary>
-        /// Call this to force a redraw of the linescan image and regeneration of all plots
-        /// </summary>
+        private void RecalculateSoon()
+        {
+            NeedsRecalculation = true;
+        }
+
+        private void RecalculateIfNeeded()
+        {
+            if (NeedsRecalculation)
+                RecalculateNow();
+        }
+
         private void RecalculateNow()
         {
             Imaging.RatiometricImage? ratioImage = GetRatiometricImage();
@@ -245,6 +234,7 @@ namespace ScanAGator.GUI
             pbGraph.Image = plt.GetBitmap();
 
             Recalculate?.Invoke(settings);
+            NeedsRecalculation = false;
         }
 
         private void Panel1_Paint(object sender, PaintEventArgs e)
