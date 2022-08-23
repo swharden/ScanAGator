@@ -79,7 +79,16 @@ namespace ScanAGator.GUI
         {
             ListViewItem clickedItem = lvFolders.SelectedItems[0];
             string clickedItemPath = clickedItem.ImageKey;
-            SetFolder(clickedItemPath);
+            if (IsLinescanFolder(clickedItemPath))
+            {
+                // launch the folder in Explorer
+                System.Diagnostics.Process.Start("explorer.exe", clickedItemPath);
+            }
+            else
+            {
+                // enter the folder
+                SetFolder(clickedItemPath);
+            }
         }
 
         private void FullSizeFirstColumn(ListView lv)
