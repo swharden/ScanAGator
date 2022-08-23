@@ -25,7 +25,7 @@ namespace ScanAGator.GUI
         public void ShowResult(Analysis.AnalysisResult result)
         {
             Result = result;
-            double peak = result.SmoothDeltaGreenOverRedCurve.GetPeak();
+            double peak = result.Curves.SmoothDeltaGreenOverRedCurve.GetPeak();
             lblPeak.Text = $"{peak:N2}%";
         }
 
@@ -34,7 +34,7 @@ namespace ScanAGator.GUI
             if (Result is null)
                 return;
 
-            Clipboard.SetText(Result.SmoothDeltaGreenOverRedCurve.GetPeak().ToString());
+            Clipboard.SetText(Result.Curves.SmoothDeltaGreenOverRedCurve.GetPeak().ToString());
         }
 
         private void btnCopyXs_Click(object sender, EventArgs e)
@@ -42,7 +42,7 @@ namespace ScanAGator.GUI
             if (Result is null)
                 return;
 
-            CopyValues(Result.SmoothDeltaGreenOverRedCurve.GetTimes());
+            CopyValues(Result.Curves.SmoothDeltaGreenOverRedCurve.Times);
         }
 
         private void btnCopyGoR_Click(object sender, EventArgs e)
@@ -50,7 +50,7 @@ namespace ScanAGator.GUI
             if (Result is null)
                 return;
 
-            CopyValues(Result.SmoothDeltaGreenOverRedCurve.Values);
+            CopyValues(Result.Curves.SmoothDeltaGreenOverRedCurve.Values);
         }
 
         private void CopyValues(double[] values)

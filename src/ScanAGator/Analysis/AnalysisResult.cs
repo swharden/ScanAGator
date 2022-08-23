@@ -2,7 +2,6 @@
 using ScanAGator.Imaging;
 using System;
 using System.IO;
-using System.Reflection;
 
 namespace ScanAGator.Analysis;
 
@@ -12,39 +11,16 @@ namespace ScanAGator.Analysis;
 public class AnalysisResult
 {
     public readonly AnalysisSettings Settings;
-    public readonly ImageData GreenImageData;
-    public readonly ImageData RedImageData;
-    public IntensityCurve GreenCurve;
-    public IntensityCurve RedCurve;
-    public IntensityCurve SmoothGreenCurve;
-    public IntensityCurve SmoothRedCurve;
-    public IntensityCurve SmoothDeltaGreenCurve;
-    public IntensityCurve SmoothDeltaGreenOverRedCurve;
+    public readonly AnalysisResultCurves Curves;
 
-    public static Version Version => new Version(4, 1); // EDIT THIS MANUALLY
+    public static Version Version => new(4, 1); // EDIT THIS MANUALLY
 
     public static string VersionString => $"Scan-A-Gator v{Version.Major}.{Version.Minor}";
 
     public AnalysisResult(AnalysisSettings settings)
     {
         Settings = settings;
-
-        // images loaded and turned into raw curves
-        GreenImageData = settings.Image.GreenData;
-        RedImageData = settings.Image.RedData;
-
-        // get the intensity curves for the structure of interest
-        GreenCurve = new IntensityCurve(GreenImageData, settings.Structure);
-        RedCurve = new IntensityCurve(RedImageData, settings.Structure);
-
-        // calculate smooth curves
-        SmoothGreenCurve = GreenCurve.LowPassFiltered(settings.FilterPx);
-        SmoothRedCurve = RedCurve.LowPassFiltered(settings.FilterPx);
-
-        // calculate ratios from smoothed curves
-        double greenCurveBaseline = GreenCurve.GetMean(settings.Baseline);
-        SmoothDeltaGreenCurve = SmoothGreenCurve - greenCurveBaseline;
-        SmoothDeltaGreenOverRedCurve = SmoothDeltaGreenCurve / SmoothRedCurve * 100;
+        Curves = new(settings.PrimaryImage, settings.Baseline, settings.Structure, settings.FilterPx, settings.Xml.MsecPerPixel);
     }
 
     public string Save()
@@ -54,12 +30,22 @@ public class AnalysisResult
             Directory.CreateDirectory(outputFolder);
 
         CsvBuilder csv = new();
-        csv.Add("Times", "msec", "", SmoothDeltaGreenOverRedCurve.GetTimes());
-        csv.Add("Green", "AFU", "", SmoothGreenCurve.Values);
-        csv.Add("Red", "AFU", "", SmoothRedCurve.Values);
-        csv.Add("ΔG/R", "%", "", SmoothDeltaGreenOverRedCurve.Values);
+        csv.Add("Time", "ms", "", Curves.SmoothDeltaGreenOverRedCurve.Times);
+        csv.Add("Green", "AFU", "average", Curves.SmoothGreenCurve.Values);
+        csv.Add("Red", "AFU", "average", Curves.SmoothRedCurve.Values);
+        csv.Add("ΔG/R", "%", "average", Curves.SmoothDeltaGreenOverRedCurve.Values);
 
-        string csvFilePath = Path.Combine(outputFolder, "frame-average.csv");
+        for (int i = 0; i < Settings.SecondaryImages.Length; i++)
+        {
+            RatiometricImage img = Settings.SecondaryImages[i];
+            AnalysisResultCurves curves = new(img, Settings.Baseline, Settings.Structure, Settings.FilterPx, Settings.Xml.MsecPerPixel);
+
+            csv.Add("Green", "AFU", $"frame {i + 1}", curves.SmoothGreenCurve.Values);
+            csv.Add("Red", "AFU", $"frame {i + 1}", curves.SmoothRedCurve.Values);
+            csv.Add("ΔG/R", "AFU", $"frame {i + 1}", curves.SmoothDeltaGreenOverRedCurve.Values);
+        }
+
+        string csvFilePath = Path.Combine(outputFolder, "curves.csv");
         csv.SaveAs(csvFilePath);
 
         Metadata.SaveJsonMetadata(csvFilePath + ".json", Settings);

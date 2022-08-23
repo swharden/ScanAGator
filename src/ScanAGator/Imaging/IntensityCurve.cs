@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ScottPlot.Drawing.Colormaps;
+using System;
 using System.Linq;
 
 namespace ScanAGator.Imaging;
@@ -6,35 +7,21 @@ namespace ScanAGator.Imaging;
 public class IntensityCurve
 {
     public readonly double[] Values;
-    public readonly double MsPerPixel;
+    public readonly double SamplePeriod;
+    public readonly double[] Times;
 
-    public IntensityCurve(double[] values)
+    public IntensityCurve(double[] values, double period)
     {
         Values = values;
-        MsPerPixel = double.NaN;
+        SamplePeriod = period;
+        Times = Enumerable.Range(0, values.Length).Select(x => x * period).ToArray();
     }
 
-    public IntensityCurve(double[] values, double msPerPixel)
-    {
-        Values = values;
-        MsPerPixel = msPerPixel;
-    }
-
-    public IntensityCurve(ImageData img, StructureRange structure)
+    public IntensityCurve(ImageData img, double period, StructureRange structure)
     {
         Values = img.AverageByRow(structure.Min, structure.Max);
-        MsPerPixel = double.NaN;
-    }
-
-    public double[] GetTimes()
-    {
-        double[] times = new double[Values.Length];
-        double period = double.IsNaN(MsPerPixel) ? 1 : MsPerPixel;
-        for (int i = 0; i < times.Length; i++)
-        {
-            times[i] = i * period;
-        }
-        return times;
+        SamplePeriod = period;
+        Times = Enumerable.Range(0, Values.Length).Select(x => x * period).ToArray();
     }
 
     public double GetMean(BaselineRange baseline)
@@ -73,7 +60,7 @@ public class IntensityCurve
 
         if (Values.Length != smooth.Length)
             throw new InvalidOperationException("Array size changed after filtering");
-        return new IntensityCurve(smooth, MsPerPixel);
+        return new IntensityCurve(smooth, SamplePeriod);
     }
 
     public static IntensityCurve operator +(IntensityCurve a, IntensityCurve b)
@@ -85,7 +72,7 @@ public class IntensityCurve
         for (int i = 0; i < values.Length; i++)
             values[i] = a.Values[i] + b.Values[i];
 
-        return new IntensityCurve(values);
+        return new IntensityCurve(values, a.SamplePeriod);
     }
 
     public static IntensityCurve operator -(IntensityCurve a, IntensityCurve b)
@@ -97,7 +84,7 @@ public class IntensityCurve
         for (int i = 0; i < values.Length; i++)
             values[i] = a.Values[i] - b.Values[i];
 
-        return new IntensityCurve(values);
+        return new IntensityCurve(values, a.SamplePeriod);
     }
 
     public static IntensityCurve operator *(IntensityCurve a, IntensityCurve b)
@@ -109,7 +96,7 @@ public class IntensityCurve
         for (int i = 0; i < values.Length; i++)
             values[i] = a.Values[i] * b.Values[i];
 
-        return new IntensityCurve(values);
+        return new IntensityCurve(values, a.SamplePeriod);
     }
 
     public static IntensityCurve operator /(IntensityCurve a, IntensityCurve b)
@@ -121,7 +108,7 @@ public class IntensityCurve
         for (int i = 0; i < values.Length; i++)
             values[i] = a.Values[i] / b.Values[i];
 
-        return new IntensityCurve(values);
+        return new IntensityCurve(values, a.SamplePeriod);
     }
 
     public static IntensityCurve operator +(IntensityCurve a, double b)
@@ -130,7 +117,7 @@ public class IntensityCurve
         for (int i = 0; i < values.Length; i++)
             values[i] = a.Values[i] + b;
 
-        return new IntensityCurve(values);
+        return new IntensityCurve(values, a.SamplePeriod);
     }
 
     public static IntensityCurve operator -(IntensityCurve a, double b)
@@ -139,7 +126,7 @@ public class IntensityCurve
         for (int i = 0; i < values.Length; i++)
             values[i] = a.Values[i] - b;
 
-        return new IntensityCurve(values);
+        return new IntensityCurve(values, a.SamplePeriod);
     }
 
     public static IntensityCurve operator *(IntensityCurve a, double b)
@@ -148,7 +135,7 @@ public class IntensityCurve
         for (int i = 0; i < values.Length; i++)
             values[i] = a.Values[i] * b;
 
-        return new IntensityCurve(values);
+        return new IntensityCurve(values, a.SamplePeriod);
     }
 
     public static IntensityCurve operator /(IntensityCurve a, double b)
@@ -157,6 +144,6 @@ public class IntensityCurve
         for (int i = 0; i < values.Length; i++)
             values[i] = a.Values[i] / b;
 
-        return new IntensityCurve(values);
+        return new IntensityCurve(values, a.SamplePeriod);
     }
 }

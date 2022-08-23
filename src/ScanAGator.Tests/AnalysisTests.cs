@@ -23,8 +23,9 @@ namespace ScanAGator.Tests
             ImageData greenImage = ImageDataTools.ReadTif(SampleData.GreenLinescanImagePath);
             ImageData redImage = ImageDataTools.ReadTif(SampleData.RedLinescanImagePath);
 
-            IntensityCurve green = new(greenImage, structure);
-            IntensityCurve red = new(redImage, structure);
+            double msecPerPixel = 12.34;
+            IntensityCurve green = new(greenImage, msecPerPixel, structure);
+            IntensityCurve red = new(redImage, msecPerPixel, structure);
 
             // green baseline calculated from raw green curve
             double baselineGreen = green.GetMean(baseline);
@@ -45,7 +46,7 @@ namespace ScanAGator.Tests
         private void PlotGreenAndRed(IntensityCurve green, IntensityCurve red, IntensityCurve smoothGreen, IntensityCurve smoothRed)
         {
             ScottPlot.Plot plt = new();
-            double[] xs = green.GetTimes();
+            double[] xs = green.Times;
             plt.AddScatterPoints(xs, green.Values, Color.FromArgb(30, Color.Green));
             plt.AddScatterPoints(xs, red.Values, Color.FromArgb(30, Color.Red));
             plt.AddScatterLines(xs, smoothGreen.Values, Color.Green);
@@ -57,8 +58,7 @@ namespace ScanAGator.Tests
         private void PlotDeltaGreenOverRed(IntensityCurve dgor, BaselineRange baseline)
         {
             ScottPlot.Plot plt = new();
-            double[] xs = dgor.GetTimes();
-            plt.AddScatterLines(xs, dgor.Values);
+            plt.AddScatterLines(dgor.Times, dgor.Values);
             plt.AddHorizontalSpan(baseline.Min, baseline.Max, Color.FromArgb(20, Color.Black));
             plt.AddHorizontalLine(0, Color.Black, 1, ScottPlot.LineStyle.Dash);
             plt.YLabel("ΔF/F (%)");

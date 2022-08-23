@@ -116,6 +116,7 @@ namespace ScanAGator.GUI
         {
             if (Images is null)
                 return null;
+
             return cbAverage.Checked ? Images.Average : Images.Frames[tbFrame.Value];
         }
 
@@ -207,7 +208,7 @@ namespace ScanAGator.GUI
         {
             Imaging.RatiometricImage? ratioImage = GetRatiometricImage();
 
-            if (ratioImage is null || PVXml is null)
+            if (ratioImage is null || PVXml is null || Images is null)
                 return;
 
             BaselineRange baseline = new((int)nudBaseline1.Value, (int)nudBaseline2.Value);
@@ -216,7 +217,7 @@ namespace ScanAGator.GUI
             double filterMs = filterPx * PVXml.MsecPerPixel;
             lblFilterTime.Text = $"{filterMs:N2} ms";
 
-            AnalysisSettings settings = new(ratioImage, baseline, structure, filterPx, ratioImage.FloorPercentile, PVXml);
+            AnalysisSettings settings = new(ratioImage, Images.Frames, baseline, structure, filterPx, ratioImage.FloorPercentile, PVXml);
 
             ScottPlot.Plot plt = new(pbGraph.Width, pbGraph.Height);
             plt.Frameless();

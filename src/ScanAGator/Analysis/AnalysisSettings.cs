@@ -7,21 +7,24 @@ namespace ScanAGator.Analysis;
 /// </summary>
 public class AnalysisSettings
 {
-    public readonly RatiometricImage Image;
+    public readonly RatiometricImage PrimaryImage;
+    public readonly RatiometricImage[] SecondaryImages;
     public readonly BaselineRange Baseline;
     public readonly StructureRange Structure;
     public readonly int FilterPx;
     public readonly double FloorPercentile;
     public readonly Prairie.ParirieXmlFile Xml;
 
-    public AnalysisSettings(RatiometricImage image, 
+    public AnalysisSettings(RatiometricImage img,
+        RatiometricImage[] img2,
         BaselineRange baseline, 
         StructureRange structure,
         int filterPx,
         double floorPercentile,
         Prairie.ParirieXmlFile xml)
     {
-        Image = image;
+        PrimaryImage = img;
+        SecondaryImages = img2;
         Baseline = baseline;
         Structure = structure;
         FilterPx = filterPx;
