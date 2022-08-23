@@ -7,6 +7,7 @@ public class RatiometricImage
 {
     public readonly ImageData GreenData;
     public readonly ImageData RedData;
+    public double FloorPercentile = 0;
 
     private Bitmap? _Green = null;
     private Bitmap? _Red = null;
@@ -62,6 +63,7 @@ public class RatiometricImage
 
     public void SubtractFloor(double percent)
     {
+        FloorPercentile = percent;
         GreenData.SubtractFloor(percent);
         RedData.SubtractFloor(percent);
         _Merge = null;

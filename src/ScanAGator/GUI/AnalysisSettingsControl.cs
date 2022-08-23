@@ -216,7 +216,7 @@ namespace ScanAGator.GUI
             double filterMs = filterPx * PVXml.MsecPerPixel;
             lblFilterTime.Text = $"{filterMs:N2} ms";
 
-            AnalysisSettings settings = new(ratioImage, baseline, structure, filterPx, PVXml);
+            AnalysisSettings settings = new(ratioImage, baseline, structure, filterPx, ratioImage.FloorPercentile, PVXml);
 
             ScottPlot.Plot plt = new(pbGraph.Width, pbGraph.Height);
             plt.Frameless();

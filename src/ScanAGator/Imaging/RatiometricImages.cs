@@ -34,6 +34,7 @@ namespace ScanAGator.Imaging
         {
             Frames.ToList().ForEach(x => x.SubtractFloor(percentile));
             Average = CreateAverage(Frames);
+            Average.FloorPercentile = percentile;
         }
     }
 }

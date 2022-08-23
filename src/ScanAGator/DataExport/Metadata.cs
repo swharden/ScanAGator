@@ -25,6 +25,7 @@ public static class Metadata
         writer.WriteNumber("structurePixel1", settings.Structure.Min);
         writer.WriteNumber("structurePixel2", settings.Structure.Max);
         writer.WriteNumber("filterPixels", settings.FilterPx);
+        writer.WriteNumber("imageFloorPercentile", settings.FloorPercentile);
 
         writer.WriteEndObject();
 

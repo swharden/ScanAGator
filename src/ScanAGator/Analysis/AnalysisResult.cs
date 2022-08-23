@@ -1,5 +1,7 @@
-﻿using ScanAGator.Imaging;
+﻿using ScanAGator.DataExport;
+using ScanAGator.Imaging;
 using System;
+using System.IO;
 using System.Reflection;
 
 namespace ScanAGator.Analysis;
@@ -19,7 +21,7 @@ public class AnalysisResult
     public IntensityCurve SmoothDeltaGreenCurve;
     public IntensityCurve SmoothDeltaGreenOverRedCurve;
 
-    public static Version Version => new Version(4, 0); // EDIT THIS MANUALLY
+    public static Version Version => new Version(4, 1); // EDIT THIS MANUALLY
 
     public static string VersionString => $"Scan-A-Gator v{Version.Major}.{Version.Minor}";
 
@@ -43,5 +45,25 @@ public class AnalysisResult
         double greenCurveBaseline = GreenCurve.GetMean(settings.Baseline);
         SmoothDeltaGreenCurve = SmoothGreenCurve - greenCurveBaseline;
         SmoothDeltaGreenOverRedCurve = SmoothDeltaGreenCurve / SmoothRedCurve * 100;
+    }
+
+    public string Save()
+    {
+        string outputFolder = Path.Combine(Settings.Xml.FolderPath, "ScanAGator");
+        if (!Directory.Exists(outputFolder))
+            Directory.CreateDirectory(outputFolder);
+
+        CsvBuilder csv = new();
+        csv.Add("Times", "msec", "", SmoothDeltaGreenOverRedCurve.GetTimes());
+        csv.Add("Green", "AFU", "", SmoothGreenCurve.Values);
+        csv.Add("Red", "AFU", "", SmoothRedCurve.Values);
+        csv.Add("ΔG/R", "%", "", SmoothDeltaGreenOverRedCurve.Values);
+
+        string csvFilePath = Path.Combine(outputFolder, "frame-average.csv");
+        csv.SaveAs(csvFilePath);
+
+        Metadata.SaveJsonMetadata(csvFilePath + ".json", Settings);
+
+        return csvFilePath;
     }
 }

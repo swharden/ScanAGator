@@ -11,14 +11,21 @@ public class AnalysisSettings
     public readonly BaselineRange Baseline;
     public readonly StructureRange Structure;
     public readonly int FilterPx;
+    public readonly double FloorPercentile;
     public readonly Prairie.ParirieXmlFile Xml;
 
-    public AnalysisSettings(RatiometricImage image, BaselineRange baseline, StructureRange structure, int filterPx, Prairie.ParirieXmlFile xml)
+    public AnalysisSettings(RatiometricImage image, 
+        BaselineRange baseline, 
+        StructureRange structure,
+        int filterPx,
+        double floorPercentile,
+        Prairie.ParirieXmlFile xml)
     {
         Image = image;
         Baseline = baseline;
         Structure = structure;
         FilterPx = filterPx;
+        FloorPercentile = floorPercentile;
         Xml = xml;
     }
 }
