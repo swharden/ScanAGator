@@ -53,8 +53,19 @@ namespace ScanAGator.GUI
             panel1.Paint += Panel1_Paint;
         }
 
-        public void SetLinescan(Prairie.ParirieXmlFile xml, Imaging.RatiometricImages images)
+        private string? CurrentFolderpath = string.Empty;
+        public void SetLinescan(string? folderPath)
         {
+            CurrentFolderpath = folderPath;
+            if (folderPath is null)
+                return;
+
+            Prairie.FolderContents pvFolder = new(folderPath);
+            Prairie.ParirieXmlFile xml = new(pvFolder.XmlFilePath);
+            Imaging.RatiometricImages images = new(pvFolder);
+            if (cbFloor.Checked)
+                images.SubtractFloorFromAllImages(20);
+
             SetMaxValues();
 
             PVXml = xml;
@@ -68,7 +79,7 @@ namespace ScanAGator.GUI
             AutoStructure();
         }
 
-        private void CbFloor_CheckedChanged(object sender, EventArgs e) => RecalculateSoon();
+        private void CbFloor_CheckedChanged(object sender, EventArgs e) => SetLinescan(CurrentFolderpath);
         private void CbDisplay_SelectedIndexChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void CbAverage_CheckedChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void TbFrame_ValueChanged(object sender, EventArgs e) => OnLinescanImageChanged();
@@ -198,23 +209,6 @@ namespace ScanAGator.GUI
 
             if (ratioImage is null || PVXml is null)
                 return;
-
-            // TODO: move this into analysis because it is too slow to generate every time
-            if (cbFloor.Checked)
-            {
-                ImageData g = ratioImage.GreenData;
-                ImageData r = ratioImage.RedData;
-
-                double gFloor = g.Percentile(20);
-                double rFloor = r.Percentile(20);
-                Console.WriteLine($"Green noise floor: {gFloor}");
-                Console.WriteLine($"Red noise floor: {rFloor}");
-
-                g -= gFloor;
-                r -= rFloor;
-
-                ratioImage = new Imaging.RatiometricImage(g, r);
-            }
 
             BaselineRange baseline = new((int)nudBaseline1.Value, (int)nudBaseline2.Value);
             StructureRange structure = new((int)nudStructure1.Value, (int)nudStructure2.Value);

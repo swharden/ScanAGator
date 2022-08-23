@@ -35,6 +35,16 @@ public class ImageData
     }
 
     /// <summary>
+    /// Destructively modify the image to subtract the noise floor
+    /// </summary>
+    public void SubtractFloor(double percent)
+    {
+        double floor = Percentile(percent);
+        for (int i = 0; i < Values.Length; i++)
+            Values[i] -= floor;
+    }
+
+    /// <summary>
     /// Return the mean intensity of all pixels
     /// </summary>
     public double Average()

@@ -38,14 +38,7 @@ namespace ScanAGator.GUI
 
         public void OnLinescanFolderSelected(string? folderPath)
         {
-            if (folderPath is not null)
-            {
-                Prairie.FolderContents pvFolder = new(folderPath);
-                Prairie.ParirieXmlFile xml = new(pvFolder.XmlFilePath);
-                Imaging.RatiometricImages images = new(pvFolder);
-                analysisSettingsControl.SetLinescan(xml, images);
-            }
-
+            analysisSettingsControl.SetLinescan(folderPath);
             analysisSettingsControl.Visible = folderPath is not null;
             analysisResultsControl.Visible = folderPath is not null;
         }

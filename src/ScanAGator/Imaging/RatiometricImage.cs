@@ -59,4 +59,11 @@ public class RatiometricImage
         GreenData = ImageDataTools.ReadTif(greenFilePath);
         RedData = ImageDataTools.ReadTif(redFilePath);
     }
+
+    public void SubtractFloor(double percent)
+    {
+        GreenData.SubtractFloor(percent);
+        RedData.SubtractFloor(percent);
+        _Merge = null;
+    }
 }
