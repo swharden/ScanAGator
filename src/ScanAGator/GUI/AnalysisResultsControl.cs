@@ -46,10 +46,9 @@ namespace ScanAGator.GUI
 
         private static void ShadeBaseline(Plot plt, Analysis.AnalysisResult result)
         {
-            plt.AddHorizontalSpan(
-                xMin: result.Settings.Baseline.Min * result.Settings.Xml.MsecPerPixel,
-                xMax: result.Settings.Baseline.Max * result.Settings.Xml.MsecPerPixel,
-                color: Color.FromArgb(20, Color.Black));
+            double x1 = (result.Settings.Baseline.Min - .5) * result.Settings.Xml.MsecPerPixel;
+            double x2 = (result.Settings.Baseline.Max + .5) * result.Settings.Xml.MsecPerPixel;
+            plt.AddHorizontalSpan(x1, x2, Color.FromArgb(20, Color.Black));
         }
 
         private double[] GetTimesMsec(Analysis.AnalysisResult result)

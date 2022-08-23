@@ -228,7 +228,7 @@ namespace ScanAGator.GUI
             plt.Frameless();
             plt.AddSignal(ratioImage.GreenData.AverageByColumn(), 1, Color.Green);
             plt.AddSignal(ratioImage.RedData.AverageByColumn(), 1, Color.Red);
-            plt.AddHorizontalSpan(structure.Min, structure.Max, Color.FromArgb(20, Color.Blue));
+            plt.AddHorizontalSpan(structure.Min - .5, structure.Max + .5, Color.FromArgb(20, Color.Blue));
             plt.AxisAutoX(0);
             pbGraph.Image?.Dispose();
             pbGraph.Image = plt.GetBitmap();
@@ -245,22 +245,24 @@ namespace ScanAGator.GUI
             Graphics gfx = e.Graphics;
             e.Graphics.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
 
+            float pxPerPxY = (float)panel1.Height / DisplayBitmap.Height;
             BaselineRange baseline = new(DisplayBitmap.Height - tbBaseline1.Value, DisplayBitmap.Height - tbBaseline2.Value);
-            int b1 = baseline.Min * panel1.Height / DisplayBitmap.Height;
-            int b2 = (baseline.Max + 1) * panel1.Height / DisplayBitmap.Height;
+            float b1y = (baseline.Min - .5f) * pxPerPxY;
+            float b2y = (baseline.Max + .5f) * pxPerPxY;
 
+            float pxPerPxX = (float)panel1.Width / DisplayBitmap.Width;
             StructureRange structure = new(tbStructure1.Value, tbStructure2.Value);
-            int s1 = structure.Min * panel1.Width / DisplayBitmap.Width;
-            int s2 = (structure.Max + 1) * panel1.Width / DisplayBitmap.Width;
+            float s1x = (structure.Min - .5f) * pxPerPxX;
+            float s2x = (structure.Max + .5f) * pxPerPxX;
 
             gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 
             gfx.DrawImage(DisplayBitmap, 0, 0, panel1.Width, panel1.Height);
 
-            gfx.DrawLine(Pens.Yellow, 0, b1, panel1.Width, b1);
-            gfx.DrawLine(Pens.Yellow, 0, b2, panel1.Width, b2);
-            gfx.DrawLine(Pens.Yellow, s1, 0, s1, panel1.Height);
-            gfx.DrawLine(Pens.Yellow, s2, 0, s2, panel1.Height);
+            gfx.DrawLine(Pens.Yellow, 0, b1y, panel1.Width, b1y);
+            gfx.DrawLine(Pens.Yellow, 0, b2y, panel1.Width, b2y);
+            gfx.DrawLine(Pens.Yellow, s1x, 0, s1x, panel1.Height);
+            gfx.DrawLine(Pens.Yellow, s2x, 0, s2x, panel1.Height);
         }
     }
 }
