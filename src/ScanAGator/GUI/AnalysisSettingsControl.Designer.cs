@@ -324,7 +324,7 @@
             this.nudFilterPx.Size = new System.Drawing.Size(75, 26);
             this.nudFilterPx.TabIndex = 38;
             this.nudFilterPx.Value = new decimal(new int[] {
-            12,
+            30,
             0,
             0,
             0});
