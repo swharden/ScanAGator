@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using ScanAGator.Imaging;
+using ScanAGator.Analysis;
 
 namespace ScanAGator.Tests
 {
@@ -14,55 +14,65 @@ namespace ScanAGator.Tests
         [Test]
         public void Test_Analysis_Workflow()
         {
-            // user defines settings
-            BaselineRange baseline = new(20, 60);
-            StructureRange structure = new(21, 25);
-            int lowpassFilterPixels = 20;
+            // read data from disk
+            Prairie.FolderContents pvFolder = new(SampleData.MultiFrameRatiometricFolderPath);
+            Prairie.ParirieXmlFile pvXml = new(pvFolder.XmlFilePath);
+            Imaging.RatiometricImages images = new(pvFolder);
 
-            // images loaded and turned into raw curves
-            ImageData greenImage = ImageDataTools.ReadTif(SampleData.GreenLinescanImagePath);
-            ImageData redImage = ImageDataTools.ReadTif(SampleData.RedLinescanImagePath);
+            // prepare the data and settings to perform analysis
+            Imaging.RatiometricImage averageImage = images.Average;
+            AnalysisSettings settings = new(
+                img: images.Average,
+                img2: images.Frames,
+                baseline: new BaselineRange(20, 60),
+                structure: new StructureRange(21, 25),
+                filterPx: 20,
+                floorPercentile: 20,
+                xml: pvXml);
 
-            double msecPerPixel = 12.34;
-            IntensityCurve green = new(greenImage, msecPerPixel, structure);
-            IntensityCurve red = new(redImage, msecPerPixel, structure);
-
-            // green baseline calculated from raw green curve
-            double baselineGreen = green.GetMean(baseline);
-
-            // calculate smooth curves
-            IntensityCurve smoothGreen = green.LowPassFiltered(lowpassFilterPixels);
-            IntensityCurve smoothRed = red.LowPassFiltered(lowpassFilterPixels);
-
-            // calculate ratios from smoothed curves
-            IntensityCurve smoothDeltaGreen = smoothGreen - baselineGreen;
-            IntensityCurve smoothDeltaGreenOverRed = smoothDeltaGreen / smoothRed * 100;
+            // execute the analysis
+            AnalysisResult result = new(averageImage, settings);
 
             // display result
-            PlotGreenAndRed(green, red, smoothGreen, smoothRed);
-            PlotDeltaGreenOverRed(smoothDeltaGreenOverRed, baseline);
+            PlotGreenAndRed(result);
+            PlotDeltaGreenOverRed(result);
         }
 
-        private void PlotGreenAndRed(IntensityCurve green, IntensityCurve red, IntensityCurve smoothGreen, IntensityCurve smoothRed)
+        private void PlotGreenAndRed(AnalysisResult result)
         {
             ScottPlot.Plot plt = new();
-            double[] xs = green.Times;
-            plt.AddScatterPoints(xs, green.Values, Color.FromArgb(30, Color.Green));
-            plt.AddScatterPoints(xs, red.Values, Color.FromArgb(30, Color.Red));
-            plt.AddScatterLines(xs, smoothGreen.Values, Color.Green);
-            plt.AddScatterLines(xs, smoothRed.Values, Color.Red);
+            double[] xs = result.GreenCurve.Times;
+            plt.AddScatterPoints(xs, result.GreenCurve.Values, Color.FromArgb(30, Color.Green));
+            plt.AddScatterPoints(xs, result.RedCurve.Values, Color.FromArgb(30, Color.Red));
+            plt.AddScatterLines(xs, result.SmoothGreenCurve.Values, Color.Green);
+            plt.AddScatterLines(xs, result.SmoothRedCurve.Values, Color.Red);
+
+            plt.AddHorizontalSpan(
+                xMin: result.Settings.Baseline.Min * result.Settings.Xml.MsecPerPixel,
+                xMax: result.Settings.Baseline.Max * result.Settings.Xml.MsecPerPixel,
+                color: Color.FromArgb(20, Color.Black));
+
             plt.YLabel("Fluorescence (AFU)");
-            Console.WriteLine(plt.SaveFig("PlotGreenAndRed.png"));
+
+            TestTools.SaveFig(plt, "PlotGreenAndRed.png");
         }
 
-        private void PlotDeltaGreenOverRed(IntensityCurve dgor, BaselineRange baseline)
+        private void PlotDeltaGreenOverRed(AnalysisResult result)
         {
             ScottPlot.Plot plt = new();
-            plt.AddScatterLines(dgor.Times, dgor.Values);
-            plt.AddHorizontalSpan(baseline.Min, baseline.Max, Color.FromArgb(20, Color.Black));
+            plt.AddScatterLines(
+                xs: result.SmoothDeltaGreenOverRedCurve.Times,
+                ys: result.SmoothDeltaGreenOverRedCurve.Values);
+
+            plt.AddHorizontalSpan(
+                xMin: result.Settings.Baseline.Min * result.Settings.Xml.MsecPerPixel,
+                xMax: result.Settings.Baseline.Max * result.Settings.Xml.MsecPerPixel,
+                color: Color.FromArgb(20, Color.Black));
+
             plt.AddHorizontalLine(0, Color.Black, 1, ScottPlot.LineStyle.Dash);
             plt.YLabel("ΔF/F (%)");
-            Console.WriteLine(plt.SaveFig("PlotDeltaGreenOverRed.png"));
+
+            TestTools.SaveFig(plt, "PlotDeltaGreenOverRed.png");
         }
     }
 }

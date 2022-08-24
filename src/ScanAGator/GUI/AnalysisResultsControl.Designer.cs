@@ -113,7 +113,7 @@
             // 
             // btnCopyPeak
             // 
-            this.btnCopyPeak.Location = new System.Drawing.Point(114, 15);
+            this.btnCopyPeak.Location = new System.Drawing.Point(137, 15);
             this.btnCopyPeak.Name = "btnCopyPeak";
             this.btnCopyPeak.Size = new System.Drawing.Size(116, 47);
             this.btnCopyPeak.TabIndex = 2;
@@ -123,22 +123,22 @@
             // 
             // lblPeak
             // 
-            this.lblPeak.AutoSize = true;
             this.lblPeak.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblPeak.Location = new System.Drawing.Point(13, 14);
+            this.lblPeak.Location = new System.Drawing.Point(3, 14);
             this.lblPeak.Name = "lblPeak";
-            this.lblPeak.Size = new System.Drawing.Size(90, 28);
+            this.lblPeak.Size = new System.Drawing.Size(128, 28);
             this.lblPeak.TabIndex = 1;
-            this.lblPeak.Text = "12.34%";
+            this.lblPeak.Text = "123.45%";
+            this.lblPeak.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(14, 42);
+            this.label1.Location = new System.Drawing.Point(3, 42);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(84, 20);
+            this.label1.Size = new System.Drawing.Size(128, 20);
             this.label1.TabIndex = 0;
             this.label1.Text = "Peak ΔF/F";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // AnalysisResultsControl
             // 
@@ -149,7 +149,6 @@
             this.Size = new System.Drawing.Size(786, 890);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
             this.ResumeLayout(false);
 
         }

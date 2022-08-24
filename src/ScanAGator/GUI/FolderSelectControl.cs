@@ -172,7 +172,8 @@ namespace ScanAGator.GUI
         {
             if (lvFolders.SelectedItems.Count != 1)
             {
-                LinescanFolderSelected?.Invoke(null);
+                if (lvFolders.SelectedItems.Count > 1)
+                    LinescanFolderSelected?.Invoke(null);
                 return;
             }
 

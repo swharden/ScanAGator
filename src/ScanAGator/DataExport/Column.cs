@@ -1,4 +1,4 @@
-﻿namespace ScanAGator.DataExport;
+﻿namespace ScanAGator.CSV;
 
 public struct Column
 {

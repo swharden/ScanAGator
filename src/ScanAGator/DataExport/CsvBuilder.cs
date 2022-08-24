@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ScanAGator.DataExport;
+namespace ScanAGator.CSV;
 
 /// <summary>
 /// This class generates CSV files that can be read by OriginLab

@@ -1,4 +1,5 @@
 ﻿using ScanAGator.Analysis;
+using ScanAGator.Imaging;
 using ScottPlot;
 using System;
 using System.Collections.Generic;
@@ -34,7 +35,12 @@ namespace ScanAGator.GUI
             {
                 Analysis.AnalysisSettings settings = SettingsToAnalyze;
                 SettingsToAnalyze = null;
-                Analysis.AnalysisResult results = new(settings);
+
+                RatiometricImage? img = analysisSettingsControl.GetRatiometricImage();
+                if (img is null)
+                    return;
+
+                AnalysisResult results = new(img, settings);
                 analysisResultsControl.ShowResult(results);
             }
         }
@@ -66,9 +72,12 @@ namespace ScanAGator.GUI
             Application.DoEvents(); // force UI update
 
             AnalysisSettings settings = analysisSettingsControl.RecalculateNow()
-                ?? throw new System.NullReferenceException("auto-calculated settings");
+                ?? throw new NullReferenceException("auto-calculated settings");
 
-            Analysis.AnalysisResult results = new(settings);
+            RatiometricImage img = analysisSettingsControl.GetRatiometricImage()
+                ?? throw new NullReferenceException("ratiometric image");
+
+            Analysis.AnalysisResult results = new(img, settings);
             results.Save();
             Application.DoEvents(); // force UI update
         }

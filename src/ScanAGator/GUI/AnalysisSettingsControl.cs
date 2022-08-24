@@ -112,7 +112,7 @@ namespace ScanAGator.GUI
             OnTrackbarChanged();
         }
 
-        private Imaging.RatiometricImage? GetRatiometricImage()
+        public Imaging.RatiometricImage? GetRatiometricImage()
         {
             if (Images is null)
                 return null;

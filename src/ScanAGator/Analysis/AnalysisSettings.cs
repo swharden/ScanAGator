@@ -1,4 +1,5 @@
 ﻿using ScanAGator.Imaging;
+using System.IO;
 
 namespace ScanAGator.Analysis;
 
@@ -17,7 +18,7 @@ public class AnalysisSettings
 
     public AnalysisSettings(RatiometricImage img,
         RatiometricImage[] img2,
-        BaselineRange baseline, 
+        BaselineRange baseline,
         StructureRange structure,
         int filterPx,
         double floorPercentile,
@@ -30,5 +31,13 @@ public class AnalysisSettings
         FilterPx = filterPx;
         FloorPercentile = floorPercentile;
         Xml = xml;
+    }
+
+    public string GetOutputFolder(bool create = true)
+    {
+        string outputFolder = Path.Combine(Xml.FolderPath, "ScanAGator");
+        if (create && !Directory.Exists(outputFolder))
+            Directory.CreateDirectory(outputFolder);
+        return outputFolder;
     }
 }

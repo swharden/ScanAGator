@@ -12,7 +12,7 @@ namespace ScanAGator.Tests
         [Test]
         public void Test_CsvBuilder_SampleData()
         {
-            DataExport.CsvBuilder csv = new();
+            CSV.CsvBuilder csv = new();
             csv.Add("Time", "sec", "fileid", ScottPlot.DataGen.Consecutive(50));
             csv.Add("title 2", "%", "", ScottPlot.DataGen.Sin(50));
             csv.Add("title 3", "%", "", ScottPlot.DataGen.Sin(20));

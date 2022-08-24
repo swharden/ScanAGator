@@ -1,67 +1,47 @@
 ﻿using ScanAGator.DataExport;
 using ScanAGator.Imaging;
 using System;
-using System.IO;
 
 namespace ScanAGator.Analysis;
 
-/// <summary>
-/// This class stores analysis results together with the settings used to create them.
-/// </summary>
 public class AnalysisResult
 {
     public readonly AnalysisSettings Settings;
-    public readonly AnalysisResultCurves Curves;
+    public readonly IntensityCurve GreenCurve;
+    public readonly IntensityCurve RedCurve;
+    public readonly IntensityCurve SmoothGreenCurve;
+    public readonly IntensityCurve SmoothRedCurve;
+    public readonly IntensityCurve SmoothDeltaGreenCurve;
+    public readonly IntensityCurve SmoothDeltaGreenOverRedCurve;
 
-    public static Version Version => new(4, 2); // EDIT THIS MANUALLY
-
+    public static Version Version => new(4, 3); // bump to reflect breaking changes
     public static string VersionString => $"Scan-A-Gator v{Version.Major}.{Version.Minor}";
 
-    public AnalysisResult(AnalysisSettings settings)
+    /// <summary>
+    /// This class analyzes a linescan image according to the given settings.
+    /// The constructor contains the core linescan analysis routine for ScanAGator.
+    /// </summary>
+    public AnalysisResult(RatiometricImage img, AnalysisSettings settings)
     {
         Settings = settings;
-        Curves = new(settings.PrimaryImage, settings.Baseline, settings.Structure, settings.FilterPx, settings.Xml.MsecPerPixel);
+
+        // get the intensity curves for the structure of interest
+        GreenCurve = new IntensityCurve(img.GreenData, settings.Xml.MsecPerPixel, settings.Structure);
+        RedCurve = new IntensityCurve(img.RedData, settings.Xml.MsecPerPixel, settings.Structure);
+
+        // calculate smooth curves
+        SmoothGreenCurve = GreenCurve.LowPassFiltered(settings.FilterPx);
+        SmoothRedCurve = RedCurve.LowPassFiltered(settings.FilterPx);
+
+        // calculate ratios from smoothed curves
+        double greenCurveBaseline = GreenCurve.GetMean(settings.Baseline);
+        SmoothDeltaGreenCurve = SmoothGreenCurve - greenCurveBaseline;
+        SmoothDeltaGreenOverRedCurve = SmoothDeltaGreenCurve / SmoothRedCurve * 100;
     }
 
-    public string GetOutputFolder(bool create = true)
-    {
-        string outputFolder = Path.Combine(Settings.Xml.FolderPath, "ScanAGator");
-        if (create && !Directory.Exists(outputFolder))
-            Directory.CreateDirectory(outputFolder);
-        return outputFolder;
-    }
-
-    public void ClearOutputFolder()
-    {
-        string outputFolder = GetOutputFolder();
-        foreach (string path in Directory.GetFiles(outputFolder, "*.*"))
-            File.Delete(path);
-    }
-
-    public string Save()
-    {
-        CsvBuilder csv = new();
-        csv.Add("Time", "ms", "", Curves.SmoothDeltaGreenOverRedCurve.Times);
-        csv.Add("Green", "AFU", "average", Curves.SmoothGreenCurve.Values);
-        csv.Add("Red", "AFU", "average", Curves.SmoothRedCurve.Values);
-        csv.Add("ΔG/R", "%", "average", Curves.SmoothDeltaGreenOverRedCurve.Values);
-
-        for (int i = 0; i < Settings.SecondaryImages.Length; i++)
-        {
-            RatiometricImage img = Settings.SecondaryImages[i];
-            AnalysisResultCurves curves = new(img, Settings.Baseline, Settings.Structure, Settings.FilterPx, Settings.Xml.MsecPerPixel);
-
-            csv.Add("Green", "AFU", $"frame {i + 1}", curves.SmoothGreenCurve.Values);
-            csv.Add("Red", "AFU", $"frame {i + 1}", curves.SmoothRedCurve.Values);
-            csv.Add("ΔG/R", "AFU", $"frame {i + 1}", curves.SmoothDeltaGreenOverRedCurve.Values);
-        }
-
-        string outputFolder = GetOutputFolder();
-        string csvFilePath = Path.Combine(outputFolder, "curves.csv");
-        csv.SaveAs(csvFilePath);
-
-        JsonMetadata.Save(csvFilePath + ".json", Settings);
-
-        return csvFilePath;
-    }
+    /// <summary>
+    /// Save these results as a CSV file (containing curves) and JSON file (containing scan settings)
+    /// </summary>
+    /// <returns>Path to the CSV file created</returns>
+    public string Save() => AnalysisResultFile.SaveCsv(this);
 }
