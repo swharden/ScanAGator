@@ -19,6 +19,9 @@ public class CsvBuilder
 
     public void Add(string title, string units, string comments, double[] data)
     {
+        title = string.IsNullOrWhiteSpace(title) ? "---" : title;
+        units = string.IsNullOrWhiteSpace(units) ? "---" : units;
+        comments = string.IsNullOrWhiteSpace(comments) ? "---" : comments;
         Columns.Add(new Column(title, units, comments, data));
     }
 
@@ -37,7 +40,15 @@ public class CsvBuilder
             {
                 if (i < Columns[j].Data.Length)
                 {
-                    sb.Append(Columns[j].Data[i].ToString());
+                    double value = Columns[j].Data[i];
+                    if (double.IsNaN(value))
+                    {
+                        sb.Append(string.Empty);
+                    }
+                    else
+                    {
+                        sb.Append(value.ToString());
+                    }
                 }
 
                 if (j < Columns.Count - 1)

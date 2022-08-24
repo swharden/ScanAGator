@@ -50,12 +50,13 @@ public class IntensityCurve
     public IntensityCurve LowPassFiltered(int filterSizePixels)
     {
         double[] smooth = Filtering.GaussianFilter1d(Values, filterSizePixels);
+
         int padPoints = filterSizePixels * 2 + 1;
 
         for (int i = 0; i < padPoints; i++)
         {
-            smooth[i] = smooth[padPoints];
-            smooth[smooth.Length - 1 - i] = smooth[smooth.Length - 1 - padPoints];
+            smooth[i] = double.NaN;
+            smooth[smooth.Length - 1 - i] = double.NaN;
         }
 
         if (Values.Length != smooth.Length)

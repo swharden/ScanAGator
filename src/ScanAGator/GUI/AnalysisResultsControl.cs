@@ -1,7 +1,9 @@
 ﻿using ScottPlot;
+using ScottPlot.Plottable;
 using System;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace ScanAGator.GUI
@@ -38,6 +40,7 @@ namespace ScanAGator.GUI
             formsPlot1.Plot.AddScatterPoints(xs, result.RedCurve.Values, Color.FromArgb(30, Color.Red));
             formsPlot1.Plot.AddScatterLines(xs, result.SmoothGreenCurve.Values, Color.Green);
             formsPlot1.Plot.AddScatterLines(xs, result.SmoothRedCurve.Values, Color.Red);
+            EnableNanOnScatterPlots(formsPlot1.Plot);
             ShadeBaseline(formsPlot1.Plot, result);
             formsPlot1.Plot.SetAxisLimits(yMin: 0);
             formsPlot1.Plot.YLabel("Fluorescence (AFU)");
@@ -45,11 +48,21 @@ namespace ScanAGator.GUI
 
             formsPlot2.Plot.Clear();
             formsPlot2.Plot.AddScatterLines(xs, result.SmoothDeltaGreenOverRedCurve.Values);
+            EnableNanOnScatterPlots(formsPlot2.Plot);
             ShadeBaseline(formsPlot2.Plot, result);
             formsPlot2.Plot.AddHorizontalLine(0, Color.Black, 0, ScottPlot.LineStyle.Dash);
             formsPlot2.Plot.YLabel("ΔF/F (%)");
             formsPlot2.Plot.MatchLayout(formsPlot1.Plot);
             formsPlot2.Refresh();
+        }
+
+        private static void EnableNanOnScatterPlots(Plot plt)
+        {
+            plt.GetPlottables()
+                .Where(x => x is ScatterPlot)
+                .Cast<ScatterPlot>()
+                .ToList()
+                .ForEach(x => x.OnNaN = ScatterPlot.NanBehavior.Ignore);
         }
 
         private static void ShadeBaseline(Plot plt, Analysis.AnalysisResult result)

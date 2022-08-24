@@ -6,6 +6,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ScanAGator.Analysis;
+using ScottPlot.Plottable;
+using ScottPlot;
 
 namespace ScanAGator.Tests
 {
@@ -54,6 +56,7 @@ namespace ScanAGator.Tests
 
             plt.YLabel("Fluorescence (AFU)");
 
+            EnableNanOnScatterPlots(plt);
             TestTools.SaveFig(plt, "PlotGreenAndRed.png");
         }
 
@@ -72,7 +75,17 @@ namespace ScanAGator.Tests
             plt.AddHorizontalLine(0, Color.Black, 1, ScottPlot.LineStyle.Dash);
             plt.YLabel("ΔF/F (%)");
 
+            EnableNanOnScatterPlots(plt);
             TestTools.SaveFig(plt, "PlotDeltaGreenOverRed.png");
+        }
+
+        private static void EnableNanOnScatterPlots(Plot plt)
+        {
+            plt.GetPlottables()
+                .Where(x => x is ScatterPlot)
+                .Cast<ScatterPlot>()
+                .ToList()
+                .ForEach(x => x.OnNaN = ScatterPlot.NanBehavior.Ignore);
         }
     }
 }
