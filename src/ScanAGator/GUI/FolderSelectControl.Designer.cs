@@ -53,7 +53,6 @@
             listViewItem2,
             listViewItem3});
             this.lvFolders.Location = new System.Drawing.Point(3, 23);
-            this.lvFolders.MultiSelect = false;
             this.lvFolders.Name = "lvFolders";
             this.lvFolders.Size = new System.Drawing.Size(329, 304);
             this.lvFolders.TabIndex = 6;
@@ -88,13 +87,13 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "Drag/drop a folder here to load it...";
             // 
-            // FolderSelector
+            // FolderSelectControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.Name = "FolderSelector";
+            this.Name = "FolderSelectControl";
             this.Size = new System.Drawing.Size(335, 330);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();

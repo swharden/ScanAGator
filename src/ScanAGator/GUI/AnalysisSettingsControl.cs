@@ -204,12 +204,12 @@ namespace ScanAGator.GUI
                 RecalculateNow();
         }
 
-        private void RecalculateNow()
+        public AnalysisSettings? RecalculateNow()
         {
             Imaging.RatiometricImage? ratioImage = GetRatiometricImage();
 
             if (ratioImage is null || PVXml is null || Images is null)
-                return;
+                return null;
 
             BaselineRange baseline = new((int)nudBaseline1.Value, (int)nudBaseline2.Value);
             StructureRange structure = new((int)nudStructure1.Value, (int)nudStructure2.Value);
@@ -230,6 +230,8 @@ namespace ScanAGator.GUI
 
             Recalculate?.Invoke(settings);
             NeedsRecalculation = false;
+
+            return settings;
         }
 
         private void Panel1_Paint(object sender, PaintEventArgs e)

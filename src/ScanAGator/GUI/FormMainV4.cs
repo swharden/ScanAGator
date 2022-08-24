@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ScanAGator.Analysis;
+using ScottPlot;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -20,6 +22,7 @@ namespace ScanAGator.GUI
             InitializeComponent();
             Text = Analysis.AnalysisResult.VersionString;
             folderSelector1.LinescanFolderSelected = OnLinescanFolderSelected;
+            folderSelector1.AutoAnalyze += OnAutoAnalyze;
             analysisSettingsControl.Recalculate += OnRecalculate;
             OnLinescanFolderSelected(null);
             Timer.Tick += Timer_Tick;
@@ -48,6 +51,26 @@ namespace ScanAGator.GUI
             // We got new settings, but don't analyze them immediately.
             // Instead store them and we will analyze them when the GUI thread is free.
             SettingsToAnalyze = settings;
+        }
+
+        /// <summary>
+        /// Fully automated analysis starting with just a path and ending with saved CSV files
+        /// </summary>
+        public void OnAutoAnalyze(string folderPath)
+        {
+            // ideal baseline and structure are selected automatically by default
+            analysisSettingsControl.SetLinescan(folderPath);
+            analysisSettingsControl.Visible = true;
+            analysisResultsControl.Visible = true;
+
+            Application.DoEvents(); // force UI update
+
+            AnalysisSettings settings = analysisSettingsControl.RecalculateNow()
+                ?? throw new System.NullReferenceException("auto-calculated settings");
+
+            Analysis.AnalysisResult results = new(settings);
+            results.Save();
+            Application.DoEvents(); // force UI update
         }
     }
 }

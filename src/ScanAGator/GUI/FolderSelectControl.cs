@@ -8,12 +8,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
+using System.Diagnostics;
 
 namespace ScanAGator.GUI
 {
     public partial class FolderSelectControl : UserControl
     {
         public Action<string?>? LinescanFolderSelected;
+        public Action<string>? AutoAnalyze;
 
         public FolderSelectControl()
         {
@@ -23,12 +25,120 @@ namespace ScanAGator.GUI
             string initialFolderPath = @"X:\Data\zProjects\OT-Tom NMDA signaling\2P bpAP NMDA\2022-08-22 1mM Mg\cell3";
             SetFolder(initialFolderPath);
 
-            lvFolders.DoubleClick += LvFolders_DoubleClick;
+            lvFolders.MouseDoubleClick += LvFolders_MouseDoubleClick;
             lvFolders.SelectedIndexChanged += LvFolders_SelectedIndexChanged;
+            lvFolders.MouseClick += LvFolders_MouseClick;
 
             AllowDrop = true;
             DragEnter += FolderSelectControl_DragEnter;
             DragDrop += FolderSelectControl_DragDrop;
+        }
+
+        private void LvFolders_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                ContextMenu context = new();
+
+                string s = lvFolders.SelectedItems.Count > 1 ? "s" : "";
+
+                MenuItem openLinescanFolderItem = new() { Text = $"Open Folder{s}" };
+                openLinescanFolderItem.Click += (s, e) => LaunchSelectedFolders();
+                context.MenuItems.Add(openLinescanFolderItem);
+
+                MenuItem openAnalysisFolderItem = new() { Text = $"Open ScanAGator Folder{s}" };
+                openAnalysisFolderItem.Click += (s, e) => LaunchSelectedFolders(true);
+                context.MenuItems.Add(openAnalysisFolderItem);
+
+                MenuItem analyzeItem = new() { Text = $"Auto-Analyze Folder{s}" };
+                analyzeItem.Click += (s, e) => AnalyzeSelectedFolders();
+                context.MenuItems.Add(analyzeItem);
+
+                MenuItem analyzeItem2 = new() { Text = $"Delete ScanAGator Folder{s}" };
+                analyzeItem2.Click += (s, e) => ClearSelectedFolders();
+                context.MenuItems.Add(analyzeItem2);
+
+                context.Show(lvFolders, e.Location);
+            }
+        }
+
+        private void LvFolders_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            ListViewItem clickedItem = lvFolders.SelectedItems[0];
+            string clickedItemPath = clickedItem.ImageKey;
+            if (IsLinescanFolder(clickedItemPath))
+            {
+                Process.Start("explorer.exe", clickedItemPath);
+            }
+            else
+            {
+                SetFolder(clickedItemPath);
+            }
+        }
+
+        private void LaunchSelectedFolders(bool analysisFolder = false)
+        {
+            Enumerable.Range(0, lvFolders.SelectedItems.Count)
+                .Select(x => lvFolders.SelectedItems[x].ImageKey)
+                .Select(x => analysisFolder ? Path.Combine(x, "ScanAGator") : x)
+                .Where(x => Directory.Exists(x))
+                .ToList()
+                .ForEach(x => Process.Start("explorer.exe", x));
+        }
+
+        private void ClearSelectedFolders()
+        {
+            DialogResult dialogResult = MessageBox.Show(
+                text: "Are you sure you want to delete ScanAGator analysis folders?",
+                caption: "Clear Old Results",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Warning);
+
+            if (dialogResult != DialogResult.Yes)
+                return;
+
+            int count = 0;
+
+            Enumerable.Range(0, lvFolders.SelectedItems.Count)
+                .Select(x => lvFolders.SelectedItems[x].ImageKey)
+                .Where(x => IsLinescanFolder(x))
+                .ToList()
+                .ForEach(x =>
+                {
+                    string analysisFolderPath = Path.Combine(x, "ScanAGator");
+                    if (Directory.Exists(analysisFolderPath))
+                    {
+                        Directory.Delete(analysisFolderPath, true);
+                        count += 1;
+                    }
+                });
+
+            MessageBox.Show(
+                text: $"Deleted {count} ScanAGator folders",
+                caption: "Clear Old Results",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+        }
+
+        private void AnalyzeSelectedFolders()
+        {
+            int count = 0;
+
+            Enumerable.Range(0, lvFolders.SelectedItems.Count)
+                .Select(x => lvFolders.SelectedItems[x].ImageKey)
+                .Where(x => IsLinescanFolder(x))
+                .ToList()
+                .ForEach(x =>
+                {
+                    AutoAnalyze?.Invoke(x);
+                    count += 1;
+                });
+
+            MessageBox.Show(
+                text: $"Automatically analyzed data for {count} folders",
+                caption: "Auto-Analysis",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
         }
 
         private void FolderSelectControl_DragEnter(object sender, DragEventArgs e)
@@ -60,8 +170,11 @@ namespace ScanAGator.GUI
 
         private void LvFolders_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (lvFolders.SelectedItems.Count == 0)
+            if (lvFolders.SelectedItems.Count != 1)
+            {
+                LinescanFolderSelected?.Invoke(null);
                 return;
+            }
 
             ListViewItem clickedItem = lvFolders.SelectedItems[0];
             string clickedItemPath = clickedItem.ImageKey;
@@ -72,22 +185,6 @@ namespace ScanAGator.GUI
             else
             {
                 LinescanFolderSelected?.Invoke(null);
-            }
-        }
-
-        private void LvFolders_DoubleClick(object sender, EventArgs e)
-        {
-            ListViewItem clickedItem = lvFolders.SelectedItems[0];
-            string clickedItemPath = clickedItem.ImageKey;
-            if (IsLinescanFolder(clickedItemPath))
-            {
-                // launch the folder in Explorer
-                System.Diagnostics.Process.Start("explorer.exe", clickedItemPath);
-            }
-            else
-            {
-                // enter the folder
-                SetFolder(clickedItemPath);
             }
         }
 
