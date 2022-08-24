@@ -1,12 +1,19 @@
 ﻿using ScottPlot;
 using System;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 
 namespace ScanAGator.GUI
 {
     public partial class AnalysisResultsControl : UserControl
     {
+        Analysis.AnalysisResult? Result;
+
+        private double PeakDFF => Result is null
+            ? double.NaN
+            : Result.Curves.SmoothDeltaGreenOverRedCurve.GetPeak();
+
         public AnalysisResultsControl()
         {
             InitializeComponent();
@@ -21,6 +28,9 @@ namespace ScanAGator.GUI
 
         public void ShowResult(Analysis.AnalysisResult result)
         {
+            Result = result;
+            lblPeak.Text = $"{PeakDFF:N2}%";
+
             double[] xs = GetTimesMsec(result);
 
             formsPlot1.Plot.Clear();
@@ -40,8 +50,6 @@ namespace ScanAGator.GUI
             formsPlot2.Plot.YLabel("ΔF/F (%)");
             formsPlot2.Plot.MatchLayout(formsPlot1.Plot);
             formsPlot2.Refresh();
-
-            dataExportControl1.ShowResult(result);
         }
 
         private static void ShadeBaseline(Plot plt, Analysis.AnalysisResult result)
@@ -54,6 +62,32 @@ namespace ScanAGator.GUI
         private double[] GetTimesMsec(Analysis.AnalysisResult result)
         {
             return DataGen.Consecutive(result.Curves.GreenCurve.Values.Length, result.Settings.Xml.MsecPerPixel);
+        }
+
+        private void btnCopyPeak_Click(object sender, EventArgs e)
+        {
+            Clipboard.SetText(Math.Round(PeakDFF, 5).ToString());
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            if (Result is not null)
+            {
+                string csvPath = Result.Save();
+                Clipboard.SetText($"LoadLinescanCSV \"{csvPath}\";");
+            }
+        }
+
+        private void btnLaunch_Click(object sender, EventArgs e)
+        {
+            if (Result is not null)
+            {
+                string folder = Path.Combine(Result.Settings.Xml.FolderPath, "ScanAGator");
+                if (!Directory.Exists(folder))
+                    folder = Path.GetDirectoryName(folder);
+
+                System.Diagnostics.Process.Start("explorer.exe", folder);
+            }
         }
     }
 }

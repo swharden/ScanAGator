@@ -5,9 +5,9 @@ using System.Text.Json;
 
 namespace ScanAGator.DataExport;
 
-public static class Metadata
+public static class JsonMetadata
 {
-    public static void SaveJsonMetadata(string saveAs, Analysis.AnalysisSettings settings)
+    public static void Save(string saveAs, Analysis.AnalysisSettings settings)
     {
         using MemoryStream stream = new();
         JsonWriterOptions options = new() { Indented = true };

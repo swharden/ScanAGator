@@ -6,14 +6,14 @@ using System.IO;
 namespace ScanAGator.Analysis;
 
 /// <summary>
-/// This class contains logic for calculating ΔG/R from analysis settings containing a single ratiometric image
+/// This class stores analysis results together with the settings used to create them.
 /// </summary>
 public class AnalysisResult
 {
     public readonly AnalysisSettings Settings;
     public readonly AnalysisResultCurves Curves;
 
-    public static Version Version => new(4, 1); // EDIT THIS MANUALLY
+    public static Version Version => new(4, 2); // EDIT THIS MANUALLY
 
     public static string VersionString => $"Scan-A-Gator v{Version.Major}.{Version.Minor}";
 
@@ -60,7 +60,7 @@ public class AnalysisResult
         string csvFilePath = Path.Combine(outputFolder, "curves.csv");
         csv.SaveAs(csvFilePath);
 
-        Metadata.SaveJsonMetadata(csvFilePath + ".json", Settings);
+        JsonMetadata.Save(csvFilePath + ".json", Settings);
 
         return csvFilePath;
     }
