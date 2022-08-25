@@ -42,6 +42,11 @@ namespace ScanAGator.GUI
 
                 string s = lvFolders.SelectedItems.Count > 1 ? "s" : "";
 
+
+                MenuItem copyFolderPathItem = new() { Text = $"Copy Folder Path{s}" };
+                copyFolderPathItem.Click += (s, e) => CopySelectedFolders();
+                context.MenuItems.Add(copyFolderPathItem);
+
                 MenuItem openLinescanFolderItem = new() { Text = $"Open Folder{s}" };
                 openLinescanFolderItem.Click += (s, e) => LaunchSelectedFolders();
                 context.MenuItems.Add(openLinescanFolderItem);
@@ -74,6 +79,15 @@ namespace ScanAGator.GUI
             {
                 SetFolder(clickedItemPath);
             }
+        }
+
+        private void CopySelectedFolders()
+        {
+            string[] selectedPaths = Enumerable.Range(0, lvFolders.SelectedItems.Count)
+                .Select(x => lvFolders.SelectedItems[x].ImageKey)
+                .ToArray();
+
+            Clipboard.SetText(string.Join(Environment.NewLine, selectedPaths));
         }
 
         private void LaunchSelectedFolders(bool analysisFolder = false)
