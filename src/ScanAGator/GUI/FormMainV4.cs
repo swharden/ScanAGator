@@ -47,9 +47,11 @@ namespace ScanAGator.GUI
 
         public void OnLinescanFolderSelected(string? folderPath)
         {
-            analysisSettingsControl.SetLinescan(folderPath);
+            analysisSettingsControl.SetLinescanFolder(folderPath);
+            imagesControl1.SetLinescanFolder(folderPath);
             analysisSettingsControl.Visible = folderPath is not null;
             analysisResultsControl.Visible = folderPath is not null;
+            imagesControl1.Visible = folderPath is not null;
         }
 
         public void OnRecalculate(Analysis.AnalysisSettings settings)
@@ -65,7 +67,7 @@ namespace ScanAGator.GUI
         public void OnAutoAnalyze(string folderPath)
         {
             // ideal baseline and structure are selected automatically by default
-            analysisSettingsControl.SetLinescan(folderPath);
+            analysisSettingsControl.SetLinescanFolder(folderPath);
             analysisSettingsControl.Visible = true;
             analysisResultsControl.Visible = true;
 

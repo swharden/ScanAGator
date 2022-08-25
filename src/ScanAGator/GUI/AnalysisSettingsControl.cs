@@ -27,6 +27,7 @@ namespace ScanAGator.GUI
         public AnalysisSettingsControl()
         {
             InitializeComponent();
+            this.SizeChanged += (s, e) => OnLinescanImageChanged();
             cbDisplay.SelectedIndex = 0;
 
             cbDisplay.SelectedIndexChanged += CbDisplay_SelectedIndexChanged;
@@ -54,7 +55,7 @@ namespace ScanAGator.GUI
         }
 
         private string? CurrentFolderpath = string.Empty;
-        public void SetLinescan(string? folderPath)
+        public void SetLinescanFolder(string? folderPath)
         {
             CurrentFolderpath = folderPath;
             if (folderPath is null)
@@ -79,7 +80,7 @@ namespace ScanAGator.GUI
             AutoStructure();
         }
 
-        private void CbFloor_CheckedChanged(object sender, EventArgs e) => SetLinescan(CurrentFolderpath);
+        private void CbFloor_CheckedChanged(object sender, EventArgs e) => SetLinescanFolder(CurrentFolderpath);
         private void CbDisplay_SelectedIndexChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void CbAverage_CheckedChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void TbFrame_ValueChanged(object sender, EventArgs e) => OnLinescanImageChanged();

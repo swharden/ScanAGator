@@ -58,7 +58,7 @@ namespace ScanAGator.GUI
                 analyzeItem2.Click += (s, e) => ClearSelectedFolders();
                 context.MenuItems.Add(analyzeItem2);
 
-                context.Show(lvFolders, e.Location);
+                context.Show(this, e.Location);
             }
         }
 
