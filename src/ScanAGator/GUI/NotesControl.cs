@@ -18,23 +18,17 @@ namespace ScanAGator.GUI
             InitializeComponent();
         }
 
-        public void SetFolder(string? folderPath)
+        public static bool IsNotesFolder(string folderPath)
+        {
+            string[] textFilePaths = Directory.GetFiles(folderPath, "*.txt").ToArray();
+            return textFilePaths.Any();
+        }
+
+        public void SetFolder(string folderPath)
         {
             tabControl1.TabPages.Clear();
 
-            if (folderPath is null)
-            {
-                tabControl1.Visible = false;
-                return;
-            }
-
             string[] textFilePaths = Directory.GetFiles(folderPath, "*.txt").ToArray();
-
-            if (!textFilePaths.Any())
-            {
-                tabControl1.Visible = false;
-                return;
-            }
 
             foreach (string path in textFilePaths)
             {

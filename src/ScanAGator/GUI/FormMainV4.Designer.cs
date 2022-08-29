@@ -36,24 +36,27 @@
             this.analysisResultsControl = new ScanAGator.GUI.AnalysisResultsControl();
             this.analysisSettingsControl = new ScanAGator.GUI.AnalysisSettingsControl();
             this.notesControl1 = new ScanAGator.GUI.NotesControl();
+            this.zStackControl1 = new ScanAGator.GUI.ZStackControl();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
             // 
-            this.tableLayoutPanel1.ColumnCount = 4;
+            this.tableLayoutPanel1.ColumnCount = 5;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 267F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 373F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this.analysisResultsControl, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.analysisSettingsControl, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.notesControl1, 3, 0);
+            this.tableLayoutPanel1.Controls.Add(this.zStackControl1, 4, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -68,7 +71,7 @@
             this.tableLayoutPanel2.Controls.Add(this.folderSelector1, 0, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(2, 2);
-            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
@@ -101,7 +104,7 @@
             this.analysisResultsControl.Location = new System.Drawing.Point(641, 1);
             this.analysisResultsControl.Margin = new System.Windows.Forms.Padding(1);
             this.analysisResultsControl.Name = "analysisResultsControl";
-            this.analysisResultsControl.Size = new System.Drawing.Size(287, 756);
+            this.analysisResultsControl.Size = new System.Drawing.Size(191, 756);
             this.analysisResultsControl.TabIndex = 2;
             // 
             // analysisSettingsControl
@@ -116,11 +119,19 @@
             // notesControl1
             // 
             this.notesControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.notesControl1.Location = new System.Drawing.Point(932, 3);
+            this.notesControl1.Location = new System.Drawing.Point(836, 3);
             this.notesControl1.Name = "notesControl1";
             this.notesControl1.Padding = new System.Windows.Forms.Padding(5);
-            this.notesControl1.Size = new System.Drawing.Size(284, 752);
+            this.notesControl1.Size = new System.Drawing.Size(187, 752);
             this.notesControl1.TabIndex = 3;
+            // 
+            // zStackControl1
+            // 
+            this.zStackControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.zStackControl1.Location = new System.Drawing.Point(1029, 3);
+            this.zStackControl1.Name = "zStackControl1";
+            this.zStackControl1.Size = new System.Drawing.Size(187, 752);
+            this.zStackControl1.TabIndex = 4;
             // 
             // FormMainV4
             // 
@@ -148,5 +159,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private NotesControl notesControl1;
+        private ZStackControl zStackControl1;
     }
 }

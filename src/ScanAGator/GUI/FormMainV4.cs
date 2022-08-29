@@ -48,29 +48,58 @@ namespace ScanAGator.GUI
         public void OnFolderSelected(string? folderPath)
         {
             bool isLinescanFolder = (folderPath is not null) && FolderSelectControl.IsLinescanFolder(folderPath);
+            bool isZStackFolder = (folderPath is not null) && ZStackControl.IsZStackFolder(folderPath);
+            bool isNotesFolder = (folderPath is not null) && NotesControl.IsNotesFolder(folderPath);
 
             ColumnStyle menuColumn = tableLayoutPanel1.ColumnStyles[0];
             ColumnStyle settingsColumn = tableLayoutPanel1.ColumnStyles[1];
             ColumnStyle resultsColumn = tableLayoutPanel1.ColumnStyles[2];
-            ColumnStyle textColumn = tableLayoutPanel1.ColumnStyles[3];
+            ColumnStyle notesColumn = tableLayoutPanel1.ColumnStyles[3];
+            ColumnStyle stackColumn = tableLayoutPanel1.ColumnStyles[4];
 
-            if (isLinescanFolder)
+            tableLayoutPanel1.SuspendLayout();
+
+            // hide everything
+            Enumerable.Range(1, tableLayoutPanel1.ColumnCount - 1)
+                .Select(i => tableLayoutPanel1.ColumnStyles[i])
+                .ToList()
+                .ForEach(x => x.Width = 0);
+
+            imagesControl1.Visible = false;
+
+            if (folderPath is null)
+            {
+                // use invisible notes as a placeholder to take up space
+                notesControl1.Visible = false;
+                notesColumn.Width = 100;
+            }
+            else if (isLinescanFolder)
             {
                 analysisSettingsControl.SetLinescanFolder(folderPath);
                 imagesControl1.SetLinescanFolder(folderPath);
                 imagesControl1.Visible = true;
                 settingsColumn.Width = 373;
                 resultsColumn.Width = 100;
-                textColumn.Width = 0;
+            }
+            else if (isZStackFolder)
+            {
+                zStackControl1.SetFolder(folderPath);
+                stackColumn.Width = 100;
+            }
+            else if (isNotesFolder)
+            {
+                notesControl1.SetFolder(folderPath);
+                notesControl1.Visible = true;
+                notesColumn.Width = 100;
             }
             else
             {
-                notesControl1.SetFolder(folderPath);
-                imagesControl1.Visible = false;
-                settingsColumn.Width = 0;
-                resultsColumn.Width = 0;
-                textColumn.Width = 100;
+                // use invisible notes as a placeholder to take up space
+                notesControl1.Visible = false;
+                notesColumn.Width = 100;
             }
+
+            tableLayoutPanel1.ResumeLayout();
         }
 
         public void OnRecalculate(Analysis.AnalysisSettings settings)
