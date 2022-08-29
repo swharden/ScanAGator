@@ -22,10 +22,10 @@ namespace ScanAGator.GUI
         {
             InitializeComponent();
             Text = Analysis.AnalysisResult.VersionString;
-            folderSelector1.LinescanFolderSelected = OnLinescanFolderSelected;
+            folderSelector1.FolderSelected = OnFolderSelected;
             folderSelector1.AutoAnalyze += OnAutoAnalyze;
             analysisSettingsControl.Recalculate += OnRecalculate;
-            OnLinescanFolderSelected(null);
+            OnFolderSelected(null);
             Timer.Tick += Timer_Tick;
         }
 
@@ -45,13 +45,32 @@ namespace ScanAGator.GUI
             }
         }
 
-        public void OnLinescanFolderSelected(string? folderPath)
+        public void OnFolderSelected(string? folderPath)
         {
-            analysisSettingsControl.SetLinescanFolder(folderPath);
-            imagesControl1.SetLinescanFolder(folderPath);
-            analysisSettingsControl.Visible = folderPath is not null;
-            analysisResultsControl.Visible = folderPath is not null;
-            imagesControl1.Visible = folderPath is not null;
+            bool isLinescanFolder = (folderPath is not null) && FolderSelectControl.IsLinescanFolder(folderPath);
+
+            ColumnStyle menuColumn = tableLayoutPanel1.ColumnStyles[0];
+            ColumnStyle settingsColumn = tableLayoutPanel1.ColumnStyles[1];
+            ColumnStyle resultsColumn = tableLayoutPanel1.ColumnStyles[2];
+            ColumnStyle textColumn = tableLayoutPanel1.ColumnStyles[3];
+
+            if (isLinescanFolder)
+            {
+                analysisSettingsControl.SetLinescanFolder(folderPath);
+                imagesControl1.SetLinescanFolder(folderPath);
+                imagesControl1.Visible = true;
+                settingsColumn.Width = 373;
+                resultsColumn.Width = 100;
+                textColumn.Width = 0;
+            }
+            else
+            {
+                notesControl1.SetFolder(folderPath);
+                imagesControl1.Visible = false;
+                settingsColumn.Width = 0;
+                resultsColumn.Width = 0;
+                textColumn.Width = 100;
+            }
         }
 
         public void OnRecalculate(Analysis.AnalysisSettings settings)

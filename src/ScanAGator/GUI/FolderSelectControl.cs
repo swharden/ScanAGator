@@ -14,7 +14,7 @@ namespace ScanAGator.GUI
 {
     public partial class FolderSelectControl : UserControl
     {
-        public Action<string?>? LinescanFolderSelected;
+        public Action<string?>? FolderSelected;
         public Action<string>? AutoAnalyze;
 
         public FolderSelectControl()
@@ -187,20 +187,12 @@ namespace ScanAGator.GUI
             if (lvFolders.SelectedItems.Count != 1)
             {
                 if (lvFolders.SelectedItems.Count > 1)
-                    LinescanFolderSelected?.Invoke(null);
+                    FolderSelected?.Invoke(null);
                 return;
             }
 
             ListViewItem clickedItem = lvFolders.SelectedItems[0];
-            string clickedItemPath = clickedItem.ImageKey;
-            if (IsLinescanFolder(clickedItemPath))
-            {
-                LinescanFolderSelected?.Invoke(clickedItemPath);
-            }
-            else
-            {
-                LinescanFolderSelected?.Invoke(null);
-            }
+            FolderSelected?.Invoke(clickedItem.ImageKey);
         }
 
         private void FullSizeFirstColumn(ListView lv)
@@ -238,7 +230,7 @@ namespace ScanAGator.GUI
             }
         }
 
-        private static bool IsLinescanFolder(string folderPath)
+        public static bool IsLinescanFolder(string folderPath)
         {
             string folderName = Path.GetFileName(folderPath);
             if (!folderName.StartsWith("LineScan-"))
