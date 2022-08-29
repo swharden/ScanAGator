@@ -17,6 +17,7 @@ namespace ScanAGator.GUI
     {
         Timer Timer = new() { Interval = 20, Enabled = true };
         Analysis.AnalysisSettings? SettingsToAnalyze = null;
+        readonly CurveCompareForm CompareForm = new();
 
         public FormMainV4()
         {
@@ -24,6 +25,7 @@ namespace ScanAGator.GUI
             Text = Analysis.AnalysisResult.VersionString;
             folderSelector1.FolderSelected = OnFolderSelected;
             folderSelector1.AutoAnalyze += OnAutoAnalyze;
+            folderSelector1.PlotCurves += OnPlotCurves;
             analysisSettingsControl.Recalculate += OnRecalculate;
             OnFolderSelected(null);
             Timer.Tick += Timer_Tick;
@@ -130,6 +132,15 @@ namespace ScanAGator.GUI
             Analysis.AnalysisResult results = new(img, settings);
             results.Save();
             Application.DoEvents(); // force UI update
+        }
+
+        public void OnPlotCurves(string[] folderPaths)
+        {
+            folderPaths.Where(x=>FolderSelectControl.IsLinescanFolder(x))
+                .ToList()
+                .ForEach(x => CompareForm.AddLinescanFolder(x));
+
+            CompareForm.Visible = true;
         }
     }
 }

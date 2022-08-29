@@ -15,6 +15,7 @@ namespace ScanAGator.GUI
     public partial class FolderSelectControl : UserControl
     {
         public Action<string?>? FolderSelected;
+        public Action<string[]>? PlotCurves;
         public Action<string>? AutoAnalyze;
 
         public FolderSelectControl()
@@ -40,7 +41,11 @@ namespace ScanAGator.GUI
             {
                 ContextMenu context = new();
 
-                string s = lvFolders.SelectedItems.Count > 1 ? "s" : "";
+                string[] selectedPaths = Enumerable.Range(0, lvFolders.SelectedItems.Count)
+                    .Select(x => lvFolders.SelectedItems[x].ImageKey)
+                    .ToArray();
+
+                string s = selectedPaths.Length > 1 ? "s" : "";
 
 
                 MenuItem copyFolderPathItem = new() { Text = $"Copy Folder Path{s}" };
@@ -62,6 +67,14 @@ namespace ScanAGator.GUI
                 MenuItem analyzeItem2 = new() { Text = $"Delete ScanAGator Folder{s}" };
                 analyzeItem2.Click += (s, e) => ClearSelectedFolders();
                 context.MenuItems.Add(analyzeItem2);
+
+                MenuItem item5 = new() { Text = $"Plot Curve{s}" };
+                item5.Click += (s, e) => PlotCurves?.Invoke(selectedPaths);
+                context.MenuItems.Add(item5);
+
+                MenuItem item6 = new() { Text = $"Show Plotted Curves" };
+                item6.Click += (s, e) => PlotCurves?.Invoke(Array.Empty<string>());
+                context.MenuItems.Add(item6);
 
                 context.Show(this, e.Location);
             }
