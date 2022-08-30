@@ -77,11 +77,19 @@ namespace ScanAGator.GUI
             }
             else if (isLinescanFolder)
             {
-                analysisSettingsControl.SetLinescanFolder(folderPath);
-                imagesControl1.SetLinescanFolder(folderPath);
-                imagesControl1.Visible = true;
-                settingsColumn.Width = 373;
-                resultsColumn.Width = 100;
+                try
+                {
+                    analysisSettingsControl.SetLinescanFolder(folderPath);
+                    imagesControl1.SetLinescanFolder(folderPath);
+                    imagesControl1.Visible = true;
+                    settingsColumn.Width = 373;
+                    resultsColumn.Width = 100;
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Linescan folder contains invalid data.\n\n{ex}",
+                        "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
             }
             else if (isZStackFolder)
             {
@@ -136,7 +144,7 @@ namespace ScanAGator.GUI
 
         public void OnPlotCurves(string[] folderPaths)
         {
-            folderPaths.Where(x=>FolderSelectControl.IsLinescanFolder(x))
+            folderPaths.Where(x => FolderSelectControl.IsLinescanFolder(x))
                 .ToList()
                 .ForEach(x => CompareForm.AddLinescanFolder(x));
 
