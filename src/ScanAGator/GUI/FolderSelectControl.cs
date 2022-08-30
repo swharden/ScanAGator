@@ -186,6 +186,7 @@ namespace ScanAGator.GUI
         private void AnalyzeSelectedFolders()
         {
             int count = 0;
+            StringBuilder commands = new();
 
             Enumerable.Range(0, lvFolders.SelectedItems.Count)
                 .Select(x => lvFolders.SelectedItems[x].ImageKey)
@@ -195,10 +196,17 @@ namespace ScanAGator.GUI
                 {
                     AutoAnalyze?.Invoke(x);
                     count += 1;
+                    string csvPath = Path.GetFullPath(Path.Combine(x, "ScanAGator/curves.csv"));
+                    string folderName = Path.GetFileName(x);
+                    string sheetName = folderName.Split(new char[] { '-' }, 4).Last();
+                    commands.AppendLine($"LoadLinescanCSV \"{csvPath}\" \"LineScans.BookName\" \"{sheetName}\";");
                 });
 
+            Clipboard.SetText(commands.ToString());
+
             MessageBox.Show(
-                text: $"Automatically analyzed data for {count} folders",
+                text: $"Automatically analyzed data for {count} folders. " +
+                    Environment.NewLine + "Added OriginLab commands to clipboard.",
                 caption: "Auto-Analysis",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
