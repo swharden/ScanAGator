@@ -36,8 +36,10 @@ namespace ScanAGator.GUI
             double[] xs = GetTimesMsec(result);
 
             formsPlot1.Plot.Clear();
-            formsPlot1.Plot.AddScatterPoints(xs, result.GreenCurve.Values, Color.FromArgb(30, Color.Green));
-            formsPlot1.Plot.AddScatterPoints(xs, result.RedCurve.Values, Color.FromArgb(30, Color.Red));
+
+            //formsPlot1.Plot.AddScatterPoints(xs, result.GreenCurve.Values, Color.FromArgb(20, Color.Green));
+            //formsPlot1.Plot.AddScatterPoints(xs, result.RedCurve.Values, Color.FromArgb(20, Color.Red));
+
             formsPlot1.Plot.AddScatterLines(xs, result.SmoothGreenCurve.Values, Color.Green);
             formsPlot1.Plot.AddScatterLines(xs, result.SmoothRedCurve.Values, Color.Red);
             EnableNanOnScatterPlots(formsPlot1.Plot);

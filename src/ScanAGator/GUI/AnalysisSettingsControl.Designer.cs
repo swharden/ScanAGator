@@ -54,6 +54,7 @@
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel3 = new System.Windows.Forms.Panel();
+            this.cbFilter = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline2)).BeginInit();
@@ -382,6 +383,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.cbFilter);
             this.panel2.Controls.Add(this.pbGraph);
             this.panel2.Controls.Add(this.cbFloor);
             this.panel2.Controls.Add(this.label1);
@@ -418,6 +420,17 @@
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(554, 530);
             this.panel3.TabIndex = 1;
+            // 
+            // cbFilter
+            // 
+            this.cbFilter.AutoSize = true;
+            this.cbFilter.Checked = true;
+            this.cbFilter.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbFilter.Location = new System.Drawing.Point(493, 238);
+            this.cbFilter.Name = "cbFilter";
+            this.cbFilter.Size = new System.Drawing.Size(22, 21);
+            this.cbFilter.TabIndex = 41;
+            this.cbFilter.UseVisualStyleBackColor = true;
             // 
             // AnalysisSettingsControl
             // 
@@ -473,5 +486,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.CheckBox cbFilter;
     }
 }

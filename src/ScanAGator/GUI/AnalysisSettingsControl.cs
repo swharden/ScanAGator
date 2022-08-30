@@ -35,6 +35,7 @@ namespace ScanAGator.GUI
             cbAverage.CheckedChanged += CbAverage_CheckedChanged;
             cbFloor.CheckedChanged += CbFloor_CheckedChanged;
             nudFilterPx.ValueChanged += NudFilterPx_ValueChanged;
+            cbFilter.CheckedChanged += CbFilter_CheckedChanged;
 
             tbBaseline1.ValueChanged += TrackBar_ValueChanged;
             tbBaseline2.ValueChanged += TrackBar_ValueChanged;
@@ -86,8 +87,8 @@ namespace ScanAGator.GUI
         private void TbFrame_ValueChanged(object sender, EventArgs e) => OnLinescanImageChanged();
         private void TrackBar_ValueChanged(object sender, EventArgs e) => OnTrackbarChanged();
         private void NudFilterPx_ValueChanged(object sender, EventArgs e) => RecalculateSoon();
+        private void CbFilter_CheckedChanged(object sender, EventArgs e) => RecalculateSoon();
         private void btnAutoBaseline_Click(object sender, EventArgs e) => AutoBaseline();
-
         private void btnAutoStructure_Click(object sender, EventArgs e) => AutoStructure();
 
         private void AutoBaseline(double b1Frac = .02, double b2Frac = .08)
@@ -214,7 +215,8 @@ namespace ScanAGator.GUI
 
             BaselineRange baseline = new((int)nudBaseline1.Value, (int)nudBaseline2.Value);
             StructureRange structure = new((int)nudStructure1.Value, (int)nudStructure2.Value);
-            int filterPx = (int)nudFilterPx.Value;
+            int filterPx = cbFilter.Checked ? (int)nudFilterPx.Value : 0;
+            nudFilterPx.Enabled = cbFilter.Checked;
             double filterMs = filterPx * PVXml.MsecPerPixel;
             lblFilterTime.Text = $"{filterMs:N2} ms";
 
