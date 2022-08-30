@@ -20,8 +20,34 @@ namespace ScanAGator.GUI
             FolderName = initialFolderName;
             textBox1.Text = initialFolderName;
             textBox1.TextChanged += (s, e) => FolderName = textBox1.Text;
-            btnOK.Click += (s, e) => { DialogResult = DialogResult.OK; Close(); };
-            btnCancel.Click += (s, e) => { DialogResult = DialogResult.Cancel; Close(); };
+            btnOK.Click += (s, e) => OK();
+            btnCancel.Click += (s, e) => Cancel();
+            this.KeyPreview = true;
+            this.KeyDown += RenameFolderForm_KeyDown;
+        }
+
+        private void RenameFolderForm_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                OK();
+            }
+            else if (e.KeyCode == Keys.Escape)
+            {
+                Cancel();
+            }
+        }
+
+        private void OK()
+        {
+            DialogResult = DialogResult.OK;
+            Close();
+        }
+
+        private void Cancel()
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
     }
 }
