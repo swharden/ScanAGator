@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,6 +19,7 @@ public class ParirieXmlFile
     public readonly DateTime AcquisitionDate;
     public readonly double MsecPerPixel;
     public readonly double MicronsPerPixel;
+    public readonly Vector3 Position;
 
     public string FolderPath => System.IO.Path.GetDirectoryName(FilePath);
 
@@ -30,6 +32,7 @@ public class ParirieXmlFile
         AcquisitionDate = ReadAcquisitionDate(xmlLines);
         MsecPerPixel = ReadMsecPerPixel(xmlLines);
         MicronsPerPixel = ReadMicronsPerPixel(xmlLines);
+        Position = ReadPosition(xmlLines);
     }
 
     private static DateTime ReadAcquisitionDate(string[] xmlLines)
@@ -80,12 +83,37 @@ public class ParirieXmlFile
 
             if (line.Contains("micronsPerPixel"))
             {
-                string value = xmlLines[i + 1];
-                string[] values = value.Split('"');
-                return double.Parse(values[3]);
+                return ReadDoubleValue(xmlLines[i + 1]);
             }
         }
 
         throw new InvalidOperationException($"could not locate microns per pixel");
     }
+
+    private static Vector3 ReadPosition(string[] xmlLines)
+    {
+        double x = double.NaN;
+        double y = double.NaN;
+        double z = double.NaN;
+
+        for (int i = 0; i < xmlLines.Length - 1; i++)
+        {
+            if (xmlLines[i].Contains("<SubindexedValues index=\"XAxis\">"))
+            {
+                x = ReadDoubleValue(xmlLines[i + 1]);
+            }
+            else if (xmlLines[i].Contains("<SubindexedValues index=\"YAxis\">"))
+            {
+                y = ReadDoubleValue(xmlLines[i + 1]);
+            }
+            else if (xmlLines[i].Contains("<SubindexedValues index=\"ZAxis\">"))
+            {
+                z = ReadDoubleValue(xmlLines[i + 1]);
+            }
+        }
+
+        return new Vector3((float)x, (float)y, (float)z);
+    }
+
+    private static double ReadDoubleValue(string line) => double.Parse(line.Split('"')[3]);
 }
