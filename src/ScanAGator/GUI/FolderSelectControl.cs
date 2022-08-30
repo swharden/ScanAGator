@@ -53,6 +53,10 @@ namespace ScanAGator.GUI
                     MenuItem item0a = new() { Text = $"Rename Folder" };
                     item0a.Click += (s, e) => RenameFolder();
                     context.MenuItems.Add(item0a);
+
+                    MenuItem item0c = new() { Text = $"Refresh Folder" };
+                    item0c.Click += (s, e) => SetFolder(lvFolders.SelectedItems[0].ImageKey);
+                    context.MenuItems.Add(item0c);
                 }
 
                 MenuItem item0b = new() { Text = $"Copy Folder Path{s}" };
