@@ -50,7 +50,6 @@ namespace ScanAGator.GUI
         public void OnFolderSelected(string? folderPath)
         {
             bool isLinescanFolder = (folderPath is not null) && FolderSelectControl.IsLinescanFolder(folderPath);
-            bool isZStackFolder = (folderPath is not null) && ZStackControl.IsZStackFolder(folderPath);
             bool isNotesFolder = (folderPath is not null) && NotesControl.IsNotesFolder(folderPath);
 
             ColumnStyle menuColumn = tableLayoutPanel1.ColumnStyles[0];
@@ -90,11 +89,6 @@ namespace ScanAGator.GUI
                     MessageBox.Show($"Linescan folder contains invalid data.\n\n{ex}",
                         "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-            }
-            else if (isZStackFolder)
-            {
-                zStackControl1.SetFolder(folderPath);
-                stackColumn.Width = 100;
             }
             else if (isNotesFolder)
             {

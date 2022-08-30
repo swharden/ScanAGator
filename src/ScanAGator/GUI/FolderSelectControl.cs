@@ -67,9 +67,7 @@ namespace ScanAGator.GUI
                 item1.Click += (s, e) => LaunchSelectedFolders();
                 context.MenuItems.Add(item1);
 
-                MenuItem item2 = new() { Text = $"Open ScanAGator Folder{s}" };
-                item2.Click += (s, e) => LaunchSelectedFolders(true);
-                context.MenuItems.Add(item2);
+                context.MenuItems.Add("-");
 
                 MenuItem item3 = new() { Text = $"Auto-Analyze Folder{s}" };
                 item3.Click += (s, e) => AnalyzeSelectedFolders();
@@ -79,6 +77,8 @@ namespace ScanAGator.GUI
                 item4.Click += (s, e) => ClearSelectedFolders();
                 context.MenuItems.Add(item4);
 
+                context.MenuItems.Add("-");
+
                 MenuItem item5 = new() { Text = $"Plot Curve{s}" };
                 item5.Click += (s, e) => PlotCurves?.Invoke(selectedPaths);
                 context.MenuItems.Add(item5);
@@ -86,6 +86,12 @@ namespace ScanAGator.GUI
                 MenuItem item6 = new() { Text = $"Show Plotted Curves" };
                 item6.Click += (s, e) => PlotCurves?.Invoke(Array.Empty<string>());
                 context.MenuItems.Add(item6);
+
+                context.MenuItems.Add("-");
+
+                MenuItem item7 = new() { Text = $"Open ZSeries Image{s}" };
+                item7.Click += (s, e) => OpenSelectedZSeries();
+                context.MenuItems.Add(item7);
 
                 context.Show(this, e.Location);
             }
@@ -265,12 +271,19 @@ namespace ScanAGator.GUI
             foreach (string path in Directory.GetDirectories(folderPath))
             {
                 string name = indentation + Path.GetFileName(path) + "/";
-                ListViewItem item = new(name, path)
-                {
-                    ForeColor = IsLinescanFolder(path) ? Color.Blue : Color.Black
-                };
+                ListViewItem item = new(name, path) { ForeColor = GetFolderColor(path) };
                 lvFolders.Items.Add(item);
             }
+        }
+
+        private Color GetFolderColor(string path)
+        {
+            if (IsLinescanFolder(path))
+                return Color.Blue;
+            else if (IsZSeriesFolder(path))
+                return Color.Green;
+            else
+                return Color.Black;
         }
 
         public static bool IsLinescanFolder(string folderPath)
@@ -279,6 +292,16 @@ namespace ScanAGator.GUI
             if (!folderName.StartsWith("LineScan-"))
                 return false;
             return Directory.GetFiles(folderPath, "LineScan-*.xml").Any();
+        }
+
+        public static string[] GetZSeriesTifPaths(string folderPath)
+        {
+            return Directory.GetFiles(folderPath, "ZSeries-*_Ch1_*.tif");
+        }
+
+        public static bool IsZSeriesFolder(string folderPath)
+        {
+            return GetZSeriesTifPaths(folderPath).Any();
         }
 
         private static string[] GetParentPaths(string folderPath)
@@ -292,6 +315,16 @@ namespace ScanAGator.GUI
             }
 
             return names.Where(x => !string.IsNullOrWhiteSpace(x)).Reverse().ToArray();
+        }
+
+        private void OpenSelectedZSeries()
+        {
+            Enumerable.Range(0, lvFolders.SelectedItems.Count)
+                .Select(x => lvFolders.SelectedItems[x].ImageKey)
+                .Select(x => GetZSeriesTifPaths(x))
+                .Where(x => x.Any())
+                .ToList()
+                .ForEach(x => { new ZSeriesForm(x).Show(); });
         }
     }
 }

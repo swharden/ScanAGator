@@ -259,14 +259,11 @@ public static class ImageDataTools
         return new ImageData(averageData, images.First().Width, images.First().Height);
     }
 
-    public static Bitmap ReadTif_ST(string imagePath)
+    public static Bitmap ReadTif_ST(string imagePath) // WARNING: not supporting indexed tifs
     {
-        SciTIF.TifFile tifFile = new(imagePath); // WARNING: not supporting indexed tifs
+        SciTIF.TifFile tifFile = new(imagePath); 
         SciTIF.Image tifImage = tifFile.GetImage();
-        byte[] bmpBytes = tifImage.GetBitmapBytes();
-        using var ms = new MemoryStream(bmpBytes);
-        Bitmap bmp = new(ms);
-        return bmp;
+        return tifImage.ToBitmap();
     }
 
     public static Bitmap ReadTif_SD(string imagePath)
@@ -276,5 +273,21 @@ public static class ImageDataTools
         using Graphics gfx = Graphics.FromImage(bmp2);
         gfx.DrawImage(bmp, 0, 0);
         return bmp2;
+    }
+
+    public static Bitmap ToBitmap(this SciTIF.Image image)
+    {
+        byte[] bmpBytes = image.GetBitmapBytes();
+        using var ms = new MemoryStream(bmpBytes);
+        Bitmap bmp = new(ms);
+        return bmp;
+    }
+
+    public static Bitmap ToBitmap(this SciTIF.ImageRGB image)
+    {
+        byte[] bmpBytes = image.GetBitmapBytes();
+        using var ms = new MemoryStream(bmpBytes);
+        Bitmap bmp = new(ms);
+        return bmp;
     }
 }
