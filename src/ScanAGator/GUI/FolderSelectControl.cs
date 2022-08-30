@@ -274,6 +274,8 @@ namespace ScanAGator.GUI
                 ListViewItem item = new(name, path) { ForeColor = GetFolderColor(path) };
                 lvFolders.Items.Add(item);
             }
+
+            lvFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
         }
 
         private Color GetFolderColor(string path)
