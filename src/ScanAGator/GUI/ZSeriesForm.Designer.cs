@@ -104,6 +104,7 @@
             this.hScrollBar1.Name = "hScrollBar1";
             this.hScrollBar1.Size = new System.Drawing.Size(351, 34);
             this.hScrollBar1.TabIndex = 2;
+            this.hScrollBar1.Visible = false;
             // 
             // pictureBox1
             // 
