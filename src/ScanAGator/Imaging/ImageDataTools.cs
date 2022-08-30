@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using BitMiracle.LibTiff.Classic;
@@ -11,7 +12,7 @@ namespace ScanAGator.Imaging;
 /// <summary>
 /// This class contains static methods which act on images
 /// </summary>
-public class ImageDataTools
+public static class ImageDataTools
 {
     public static Bitmap Merge(ImageData imgR, ImageData imgG, ImageData imgB)
     {
@@ -256,5 +257,24 @@ public class ImageDataTools
         double[] averageData = dataSum.Select(x => x / images.Length).ToArray();
 
         return new ImageData(averageData, images.First().Width, images.First().Height);
+    }
+
+    public static Bitmap ReadTif_ST(string imagePath)
+    {
+        SciTIF.TifFile tifFile = new(imagePath); // WARNING: not supporting indexed tifs
+        SciTIF.Image tifImage = tifFile.GetImage();
+        byte[] bmpBytes = tifImage.GetBitmapBytes();
+        using var ms = new MemoryStream(bmpBytes);
+        Bitmap bmp = new(ms);
+        return bmp;
+    }
+
+    public static Bitmap ReadTif_SD(string imagePath)
+    {
+        using Bitmap bmp = new(imagePath);
+        Bitmap bmp2 = new(bmp.Width, bmp.Height);
+        using Graphics gfx = Graphics.FromImage(bmp2);
+        gfx.DrawImage(bmp, 0, 0);
+        return bmp2;
     }
 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace ScanAGator.GUI
 {
@@ -47,26 +48,32 @@ namespace ScanAGator.GUI
 
                 string s = selectedPaths.Length > 1 ? "s" : "";
 
+                if (selectedPaths.Length == 1)
+                {
+                    MenuItem item0a = new() { Text = $"Rename Folder" };
+                    item0a.Click += (s, e) => RenameFolder();
+                    context.MenuItems.Add(item0a);
+                }
 
-                MenuItem copyFolderPathItem = new() { Text = $"Copy Folder Path{s}" };
-                copyFolderPathItem.Click += (s, e) => CopySelectedFolders();
-                context.MenuItems.Add(copyFolderPathItem);
+                MenuItem item0b = new() { Text = $"Copy Folder Path{s}" };
+                item0b.Click += (s, e) => CopySelectedFolders();
+                context.MenuItems.Add(item0b);
 
-                MenuItem openLinescanFolderItem = new() { Text = $"Open Folder{s}" };
-                openLinescanFolderItem.Click += (s, e) => LaunchSelectedFolders();
-                context.MenuItems.Add(openLinescanFolderItem);
+                MenuItem item1 = new() { Text = $"Open Folder{s}" };
+                item1.Click += (s, e) => LaunchSelectedFolders();
+                context.MenuItems.Add(item1);
 
-                MenuItem openAnalysisFolderItem = new() { Text = $"Open ScanAGator Folder{s}" };
-                openAnalysisFolderItem.Click += (s, e) => LaunchSelectedFolders(true);
-                context.MenuItems.Add(openAnalysisFolderItem);
+                MenuItem item2 = new() { Text = $"Open ScanAGator Folder{s}" };
+                item2.Click += (s, e) => LaunchSelectedFolders(true);
+                context.MenuItems.Add(item2);
 
-                MenuItem analyzeItem = new() { Text = $"Auto-Analyze Folder{s}" };
-                analyzeItem.Click += (s, e) => AnalyzeSelectedFolders();
-                context.MenuItems.Add(analyzeItem);
+                MenuItem item3 = new() { Text = $"Auto-Analyze Folder{s}" };
+                item3.Click += (s, e) => AnalyzeSelectedFolders();
+                context.MenuItems.Add(item3);
 
-                MenuItem analyzeItem2 = new() { Text = $"Delete ScanAGator Folder{s}" };
-                analyzeItem2.Click += (s, e) => ClearSelectedFolders();
-                context.MenuItems.Add(analyzeItem2);
+                MenuItem item4 = new() { Text = $"Delete ScanAGator Folder{s}" };
+                item4.Click += (s, e) => ClearSelectedFolders();
+                context.MenuItems.Add(item4);
 
                 MenuItem item5 = new() { Text = $"Plot Curve{s}" };
                 item5.Click += (s, e) => PlotCurves?.Invoke(selectedPaths);
@@ -91,6 +98,25 @@ namespace ScanAGator.GUI
             else
             {
                 SetFolder(clickedItemPath);
+            }
+        }
+
+        private void RenameFolder()
+        {
+            string originalPath = lvFolders.SelectedItems[0].ImageKey;
+            string originalFolderName = Path.GetFileName(originalPath);
+            RenameFolderForm frm = new(originalFolderName);
+            DialogResult result = frm.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string containingFolder = Path.GetDirectoryName(originalPath);
+                string newFodlerName = frm.FolderName;
+                string newPath = Path.Combine(containingFolder, newFodlerName);
+                Directory.Move(originalPath, newPath);
+
+                int selectedIndex = lvFolders.SelectedIndices[0];
+                SetFolder(containingFolder); // rescan to update folder names
+                lvFolders.SelectedIndices.Add(selectedIndex);
             }
         }
 
