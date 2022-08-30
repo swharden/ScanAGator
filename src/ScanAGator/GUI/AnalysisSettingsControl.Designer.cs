@@ -53,8 +53,9 @@
             this.cbFloor = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
             this.cbFilter = new System.Windows.Forms.CheckBox();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.lblLineScanTime = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline2)).BeginInit();
@@ -383,6 +384,7 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.lblLineScanTime);
             this.panel2.Controls.Add(this.cbFilter);
             this.panel2.Controls.Add(this.pbGraph);
             this.panel2.Controls.Add(this.cbFloor);
@@ -408,6 +410,17 @@
             this.panel2.Size = new System.Drawing.Size(554, 329);
             this.panel2.TabIndex = 0;
             // 
+            // cbFilter
+            // 
+            this.cbFilter.AutoSize = true;
+            this.cbFilter.Checked = true;
+            this.cbFilter.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbFilter.Location = new System.Drawing.Point(493, 238);
+            this.cbFilter.Name = "cbFilter";
+            this.cbFilter.Size = new System.Drawing.Size(22, 21);
+            this.cbFilter.TabIndex = 41;
+            this.cbFilter.UseVisualStyleBackColor = true;
+            // 
             // panel3
             // 
             this.panel3.Controls.Add(this.panel1);
@@ -421,16 +434,15 @@
             this.panel3.Size = new System.Drawing.Size(554, 530);
             this.panel3.TabIndex = 1;
             // 
-            // cbFilter
+            // lblLineScanTime
             // 
-            this.cbFilter.AutoSize = true;
-            this.cbFilter.Checked = true;
-            this.cbFilter.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbFilter.Location = new System.Drawing.Point(493, 238);
-            this.cbFilter.Name = "cbFilter";
-            this.cbFilter.Size = new System.Drawing.Size(22, 21);
-            this.cbFilter.TabIndex = 41;
-            this.cbFilter.UseVisualStyleBackColor = true;
+            this.lblLineScanTime.AutoSize = true;
+            this.lblLineScanTime.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.lblLineScanTime.Location = new System.Drawing.Point(14, 285);
+            this.lblLineScanTime.Name = "lblLineScanTime";
+            this.lblLineScanTime.Size = new System.Drawing.Size(157, 20);
+            this.lblLineScanTime.TabIndex = 42;
+            this.lblLineScanTime.Text = "2021-02-03 15:16:17";
             // 
             // AnalysisSettingsControl
             // 
@@ -487,5 +499,6 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.CheckBox cbFilter;
+        private System.Windows.Forms.Label lblLineScanTime;
     }
 }

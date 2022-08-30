@@ -75,6 +75,8 @@ namespace ScanAGator.GUI
 
             tbFrame.Value = 0;
             tbFrame.Maximum = Images.FrameCount - 1;
+            lblLineScanTime.Text = xml.AcquisitionDate.ToString();
+
             OnLinescanImageChanged();
             SetMaxValues();
             AutoBaseline();
