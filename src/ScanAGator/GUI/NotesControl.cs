@@ -16,6 +16,7 @@ namespace ScanAGator.GUI
         public NotesControl()
         {
             InitializeComponent();
+            SetContent(string.Empty);
         }
 
         public static bool IsNotesFolder(string folderPath)
@@ -26,30 +27,30 @@ namespace ScanAGator.GUI
 
         public void SetFolder(string folderPath)
         {
-            tabControl1.TabPages.Clear();
+            StringBuilder sb = new();
 
             string[] textFilePaths = Directory.GetFiles(folderPath, "*.txt").ToArray();
 
             foreach (string path in textFilePaths)
             {
-                TabPage tp = new()
-                {
-                    ImageKey = path,
-                    Text = Path.GetFileName(path),
-                };
+                string title = Path.GetFileName(path);
+                string text = File.ReadAllText(path);
 
-                RichTextBox rtb = new()
-                {
-                    Dock = DockStyle.Fill,
-                    Text = File.ReadAllText(path),
-                };
-
-                tp.Controls.Add(rtb);
-
-                tabControl1.TabPages.Add(tp);
+                sb.AppendLine($"<h1>{title}</h1>");
+                sb.AppendLine($"<div><pre>{text}</pre></div>");
             }
 
-            tabControl1.Visible = true;
+            SetContent(sb.ToString());
+        }
+
+        private void SetContent(string body)
+        {
+            string bgColor = "#"
+                + SystemColors.Control.R.ToString("X2")
+                + SystemColors.Control.G.ToString("X2")
+                + SystemColors.Control.B.ToString("X2");
+
+            webBrowser1.DocumentText = $"<html><body style=\"background: {bgColor};\">{body}</body></html>";
         }
     }
 }
