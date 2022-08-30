@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace ScanAGator.GUI
 {

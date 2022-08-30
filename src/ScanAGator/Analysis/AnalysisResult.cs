@@ -14,7 +14,7 @@ public class AnalysisResult
     public readonly IntensityCurve SmoothDeltaGreenCurve;
     public readonly IntensityCurve SmoothDeltaGreenOverRedCurve;
 
-    public static Version Version => new(4, 3); // bump to reflect breaking changes
+    public static Version Version => new(4, 4); // bump to reflect breaking changes
     public static string VersionString => $"Scan-A-Gator v{Version.Major}.{Version.Minor}";
 
     /// <summary>
