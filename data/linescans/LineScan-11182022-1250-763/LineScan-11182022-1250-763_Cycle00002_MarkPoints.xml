@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PVMarkPointSeriesElements Iterations="1" IterationDelay="0.00" CalcFunctMap="False">
+  <PVMarkPointElement Repetitions="1" UncagingLaser="Insight X3" UncagingLaserPower="400" TriggerFrequency="None" TriggerSelection="None" TriggerCount="1" AsyncSyncFrequency="EveryRepetition" VoltageOutputCategoryName="None" VoltageRecCategoryName="None" parameterSet="CurrentSettings">
+    <PVGalvoPointElement InitialDelay="1000" InterPointDelay="0.26" Duration="100" SpiralRevolutions="5" AllPointsAtOnce="False" Use3D="False" Points="Point 1" Indices="1">
+      <Point Index="1" X="0.158114697004876" Y="∞" IsSpiral="True" SpiralWidth="0.114577788247108" SpiralHeight="NaN" SpiralSizeInMicrons="4.32203389830509" />
+    </PVGalvoPointElement>
+  </PVMarkPointElement>
+</PVMarkPointSeriesElements>
