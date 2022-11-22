@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace ScanAGator.GUI;
+namespace ScanAGator;
 
-public static class GuiExtensions
+public static class Extensions
 {
     public static void SetMax(this NumericUpDown nud, int newMax)
     {
