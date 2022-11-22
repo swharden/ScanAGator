@@ -50,7 +50,7 @@ namespace ScanAGator.GUI
         public void LoadSelectedImage()
         {
             string imagePath = ImagePaths[hScrollBar1.Value];
-            Bitmap bmp = ImageDataTools.ReadTif_SD(imagePath);
+            Bitmap bmp = ImageDataTools.ReadTif_ST(imagePath);
             Image oldImage = pictureBox1.Image;
             pictureBox1.Image = bmp;
             oldImage?.Dispose();

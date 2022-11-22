@@ -19,7 +19,7 @@ public class RatiometricImage
         {
             if (_Green is null)
             {
-                _Green = ImageDataTools.GetBitmapIndexed(GreenData);
+                _Green = GreenData.ToBitmap();
             }
             return _Green;
         }
@@ -31,7 +31,7 @@ public class RatiometricImage
         {
             if (_Red is null)
             {
-                _Red = ImageDataTools.GetBitmapIndexed(RedData);
+                _Red = RedData.ToBitmap();
             }
             return _Red;
         }

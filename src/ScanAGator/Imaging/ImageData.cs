@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ScottPlot.Drawing.Colormaps;
+using System;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 
 namespace ScanAGator.Imaging;
@@ -264,5 +267,38 @@ public class ImageData
             values[i] = a.Values[i] / b;
 
         return new ImageData(values, a.Width, a.Height);
+    }
+
+    public Bitmap ToBitmap()
+    {
+        byte[] imageBytes = new byte[Width * Height * 4];
+        for (int y=0; y<Height; y++)
+        {
+            for (int x = 0; x < Width; x++)
+            {
+                int valueIndex = y * Width + x;
+                int byteOffset = ((Height - y - 1) * Width + x) * 4;
+                imageBytes[byteOffset + 0] = (byte)Values[valueIndex];
+                imageBytes[byteOffset + 1] = (byte)Values[valueIndex];
+                imageBytes[byteOffset + 2] = (byte)Values[valueIndex];
+            }
+        }
+
+        const int imageHeaderSize = 54;
+        byte[] bmpBytes = new byte[imageBytes.Length + imageHeaderSize];
+        bmpBytes[0] = (byte)'B';
+        bmpBytes[1] = (byte)'M';
+        bmpBytes[14] = 40;
+        Array.Copy(BitConverter.GetBytes(bmpBytes.Length), 0, bmpBytes, 2, 4);
+        Array.Copy(BitConverter.GetBytes(imageHeaderSize), 0, bmpBytes, 10, 4);
+        Array.Copy(BitConverter.GetBytes(Width), 0, bmpBytes, 18, 4);
+        Array.Copy(BitConverter.GetBytes(Height), 0, bmpBytes, 22, 4);
+        Array.Copy(BitConverter.GetBytes(32), 0, bmpBytes, 28, 2);
+        Array.Copy(BitConverter.GetBytes(imageBytes.Length), 0, bmpBytes, 34, 4);
+        Array.Copy(imageBytes, 0, bmpBytes, imageHeaderSize, imageBytes.Length);
+
+        using MemoryStream ms = new(bmpBytes);
+        using Image img = Bitmap.FromStream(ms);
+        return new Bitmap(img);
     }
 }

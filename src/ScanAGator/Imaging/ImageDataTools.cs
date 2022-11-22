@@ -181,6 +181,7 @@ public static class ImageDataTools
         return new ImageData(data, width, height);
     }
 
+    [Obsolete("Not thread safe. Causes heap corruption.", true)]
     public static Bitmap GetBitmapIndexed(ImageData imageData)
     {
         // create and fill a pixel array for the 8-bit final image
@@ -223,7 +224,7 @@ public static class ImageDataTools
 
     public static Bitmap GetBmpDisplay(ImageData imageData)
     {
-        Bitmap bmpSource = GetBitmapIndexed(imageData);
+        Bitmap bmpSource = imageData.ToBitmap();
         var format = PixelFormat.Format32bppRgb;
         Bitmap bmp = new Bitmap(bmpSource.Width, bmpSource.Height, format);
         Graphics gr = Graphics.FromImage(bmp);
@@ -261,11 +262,12 @@ public static class ImageDataTools
 
     public static Bitmap ReadTif_ST(string imagePath) // WARNING: not supporting indexed tifs
     {
-        SciTIF.TifFile tifFile = new(imagePath); 
+        SciTIF.TifFile tifFile = new(imagePath);
         SciTIF.Image tifImage = tifFile.GetImage();
         return tifImage.ToBitmap();
     }
 
+    [Obsolete("Use SciTIF image reader for improved thread safety", true)]
     public static Bitmap ReadTif_SD(string imagePath)
     {
         using Bitmap bmp = new(imagePath);
