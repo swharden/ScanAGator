@@ -10,7 +10,7 @@ using System.IO;
 using System.Windows.Forms;
 using System.Diagnostics;
 
-namespace ScanAGator.GUI
+namespace ScanAGator.Controls
 {
     public partial class FolderSelectControl : UserControl
     {
@@ -114,7 +114,7 @@ namespace ScanAGator.GUI
         {
             string originalPath = lvFolders.SelectedItems[0].ImageKey;
             string originalFolderName = Path.GetFileName(originalPath);
-            RenameFolderForm frm = new(originalFolderName);
+            Forms.RenameFolderForm frm = new(originalFolderName);
             DialogResult result = frm.ShowDialog();
             if (result == DialogResult.OK)
             {
@@ -333,7 +333,7 @@ namespace ScanAGator.GUI
                 .Select(x => GetZSeriesTifPaths(x))
                 .Where(x => x.Any())
                 .ToList()
-                .ForEach(x => { new ZSeriesForm(x).Show(); });
+                .ForEach(x => { new Forms.ZSeriesForm(x).Show(); });
         }
     }
 }

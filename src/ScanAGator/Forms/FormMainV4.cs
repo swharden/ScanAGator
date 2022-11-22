@@ -10,8 +10,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ScanAGator.Controls;
 
-namespace ScanAGator.GUI
+namespace ScanAGator.Forms
 {
     public partial class FormMainV4 : Form
     {

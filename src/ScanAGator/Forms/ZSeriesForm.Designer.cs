@@ -1,4 +1,4 @@
-﻿namespace ScanAGator.GUI
+﻿namespace ScanAGator.Forms
 {
     partial class ZSeriesForm
     {

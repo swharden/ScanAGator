@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using ScanAGator.Analysis;
 using ScanAGator.Imaging;
 
-namespace ScanAGator.GUI
+namespace ScanAGator.Controls
 {
     public partial class AnalysisSettingsControl : UserControl
     {

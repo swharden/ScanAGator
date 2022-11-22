@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ScanAGator.GUI
+namespace ScanAGator.Forms
 {
     public partial class RenameFolderForm : Form
     {

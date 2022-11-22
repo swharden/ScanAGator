@@ -12,8 +12,9 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using ScanAGator.Controls;
 
-namespace ScanAGator.GUI
+namespace ScanAGator.Forms
 {
     public partial class CurveCompareForm : Form
     {

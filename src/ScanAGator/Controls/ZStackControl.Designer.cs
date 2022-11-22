@@ -1,4 +1,4 @@
-﻿namespace ScanAGator.GUI
+﻿namespace ScanAGator.Controls
 {
     partial class ZStackControl
     {

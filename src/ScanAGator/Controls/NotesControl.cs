@@ -9,7 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ScanAGator.GUI
+namespace ScanAGator.Controls
 {
     public partial class NotesControl : UserControl
     {

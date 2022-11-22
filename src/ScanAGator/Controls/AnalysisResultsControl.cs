@@ -6,7 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 
-namespace ScanAGator.GUI
+namespace ScanAGator.Controls
 {
     public partial class AnalysisResultsControl : UserControl
     {
