@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -49,7 +50,15 @@ namespace ScanAGator.Controls
 
         public void LoadSelectedImage()
         {
+            if (!ImagePaths.Any())
+            {
+                pictureBox1.Image = null;
+                label1.Text = "no valid images";
+                return;
+            }
+
             string imagePath = ImagePaths[hScrollBar1.Value];
+
             Bitmap bmp = ImageDataTools.ReadTif_ST(imagePath);
             Image oldImage = pictureBox1.Image;
             pictureBox1.Image = bmp;
@@ -90,15 +99,26 @@ namespace ScanAGator.Controls
             if (linescanFolder is null)
                 return;
 
-            ImagePaths.Clear();
+            List<string> imagePaths = new();
 
             string referenceFolder = Path.Combine(linescanFolder, "References");
             if (Directory.Exists(referenceFolder))
             {
-                ImagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.tif"));
-                ImagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.jpg"));
-                ImagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.bmp"));
-                ImagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.png"));
+                imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.tif"));
+                imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.jpg"));
+                imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.bmp"));
+                imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.png"));
+            }
+
+            ImagePaths.Clear();
+            ImagePaths.AddRange(imagePaths.Where(x => File.Exists(x)));
+
+            if (!ImagePaths.Any())
+            {
+                hScrollBar1.Value = 0;
+                hScrollBar1.Maximum = 0;
+                LoadSelectedImage();
+                return;
             }
 
             hScrollBar1.Value = Math.Min(hScrollBar1.Value, ImagePaths.Count - 1);
