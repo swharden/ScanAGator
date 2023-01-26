@@ -87,8 +87,7 @@ namespace ScanAGator.Forms
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show($"Linescan folder contains invalid data.\n\n{ex}",
-                        "ERROR", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    new CrashForm(folderPath, ex.ToString()).ShowDialog();
                 }
             }
             else if (isNotesFolder)
