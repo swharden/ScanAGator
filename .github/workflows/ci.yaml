@@ -25,10 +25,16 @@ jobs:
         uses: microsoft/setup-msbuild@v1.1
 
       - name: 🚚 Restore
-        run: dotnet restore src
+        run: |
+          dotnet restore src/ScanAGator.sln
+          dotnet restore src/ImageRatioTool.sln
 
       - name: 🛠️ Build
-        run: dotnet build src --no-restore
+        run: |
+          dotnet build src/ScanAGator.sln --no-restore
+          dotnet build src/ImageRatioTool.sln --no-restore
 
       - name: 🧪 Test
-        run: dotnet test src --no-build
+        run: |
+          dotnet test src/ScanAGator.sln --no-build
+          dotnet test src/ImageRatioTool.sln --no-build
