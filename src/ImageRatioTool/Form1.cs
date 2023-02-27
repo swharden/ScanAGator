@@ -1,8 +1,3 @@
-using System.Diagnostics;
-using System.Diagnostics.Tracing;
-using System.Runtime.Intrinsics.X86;
-using System.Windows.Forms;
-
 namespace ImageRatioTool;
 
 public partial class Form1 : Form
