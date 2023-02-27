@@ -1,0 +1,1 @@
+**Warning:** This software is an internal tool intended for use only by the author. It is made available for backup and education purposes only. Issues and pull request are not welcome at this time.
