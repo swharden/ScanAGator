@@ -13,6 +13,10 @@ public partial class Form1 : Form
         SetImages(SampleData.RedImage, SampleData.GreenImage);
 
         pictureBox1.MouseDown += PictureBox1_MouseDown;
+        label1.Text = string.Empty;
+        label2.Text = string.Empty;
+        label3.Text = string.Empty;
+        label4.Text = string.Empty;
     }
 
     private void PictureBox1_MouseDown(object? sender, MouseEventArgs e)
@@ -48,7 +52,23 @@ public partial class Form1 : Form
 
     private void btnSetImages_Click(object sender, EventArgs e)
     {
-        SetImages(SampleData.RedImage, SampleData.GreenImage);
+        string redPath = GetFileUsingDialogue("Select RED image");
+        string greenPath = GetFileUsingDialogue("Select GREEN image");
+
+        if (string.IsNullOrEmpty(redPath) || string.IsNullOrEmpty(greenPath))
+            return;
+
+        SetImages(redPath, greenPath);
+    }
+
+    private string GetFileUsingDialogue(string title)
+    {
+        OpenFileDialog diag = new()
+        {
+            Filter = "TIF files (*.tif, *.tiff)|*.tif;*.tiff",
+            Title = title,
+        };
+        return diag.ShowDialog() == DialogResult.OK ? diag.FileName : string.Empty;
     }
 
     private void SetImages(string imagePathRed, string imagePathGreen)
@@ -99,8 +119,8 @@ public partial class Form1 : Form
         {
             // outline the rectangle
             Rectangle rect = GetSelectionRect();
-            if (rect.Width < 1 || rect.Height < 1)
-                return;
+            label1.Text = $"X: [{rect.Left}, {rect.Right}]";
+            label2.Text = $"Y: [{rect.Top}, {rect.Bottom}]";
 
             gfx.DrawRectangle(Pens.Yellow, rect);
 
@@ -127,6 +147,7 @@ public partial class Form1 : Form
         double[] redValues = red.Values.OrderBy(x => x).ToArray();
         int noiseFloorIndex = (int)(redValues.Length * noiseFloorFraction);
         double noiseFloor = redValues[noiseFloorIndex];
+        label3.Text = $"Floor: {noiseFloor}";
 
         double signalThreshold = noiseFloor * signalThresholdNoiseFloorMultiple;
         int thresholdIndex;
@@ -171,6 +192,18 @@ public partial class Form1 : Form
                 ratios.Add(ratio);
             }
         }
+
+        if (ratios.Count == 0)
+        {
+            label4.Text = "No pixels were suffeciently above the noise floor";
+            formsPlot2.Plot.Clear();
+            formsPlot2.Plot.Title(string.Empty);
+            formsPlot2.Refresh();
+            return;
+        }
+
+        double percent = 100.0 * ratios.Count / (red.Width * red.Height);
+        label4.Text = $"n={ratios.Count} ({percent:#.##}%)";
 
         double[] sortedRatios = ratios.OrderBy(x => x).ToArray();
         double medianRatio = sortedRatios[sortedRatios.Length / 2];

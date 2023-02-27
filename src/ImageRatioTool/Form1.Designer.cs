@@ -33,6 +33,10 @@ partial class Form1
         pictureBox2 = new PictureBox();
         formsPlot1 = new ScottPlot.FormsPlot();
         formsPlot2 = new ScottPlot.FormsPlot();
+        label1 = new Label();
+        label2 = new Label();
+        label3 = new Label();
+        label4 = new Label();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
         SuspendLayout();
@@ -59,7 +63,7 @@ partial class Form1
         // pictureBox2
         // 
         pictureBox2.BackColor = SystemColors.ControlDark;
-        pictureBox2.Location = new Point(530, 52);
+        pictureBox2.Location = new Point(530, 12);
         pictureBox2.Name = "pictureBox2";
         pictureBox2.Size = new Size(113, 87);
         pictureBox2.TabIndex = 2;
@@ -67,25 +71,65 @@ partial class Form1
         // 
         // formsPlot1
         // 
-        formsPlot1.Location = new Point(533, 147);
+        formsPlot1.Location = new Point(533, 114);
         formsPlot1.Margin = new Padding(6, 5, 6, 5);
         formsPlot1.Name = "formsPlot1";
-        formsPlot1.Size = new Size(571, 417);
+        formsPlot1.Size = new Size(571, 450);
         formsPlot1.TabIndex = 3;
         // 
         // formsPlot2
         // 
-        formsPlot2.Location = new Point(1116, 147);
+        formsPlot2.Location = new Point(1116, 114);
         formsPlot2.Margin = new Padding(6, 5, 6, 5);
         formsPlot2.Name = "formsPlot2";
-        formsPlot2.Size = new Size(571, 417);
+        formsPlot2.Size = new Size(571, 450);
         formsPlot2.TabIndex = 4;
+        // 
+        // label1
+        // 
+        label1.AutoSize = true;
+        label1.Location = new Point(649, 9);
+        label1.Name = "label1";
+        label1.Size = new Size(59, 25);
+        label1.TabIndex = 6;
+        label1.Text = "label1";
+        // 
+        // label2
+        // 
+        label2.AutoSize = true;
+        label2.Location = new Point(649, 34);
+        label2.Name = "label2";
+        label2.Size = new Size(59, 25);
+        label2.TabIndex = 7;
+        label2.Text = "label2";
+        // 
+        // label3
+        // 
+        label3.AutoSize = true;
+        label3.Location = new Point(649, 59);
+        label3.Name = "label3";
+        label3.Size = new Size(59, 25);
+        label3.TabIndex = 8;
+        label3.Text = "label3";
+        // 
+        // label4
+        // 
+        label4.AutoSize = true;
+        label4.Location = new Point(649, 84);
+        label4.Name = "label4";
+        label4.Size = new Size(59, 25);
+        label4.TabIndex = 9;
+        label4.Text = "label4";
         // 
         // Form1
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1735, 604);
+        Controls.Add(label4);
+        Controls.Add(label3);
+        Controls.Add(label2);
+        Controls.Add(label1);
         Controls.Add(formsPlot2);
         Controls.Add(formsPlot1);
         Controls.Add(pictureBox2);
@@ -97,6 +141,7 @@ partial class Form1
         ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
         ((System.ComponentModel.ISupportInitialize)pictureBox2).EndInit();
         ResumeLayout(false);
+        PerformLayout();
     }
 
     #endregion
@@ -106,4 +151,8 @@ partial class Form1
     private PictureBox pictureBox2;
     private ScottPlot.FormsPlot formsPlot1;
     private ScottPlot.FormsPlot formsPlot2;
+    private Label label1;
+    private Label label2;
+    private Label label3;
+    private Label label4;
 }
