@@ -150,9 +150,8 @@ public partial class Form1 : Form
 
         if (ratios.Count == 0)
         {
-            label3.Text = "No pixels were suffeciently above the noise floor";
             formsPlot2.Plot.Clear();
-            formsPlot2.Plot.Title(string.Empty);
+            formsPlot2.Plot.Title("No pixels above threshold");
             formsPlot2.Refresh();
             return;
         }
