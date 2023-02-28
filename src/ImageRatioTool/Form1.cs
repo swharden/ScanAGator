@@ -141,7 +141,7 @@ public partial class Form1 : Form
                     continue;
 
                 double greenValue = green.GetPixel(x, y);
-                double ratio = redValue / greenValue;
+                double ratio = greenValue / redValue;
                 ratios.Add(ratio);
             }
         }
