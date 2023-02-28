@@ -11,7 +11,7 @@ public partial class Form1 : Form
     public Form1()
     {
         InitializeComponent();
-        SetImages(SampleData.RedImage, SampleData.GreenImage);
+        LoadImage(SampleData.RatiometricImage);
 
         pictureBox1.MouseDown += (s, e) => { Corner1 = e.Location; };
         pictureBox1.MouseMove += (s, e) => { if (e.Button == MouseButtons.Left) { Corner2 = e.Location; DrawSelectionRectangle(); } };
@@ -33,33 +33,21 @@ public partial class Form1 : Form
         return new Rectangle(xMin, yMin, xMax - xMin, yMax - yMin);
     }
 
-    private void btnSetImages_Click(object sender, EventArgs e)
+    private void btnSelectImage_Click(object sender, EventArgs e)
     {
-        string redPath = GetFileUsingDialogue("Select RED image");
-        string greenPath = GetFileUsingDialogue("Select GREEN image");
-
-        if (string.IsNullOrEmpty(redPath) || string.IsNullOrEmpty(greenPath))
-            return;
-
-        SetImages(redPath, greenPath);
+        OpenFileDialog diag = new() { Filter = "TIF files (*.tif)|*.tif", Title = "Select a 2-channel TIF file", };
+        if (diag.ShowDialog() == DialogResult.OK)
+            LoadImage(diag.FileName);
     }
 
-    private string GetFileUsingDialogue(string title)
+    private void LoadImage(string ratiometricImagePath)
     {
-        OpenFileDialog diag = new() { Filter = "TIF files (*.tif)|*.tif", Title = title, };
-        return diag.ShowDialog() == DialogResult.OK ? diag.FileName : string.Empty;
-    }
+        SciTIF.TifFile tif = new(ratiometricImagePath);
+        if (tif.Frames != 1 || tif.Slices != 1 || tif.Channels != 2)
+            throw new ArgumentException("Image must be a 1-frame, 1-slice, 2-channel TIF");
 
-    private void SetImages(string imagePathRed, string imagePathGreen)
-    {
-        // use the original high bit depth data for math
-        SciTIF.TifFile red = new(imagePathRed);
-        RedImage = red.GetImage();
-        SciTIF.TifFile green = new(imagePathGreen);
-        GreenImage = green.GetImage();
-
-        if ((red.Width != green.Width) || (red.Height != green.Height))
-            throw new InvalidOperationException("images have different dimensions");
+        RedImage = tif.GetImage(0, 0, 0);
+        GreenImage = tif.GetImage(0, 0, 1);
 
         ReferenceImage = MakeDisplayImage(RedImage, GreenImage);
         pictureBox1.Width = ReferenceImage.Width;

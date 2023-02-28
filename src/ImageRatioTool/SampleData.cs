@@ -2,9 +2,7 @@
 
 public static class SampleData
 {
-    public static string RedImage => GetSampleDataFile("C1-TSeries-2062-4D-1.tif");
-
-    public static string GreenImage => GetSampleDataFile("C2-TSeries-2062-4D-1.tif");
+    public static string RatiometricImage => GetSampleDataFile("2ch-baseline.tif");
 
     public static string GetSampleDataFile(string filename)
     {
