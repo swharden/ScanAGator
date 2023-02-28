@@ -42,6 +42,8 @@ public partial class Form1 : Form
 
     private void LoadImage(string ratiometricImagePath)
     {
+        label3.Text = Path.GetFileName(ratiometricImagePath);
+
         SciTIF.TifFile tif = new(ratiometricImagePath);
         if (tif.Frames != 1 || tif.Slices != 1 || tif.Channels != 2)
             throw new ArgumentException("Image must be a 1-frame, 1-slice, 2-channel TIF");
@@ -154,9 +156,6 @@ public partial class Form1 : Form
             formsPlot2.Refresh();
             return;
         }
-
-        double percent = 100.0 * ratios.Count / (red.Width * red.Height);
-        label3.Text = $"n={ratios.Count} ({percent:#.##}%)";
 
         double[] sortedRatios = ratios.OrderBy(x => x).ToArray();
         int medianIndex = sortedRatios.Length / 2;
