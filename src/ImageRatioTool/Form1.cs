@@ -2,7 +2,8 @@ namespace ImageRatioTool;
 
 public partial class Form1 : Form
 {
-    readonly List<Point> Corners = new();
+    Point Corner1;
+    Point Corner2;
     Bitmap? ReferenceImage = null;
     SciTIF.Image? RedImage = null;
     SciTIF.Image? GreenImage = null;
@@ -12,41 +13,23 @@ public partial class Form1 : Form
         InitializeComponent();
         SetImages(SampleData.RedImage, SampleData.GreenImage);
 
-        pictureBox1.MouseDown += PictureBox1_MouseDown;
+        pictureBox1.MouseDown += (s, e) => { Corner1 = e.Location; };
+        pictureBox1.MouseMove += (s, e) => { if (e.Button == MouseButtons.Left) { Corner2 = e.Location; DrawSelectionRectangle(); } };
+        pictureBox1.MouseUp += (s, e) => { Corner2 = e.Location; DrawSelectionRectangle(); };
+
         label1.Text = string.Empty;
         label2.Text = string.Empty;
         label3.Text = string.Empty;
-        label4.Text = string.Empty;
-    }
-
-    private void PictureBox1_MouseDown(object? sender, MouseEventArgs e)
-    {
-        Corners.Add(e.Location);
-
-        if (Corners.Count == 3)
-            Corners.Clear();
-
-        DrawOutline();
     }
 
     private Rectangle GetSelectionRect()
     {
-        if (Corners.Count != 2)
-            throw new InvalidOperationException();
-
-        Point corner1 = Corners[0];
-        Point corner2 = Corners[1];
-
-        if (corner1.X == corner2.X)
-            corner2 = new Point(corner1.X + 1, corner2.Y);
-
-        if (corner1.Y == corner2.Y)
-            corner2 = new Point(corner2.X, corner1.Y + 1);
-
-        int xMin = Math.Min(corner1.X, corner2.X);
-        int xMax = Math.Max(corner1.X, corner2.X);
-        int yMin = Math.Min(corner1.Y, corner2.Y);
-        int yMax = Math.Max(corner1.Y, corner2.Y);
+        int expandX = Corner1.X == Corner2.X ? 1 : 0;
+        int expandY = Corner1.Y == Corner2.Y ? 1 : 0;
+        int xMin = Math.Min(Corner1.X, Corner2.X);
+        int xMax = Math.Max(Corner1.X, Corner2.X) + expandX;
+        int yMin = Math.Min(Corner1.Y, Corner2.Y);
+        int yMax = Math.Max(Corner1.Y, Corner2.Y) + expandY;
         return new Rectangle(xMin, yMin, xMax - xMin, yMax - yMin);
     }
 
@@ -63,11 +46,7 @@ public partial class Form1 : Form
 
     private string GetFileUsingDialogue(string title)
     {
-        OpenFileDialog diag = new()
-        {
-            Filter = "TIF files (*.tif, *.tiff)|*.tif;*.tiff",
-            Title = title,
-        };
+        OpenFileDialog diag = new() { Filter = "TIF files (*.tif)|*.tif", Title = title, };
         return diag.ShowDialog() == DialogResult.OK ? diag.FileName : string.Empty;
     }
 
@@ -85,7 +64,7 @@ public partial class Form1 : Form
         ReferenceImage = MakeDisplayImage(RedImage, GreenImage);
         pictureBox1.Width = ReferenceImage.Width;
         pictureBox1.Height = ReferenceImage.Height;
-        DrawOutline();
+        DrawSelectionRectangle();
     }
 
     private Bitmap MakeDisplayImage(SciTIF.Image red, SciTIF.Image green)
@@ -98,7 +77,7 @@ public partial class Form1 : Form
         return bmp;
     }
 
-    private void DrawOutline()
+    private void DrawSelectionRectangle()
     {
         if (ReferenceImage is null || RedImage is null || GreenImage is null)
             return;
@@ -108,37 +87,28 @@ public partial class Form1 : Form
         Bitmap bmp = new(ReferenceImage);
         using Graphics gfx = Graphics.FromImage(bmp);
 
-        foreach (Point pt in Corners)
-        {
-            int r = 2;
-            Rectangle rect = new(pt.X - r, pt.Y - r, r * 2, r * 2);
-            gfx.FillEllipse(Brushes.Yellow, rect);
-        }
+        // outline the rectangle
+        Rectangle rect = GetSelectionRect();
+        label1.Text = $"X: [{rect.Left}, {rect.Right}]";
+        label2.Text = $"Y: [{rect.Top}, {rect.Bottom}]";
 
-        if (Corners.Count == 2)
-        {
-            // outline the rectangle
-            Rectangle rect = GetSelectionRect();
-            label1.Text = $"X: [{rect.Left}, {rect.Right}]";
-            label2.Text = $"Y: [{rect.Top}, {rect.Bottom}]";
+        gfx.DrawRectangle(Pens.Yellow, rect);
 
-            gfx.DrawRectangle(Pens.Yellow, rect);
+        // analyze source data
+        SciTIF.Image croppedRed = RedImage.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
+        SciTIF.Image croppedGreen = GreenImage.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
+        double threshold = CalculateThreshold(croppedRed);
+        MeasureGreenOverRedRatio(croppedRed, croppedGreen, threshold);
 
-            // analyze source data
-            SciTIF.Image croppedRed = RedImage.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
-            SciTIF.Image croppedGreen = GreenImage.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
-            double threshold = CalculateThreshold(croppedRed);
-            AnalyzeRatio(croppedRed, croppedGreen, threshold);
-
-            // show source data preview image
-            Image? originalImage2 = pictureBox2.Image;
-            pictureBox2.Image = MakeDisplayImage(croppedRed, croppedGreen);
-            originalImage2?.Dispose();
-            pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
-        }
+        // show source data preview image
+        Image? originalImage2 = pictureBox2.Image;
+        pictureBox2.Image = MakeDisplayImage(croppedRed, croppedGreen);
+        pictureBox2.Refresh();
+        originalImage2?.Dispose();
+        pictureBox2.SizeMode = PictureBoxSizeMode.Zoom;
 
         pictureBox1.Image = bmp;
-
+        pictureBox1.Refresh();
         originalImage?.Dispose();
     }
 
@@ -147,7 +117,6 @@ public partial class Form1 : Form
         double[] redValues = red.Values.OrderBy(x => x).ToArray();
         int noiseFloorIndex = (int)(redValues.Length * noiseFloorFraction);
         double noiseFloor = redValues[noiseFloorIndex];
-        label3.Text = $"Floor: {noiseFloor}";
 
         double signalThreshold = noiseFloor * signalThresholdNoiseFloorMultiple;
         int thresholdIndex;
@@ -158,24 +127,20 @@ public partial class Form1 : Form
         }
 
         formsPlot1.Plot.Clear();
+        formsPlot1.Plot.Title($"Pixel Intensitites (n={redValues.Length:N0})");
         formsPlot1.Plot.YLabel("Intensity (AFU)");
         formsPlot1.Plot.AddSignal(redValues);
-
-        // floor
         formsPlot1.Plot.AddVerticalLine(noiseFloorIndex, Color.Black, 1, ScottPlot.LineStyle.Dot, "floor");
         formsPlot1.Plot.AddHorizontalLine(noiseFloor, Color.Black, 1, ScottPlot.LineStyle.Dot);
-
-        // signal
         formsPlot1.Plot.AddVerticalLine(thresholdIndex, Color.Black, 1, ScottPlot.LineStyle.Dash, "threshold");
         formsPlot1.Plot.AddHorizontalLine(signalThreshold, Color.Black, 1, ScottPlot.LineStyle.Dash);
-
         formsPlot1.Plot.Legend(true, ScottPlot.Alignment.UpperLeft);
         formsPlot1.Refresh();
 
         return signalThreshold;
     }
 
-    private void AnalyzeRatio(SciTIF.Image red, SciTIF.Image green, double threshold)
+    private void MeasureGreenOverRedRatio(SciTIF.Image red, SciTIF.Image green, double threshold)
     {
         List<double> ratios = new();
 
@@ -195,7 +160,7 @@ public partial class Form1 : Form
 
         if (ratios.Count == 0)
         {
-            label4.Text = "No pixels were suffeciently above the noise floor";
+            label3.Text = "No pixels were suffeciently above the noise floor";
             formsPlot2.Plot.Clear();
             formsPlot2.Plot.Title(string.Empty);
             formsPlot2.Refresh();
@@ -203,15 +168,21 @@ public partial class Form1 : Form
         }
 
         double percent = 100.0 * ratios.Count / (red.Width * red.Height);
-        label4.Text = $"n={ratios.Count} ({percent:#.##}%)";
+        label3.Text = $"n={ratios.Count} ({percent:#.##}%)";
 
         double[] sortedRatios = ratios.OrderBy(x => x).ToArray();
-        double medianRatio = sortedRatios[sortedRatios.Length / 2];
+        int medianIndex = sortedRatios.Length / 2;
+        double medianRatio = sortedRatios[medianIndex];
 
         formsPlot2.Plot.Clear();
         formsPlot2.Plot.YLabel("G/R Ratio");
         formsPlot2.Plot.Title($"Median G/R Ratio: {medianRatio:#.###}");
         formsPlot2.Plot.AddSignal(sortedRatios);
+        formsPlot2.Plot.AddVerticalLine(medianIndex, Color.Black, 1, ScottPlot.LineStyle.Dot);
+        var hline = formsPlot2.Plot.AddHorizontalLine(medianRatio, Color.Black, 1, ScottPlot.LineStyle.Dash);
+        hline.PositionLabel = true;
+        hline.PositionLabelOppositeAxis = true;
+        formsPlot2.Plot.Layout(right: 50);
         formsPlot2.Refresh();
     }
 }

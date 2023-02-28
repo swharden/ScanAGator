@@ -2,23 +2,29 @@
 
 public static class SampleData
 {
-    public static string Folder = GetSampleDataFolder();
+    public static string RedImage => GetSampleDataFile("C1-TSeries-2062-4D-1.tif");
 
-    public static string RedImage => Path.Combine(Folder, "C1-TSeries-2062-4D-1.tif");
+    public static string GreenImage => GetSampleDataFile("C2-TSeries-2062-4D-1.tif");
 
-    public static string GreenImage => Path.Combine(Folder, "C2-TSeries-2062-4D-1.tif");
-
-    private static string GetSampleDataFolder()
+    public static string GetSampleDataFile(string filename)
     {
-        string path = Path.Join(
+        string localFolder = Path.GetFullPath("./");
+        string localPath = Path.Combine(localFolder, filename);
+        if (File.Exists(localPath))
+            return localPath;
+
+        string sampleDataFolder = Path.Join(
             path1: Application.StartupPath,
             path2: "../../../../../data/single");
+        string sampleDataFolderPath = Path.Combine(sampleDataFolder, filename);
+        if (File.Exists(sampleDataFolderPath))
+            return sampleDataFolderPath;
 
-        path = Path.GetFullPath(path);
+        string networkFolder = Path.GetFullPath("X:\\zTemp\\2p sample data");
+        string networkFolderPath = Path.Combine(networkFolder, filename);
+        if (File.Exists(networkFolderPath))
+            return networkFolderPath;
 
-        if (!Directory.Exists(path))
-            throw new DirectoryNotFoundException(path);
-
-        return path;
+        throw new InvalidOperationException("sample data file not found");
     }
 }

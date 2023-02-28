@@ -36,7 +36,6 @@ partial class Form1
         label1 = new Label();
         label2 = new Label();
         label3 = new Label();
-        label4 = new Label();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         ((System.ComponentModel.ISupportInitialize)pictureBox2).BeginInit();
         SuspendLayout();
@@ -112,21 +111,11 @@ partial class Form1
         label3.TabIndex = 8;
         label3.Text = "label3";
         // 
-        // label4
-        // 
-        label4.AutoSize = true;
-        label4.Location = new Point(649, 84);
-        label4.Name = "label4";
-        label4.Size = new Size(59, 25);
-        label4.TabIndex = 9;
-        label4.Text = "label4";
-        // 
         // Form1
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1735, 604);
-        Controls.Add(label4);
         Controls.Add(label3);
         Controls.Add(label2);
         Controls.Add(label1);
@@ -154,5 +143,4 @@ partial class Form1
     private Label label1;
     private Label label2;
     private Label label3;
-    private Label label4;
 }
