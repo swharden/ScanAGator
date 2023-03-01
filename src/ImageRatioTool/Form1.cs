@@ -14,8 +14,8 @@ public partial class Form1 : Form
         LoadImage(SampleData.RatiometricImage);
 
         pictureBox1.MouseDown += (s, e) => { Corner1 = e.Location; };
-        pictureBox1.MouseMove += (s, e) => { if (e.Button == MouseButtons.Left) { Corner2 = e.Location; ExecuteRoiAnalysis(); } };
-        pictureBox1.MouseUp += (s, e) => { Corner2 = e.Location; ExecuteRoiAnalysis(); };
+        pictureBox1.MouseMove += (s, e) => { if (e.Button == MouseButtons.Left) { Corner2 = e.Location; AnalyzeROI(); } };
+        pictureBox1.MouseUp += (s, e) => { Corner2 = e.Location; AnalyzeROI(); };
         btnCopyImage.Click += (s, e) => Clipboard.SetImage(pictureBox1.Image);
     }
 
@@ -28,7 +28,7 @@ public partial class Form1 : Form
         int yMin = Math.Min(Corner1.Y, Corner2.Y);
         int yMax = Math.Max(Corner1.Y, Corner2.Y) + expandY;
 
-        // TODO: clip this result to the image area
+        // TODO: don't allow the rectangle to get larger than the image
         return new Rectangle(xMin, yMin, xMax - xMin, yMax - yMin);
     }
 
@@ -57,27 +57,21 @@ public partial class Form1 : Form
         ReferenceImage = ImageOperations.MakeDisplayImage(RedImage, GreenImage);
         pictureBox1.Width = ReferenceImage.Width;
         pictureBox1.Height = ReferenceImage.Height;
-        ExecuteRoiAnalysis();
+        AnalyzeROI();
     }
 
-    private void ExecuteRoiAnalysis()
+    private void AnalyzeROI()
     {
         if (ReferenceImage is null || RedImage is null || GreenImage is null)
             return;
 
-        // analyze data
-        Rectangle rect = GetSelectionRect();
-        SciTIF.Image croppedRed = RedImage.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
-        SciTIF.Image croppedGreen = GreenImage.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
-        RoiAnalysis roi = new(croppedGreen, croppedRed);
+        RoiAnalysis roi = new(RedImage, GreenImage, GetSelectionRect());
 
-        // update graphs
         GraphOperations.PlotIntensities(formsPlot1, roi);
         GraphOperations.PlotRatios(formsPlot2, roi);
 
-        // update image
         Image? originalImage = pictureBox1.Image;
-        pictureBox1.Image = ImageOperations.Annotate(ReferenceImage, rect, roi);
+        pictureBox1.Image = ImageOperations.Annotate(ReferenceImage, roi);
         pictureBox1.Refresh();
         originalImage?.Dispose();
     }

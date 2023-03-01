@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-namespace ImageRatioTool;
+﻿namespace ImageRatioTool;
 
 public static class ImageOperations
 {
@@ -14,32 +12,14 @@ public static class ImageOperations
         return bmp;
     }
 
-    public static Bitmap Annotate(Bitmap reference, Rectangle rect, RoiAnalysis roi)
+    public static Bitmap Annotate(Bitmap reference, RoiAnalysis roi)
     {
         Bitmap bmp = new(reference.Width, reference.Height);
         using Graphics gfx = Graphics.FromImage(bmp);
         using Font font = new("Consolas", 8);
         gfx.DrawImage(reference, 0, 0);
-
-        DrawRoiRectangle(gfx, rect);
-
-        StringBuilder sb = new();
-        sb.AppendLine($"X: [{rect.Left}, {rect.Right}] W={rect.Width}");
-        sb.AppendLine($"Y: [{rect.Top}, {rect.Bottom}] H={rect.Height}");
-        sb.AppendLine($"Noise floor: {roi.NoiseFloor:N2}");
-        sb.AppendLine($"Signal threshold: {roi.Threshold:N2}");
-        sb.AppendLine($"Pixels above threshold: {roi.FractionAboveThreshold * 100:N1}%");
-        if (roi.PixelsAboveThreshold > 0)
-        {
-            sb.AppendLine($"G/R: {roi.MedianRatio * 100:N3}%");
-        }
-        else
-        {
-            sb.AppendLine($"G/R: No pixels in ROI above threshold");
-        }
-
-        gfx.DrawString(sb.ToString(), font, Brushes.Yellow, new Point(5, 5));
-
+        DrawRoiRectangle(gfx, roi.Rect);
+        gfx.DrawString(roi.GetSummary(), font, Brushes.Yellow, new Point(5, 5));
         return bmp;
     }
 
