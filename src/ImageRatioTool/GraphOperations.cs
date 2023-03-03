@@ -75,15 +75,11 @@ internal static class GraphOperations
 
 
         double median = roi.MedianRatio * 100;
-        plt.AddVerticalLine(median, Color.Black, 2, LineStyle.Dash, "median");
-
-        double mean = roi.MeanRatio * 100;
-        plt.AddVerticalLine(mean, Color.Black, 2, LineStyle.Dot, "mean");
+        plt.AddVerticalLine(median, Color.Black, 2, LineStyle.Dash);
 
         plt.YLabel("Count");
         plt.XLabel("G/R (%)");
         plt.Title($"Median: {median:N3}%");
         plt.SetAxisLimits(xMin: 0, xMax: 120, yMin: 0);
-        plt.Legend(true, Alignment.UpperRight);
     }
 }

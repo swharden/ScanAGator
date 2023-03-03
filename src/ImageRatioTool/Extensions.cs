@@ -27,4 +27,11 @@ public static class Extensions
 
         return img2;
     }
+
+    public static double DistanceFrom(this Point pt1, Point pt2)
+    {
+        double dX = Math.Abs(pt1.X - pt2.X);
+        double dY = Math.Abs(pt1.Y - pt2.Y);
+        return Math.Sqrt(dX * dX + dY * dY);
+    }
 }

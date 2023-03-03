@@ -11,6 +11,15 @@ public partial class TSeriesRoiSelector : UserControl
     public readonly RoiRectangle Roi = new();
     public int FrameCount => RedImages.Length;
 
+    private RoiGrab? RoiGrabBeingDragged = null;
+    private Rectangle MouseDownRect;
+    private Point MouseDownPoint;
+
+    /// <summary>
+    /// How large the displayed image is relative to the underlying image
+    /// </summary>
+    private double ImageScale => (double)pictureBox1.Width / RedImages.First().Width;
+
     public event EventHandler<RoiAnalysis> AnalysisUpdated = delegate { };
 
     public TSeriesRoiSelector()
@@ -28,14 +37,33 @@ public partial class TSeriesRoiSelector : UserControl
 
     private void PictureBox1_MouseDown(object? sender, MouseEventArgs e)
     {
+        Point cursorLocation = new((int)(e.X / ImageScale), (int)(e.Y / ImageScale));
+        RoiGrabBeingDragged = Roi.GetGrabUnderCursor(cursorLocation);
+        MouseDownRect = Roi.Rect;
+        MouseDownPoint = cursorLocation;
     }
 
     private void PictureBox1_MouseMove(object? sender, MouseEventArgs e)
     {
+        Point cursorLocation = new((int)(e.X / ImageScale), (int)(e.Y / ImageScale));
+
+        if (e.Button == MouseButtons.None)
+        {
+            RoiGrab grab = Roi.GetGrabUnderCursor(cursorLocation);
+            Cursor = grab.GetCursor();
+            return;
+        }
+
+        if (e.Button == MouseButtons.Left && RoiGrabBeingDragged.HasValue)
+        {
+            Roi.Update(RoiGrabBeingDragged.Value, cursorLocation, MouseDownRect, MouseDownPoint);
+            Analyze();
+        }
     }
 
     private void PictureBox1_MouseUp(object? sender, MouseEventArgs e)
     {
+        RoiGrabBeingDragged = null;
     }
 
     private void PictureBox1_MouseWheel(object? sender, MouseEventArgs e)
@@ -47,11 +75,16 @@ public partial class TSeriesRoiSelector : UserControl
         Analyze(newFrame);
     }
 
+    public RoiAnalysis Analyze()
+    {
+        return Analyze(hScrollBar1.Value);
+    }
+
     public RoiAnalysis Analyze(int frameIndex)
     {
         hScrollBar1.Value = frameIndex;
         groupBox1.Text = $"{Path.GetFileName(ImagePath)} ({hScrollBar1.Value}/{hScrollBar1.Maximum})";
-        
+
         Bitmap bmp = new(DisplayImages[hScrollBar1.Value]);
         using Graphics gfx = Graphics.FromImage(bmp);
         ImageOperations.DrawRoiRectangle(gfx, Roi);
