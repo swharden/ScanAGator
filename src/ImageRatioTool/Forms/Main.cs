@@ -57,4 +57,9 @@ public partial class Main : Form
 
         Clipboard.SetText(ResultsToCopy);
     }
+
+    private void button3_Click(object sender, EventArgs e)
+    {
+        Clipboard.SetImage(tSeriesRoiSelector1.GetImage());
+    }
 }

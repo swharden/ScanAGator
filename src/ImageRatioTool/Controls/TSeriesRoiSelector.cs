@@ -18,7 +18,12 @@ public partial class TSeriesRoiSelector : UserControl
     /// <summary>
     /// How large the displayed image is relative to the underlying image
     /// </summary>
-    private double ImageScale => (double)pictureBox1.Width / RedImages.First().Width;
+    private double ImageScaleX => (double)pictureBox1.Width / RedImages.First().Width;
+
+    /// <summary>
+    /// How large the displayed image is relative to the underlying image
+    /// </summary>
+    private double ImageScaleY => (double)pictureBox1.Height / RedImages.First().Height;
 
     public event EventHandler<RoiAnalysis> AnalysisUpdated = delegate { };
 
@@ -33,11 +38,12 @@ public partial class TSeriesRoiSelector : UserControl
         pictureBox1.MouseMove += PictureBox1_MouseMove;
 
         hScrollBar1.ValueChanged += (s, e) => Analyze(hScrollBar1.Value);
+        pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
     }
 
     private void PictureBox1_MouseDown(object? sender, MouseEventArgs e)
     {
-        Point cursorLocation = new((int)(e.X / ImageScale), (int)(e.Y / ImageScale));
+        Point cursorLocation = new((int)(e.X / ImageScaleX), (int)(e.Y / ImageScaleY));
         RoiGrabBeingDragged = Roi.GetGrabUnderCursor(cursorLocation);
         MouseDownRect = Roi.Rect;
         MouseDownPoint = cursorLocation;
@@ -45,7 +51,7 @@ public partial class TSeriesRoiSelector : UserControl
 
     private void PictureBox1_MouseMove(object? sender, MouseEventArgs e)
     {
-        Point cursorLocation = new((int)(e.X / ImageScale), (int)(e.Y / ImageScale));
+        Point cursorLocation = new((int)(e.X / ImageScaleX), (int)(e.Y / ImageScaleY));
 
         if (e.Button == MouseButtons.None)
         {
@@ -137,5 +143,10 @@ public partial class TSeriesRoiSelector : UserControl
             y2: (int)(tif.Height * .7));
 
         Analyze(0);
+    }
+
+    public Bitmap GetImage()
+    {
+        return (Bitmap)pictureBox1.Image;
     }
 }
