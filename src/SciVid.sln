@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33414.496
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SciVid", "SciVid\SciVid.csproj", "{38D382F4-9DB4-4B48-A0BC-A11279071E78}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SciVid.Tests", "SciVid.Tests\SciVid.Tests.csproj", "{C2870B42-9CB8-46EC-BBEF-CB85EC0C0DAD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{38D382F4-9DB4-4B48-A0BC-A11279071E78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38D382F4-9DB4-4B48-A0BC-A11279071E78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38D382F4-9DB4-4B48-A0BC-A11279071E78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38D382F4-9DB4-4B48-A0BC-A11279071E78}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C2870B42-9CB8-46EC-BBEF-CB85EC0C0DAD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C2870B42-9CB8-46EC-BBEF-CB85EC0C0DAD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C2870B42-9CB8-46EC-BBEF-CB85EC0C0DAD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C2870B42-9CB8-46EC-BBEF-CB85EC0C0DAD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E35237E-080E-41B3-B998-B1A1B4ADD8AC}
+	EndGlobalSection
+EndGlobal
