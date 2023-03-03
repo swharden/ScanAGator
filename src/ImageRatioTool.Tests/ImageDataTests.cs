@@ -5,7 +5,7 @@ namespace ImageRatioTool.Tests;
 public class Tests
 {
     [Test]
-    public void Test1()
+    public void Test_SampleData_RatiometricSingleImage()
     {
         SciTIF.TifFile tif = new(SampleData.RatiometricImage);
         tif.Frames.Should().Be(1);
@@ -17,5 +17,14 @@ public class Tests
 
         SciTIF.Image green = tif.GetImage(0, 0, 1);
         green.GetPixel(13, 17).Should().Be(422); // checked with ImageJ
+    }
+
+    [Test]
+    public void Test_SampleData_RatiometricTSeries()
+    {
+        SciTIF.TifFile tif = new(SampleData.RatiometricImageSeries);
+        tif.Frames.Should().Be(24);
+        tif.Slices.Should().Be(1);
+        tif.Channels.Should().Be(2);
     }
 }

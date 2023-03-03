@@ -1,6 +1,6 @@
 ﻿namespace ImageRatioTool;
 
-partial class Form1
+partial class Main
 {
     /// <summary>
     ///  Required designer variable.
@@ -28,42 +28,31 @@ partial class Form1
     /// </summary>
     private void InitializeComponent()
     {
-        pictureBox1 = new PictureBox();
         formsPlot1 = new ScottPlot.FormsPlot();
         formsPlot2 = new ScottPlot.FormsPlot();
         btnSelectImage = new Button();
-        btnCopyImage = new Button();
-        ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+        tSeriesRoiSelector1 = new TSeriesRoiSelector();
         SuspendLayout();
-        // 
-        // pictureBox1
-        // 
-        pictureBox1.BackColor = SystemColors.ControlDark;
-        pictureBox1.Location = new Point(12, 12);
-        pictureBox1.Name = "pictureBox1";
-        pictureBox1.Size = new Size(1024, 1024);
-        pictureBox1.TabIndex = 1;
-        pictureBox1.TabStop = false;
         // 
         // formsPlot1
         // 
-        formsPlot1.Location = new Point(1071, 105);
+        formsPlot1.Location = new Point(545, 81);
         formsPlot1.Margin = new Padding(6, 5, 6, 5);
         formsPlot1.Name = "formsPlot1";
-        formsPlot1.Size = new Size(571, 450);
+        formsPlot1.Size = new Size(571, 577);
         formsPlot1.TabIndex = 3;
         // 
         // formsPlot2
         // 
-        formsPlot2.Location = new Point(1071, 586);
+        formsPlot2.Location = new Point(1128, 81);
         formsPlot2.Margin = new Padding(6, 5, 6, 5);
         formsPlot2.Name = "formsPlot2";
-        formsPlot2.Size = new Size(571, 450);
+        formsPlot2.Size = new Size(571, 577);
         formsPlot2.TabIndex = 4;
         // 
         // btnSelectImage
         // 
-        btnSelectImage.Location = new Point(1071, 12);
+        btnSelectImage.Location = new Point(12, 12);
         btnSelectImage.Name = "btnSelectImage";
         btnSelectImage.Size = new Size(148, 52);
         btnSelectImage.TabIndex = 9;
@@ -71,36 +60,31 @@ partial class Form1
         btnSelectImage.UseVisualStyleBackColor = true;
         btnSelectImage.Click += btnSelectImage_Click;
         // 
-        // btnCopyImage
+        // tSeriesRoiSelector1
         // 
-        btnCopyImage.Location = new Point(1225, 12);
-        btnCopyImage.Name = "btnCopyImage";
-        btnCopyImage.Size = new Size(148, 52);
-        btnCopyImage.TabIndex = 10;
-        btnCopyImage.Text = "Copy Image";
-        btnCopyImage.UseVisualStyleBackColor = true;
+        tSeriesRoiSelector1.Location = new Point(12, 70);
+        tSeriesRoiSelector1.Name = "tSeriesRoiSelector1";
+        tSeriesRoiSelector1.Size = new Size(524, 588);
+        tSeriesRoiSelector1.TabIndex = 10;
         // 
-        // Form1
+        // MainWindow
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1688, 1051);
-        Controls.Add(btnCopyImage);
+        ClientSize = new Size(1715, 672);
+        Controls.Add(tSeriesRoiSelector1);
         Controls.Add(btnSelectImage);
         Controls.Add(formsPlot2);
         Controls.Add(formsPlot1);
-        Controls.Add(pictureBox1);
-        Name = "Form1";
+        Name = "MainWindow";
         StartPosition = FormStartPosition.CenterScreen;
         Text = "Image Ratio Tool";
-        ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
         ResumeLayout(false);
     }
 
     #endregion
-    private PictureBox pictureBox1;
     private ScottPlot.FormsPlot formsPlot1;
     private ScottPlot.FormsPlot formsPlot2;
     private Button btnSelectImage;
-    private Button btnCopyImage;
+    private TSeriesRoiSelector tSeriesRoiSelector1;
 }

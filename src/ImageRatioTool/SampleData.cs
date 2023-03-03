@@ -3,25 +3,26 @@
 public static class SampleData
 {
     public static string RatiometricImage => GetSampleDataFile("2ch-baseline.tif");
+    public static string RatiometricImageSeries => GetSampleDataFile("TSeries-03022023-1227-2098-2ch.tif");
 
     public static string GetSampleDataFile(string filename)
     {
         string localFolder = Path.GetFullPath("./");
         string localPath = Path.Combine(localFolder, filename);
         if (File.Exists(localPath))
-            return localPath;
+            return Path.GetFullPath(localPath);
 
         string sampleDataFolder = Path.Join(
             path1: Application.StartupPath,
             path2: "../../../../../data/single");
         string sampleDataFolderPath = Path.Combine(sampleDataFolder, filename);
         if (File.Exists(sampleDataFolderPath))
-            return sampleDataFolderPath;
+            return Path.GetFullPath(sampleDataFolderPath);
 
         string networkFolder = Path.GetFullPath("X:\\zTemp\\2p sample data");
         string networkFolderPath = Path.Combine(networkFolder, filename);
         if (File.Exists(networkFolderPath))
-            return networkFolderPath;
+            return Path.GetFullPath(networkFolderPath);
 
         throw new InvalidOperationException("sample data file not found");
     }
