@@ -21,6 +21,7 @@ public struct RoiAnalysis
     public double[] SortedRatios;
     public int MedianIndex => SortedRatios.Length / 2;
     public double MedianRatio => SortedRatios[MedianIndex];
+    public readonly double MeanRatio;
 
     /// <summary>
     /// Analyze the source images using the given rectangular ROI
@@ -48,6 +49,7 @@ public struct RoiAnalysis
         }
 
         SortedRatios = GetThresholdedRatios(roiRed, roiGreen, Threshold);
+        MeanRatio = SortedRatios.Sum() / SortedRatios.Length;
     }
 
     /// <summary>
@@ -73,6 +75,25 @@ public struct RoiAnalysis
         }
 
         return ratios.OrderBy(x => x).ToArray();
+    }
+
+    /// <summary>
+    /// Return the mean of the center percentile
+    /// </summary>
+    public double GetCenterMean(double widthFraction = 0.3)
+    {
+        int i1 = (int)(SortedRatios.Length / 2 - widthFraction / 2);
+        int i2 = (int)(SortedRatios.Length / 2 + widthFraction / 2);
+
+        double sum = 0;
+        for (int i = i1; i < i2; i++)
+        {
+            sum += SortedRatios[i];
+        }
+
+        double mean = sum / (i2 - i1);
+
+        return mean;
     }
 
     public string GetSummary()

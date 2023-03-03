@@ -1,7 +1,11 @@
+using ScottPlot;
+
 namespace ImageRatioTool;
 
 public partial class Main : Form
 {
+    private string ResultsToCopy = string.Empty;
+
     public Main()
     {
         InitializeComponent();
@@ -25,5 +29,32 @@ public partial class Main : Form
     {
         GraphOperations.PlotIntensities(formsPlot1, e);
         GraphOperations.PlotRatios(formsPlot2, e);
+    }
+
+    private void button1_Click(object sender, EventArgs e)
+    {
+        double[] values = new double[tSeriesRoiSelector1.FrameCount];
+
+        for (int i = 0; i < tSeriesRoiSelector1.FrameCount; i++)
+        {
+            RoiAnalysis analysis = tSeriesRoiSelector1.Analyze(i);
+            values[i] = analysis.MedianRatio * 100;
+        }
+
+        formsPlot3.Plot.Clear();
+        formsPlot3.Plot.AddSignal(values);
+        formsPlot3.Plot.YLabel("G/R (%)");
+        formsPlot3.Plot.XLabel("Frame Number");
+        formsPlot3.Refresh();
+
+        ResultsToCopy = string.Join("\n", values.Select(x => x.ToString()));
+    }
+
+    private void button2_Click(object sender, EventArgs e)
+    {
+        if (string.IsNullOrEmpty(ResultsToCopy))
+            return;
+
+        Clipboard.SetText(ResultsToCopy);
     }
 }

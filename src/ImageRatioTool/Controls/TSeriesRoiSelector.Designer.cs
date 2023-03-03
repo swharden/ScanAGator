@@ -58,6 +58,7 @@
             // 
             // hScrollBar1
             // 
+            hScrollBar1.LargeChange = 1;
             hScrollBar1.Location = new Point(6, 545);
             hScrollBar1.Name = "hScrollBar1";
             hScrollBar1.Size = new Size(512, 39);
