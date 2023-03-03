@@ -25,18 +25,18 @@ public struct RoiAnalysis
     /// <summary>
     /// Analyze the source images using the given rectangular ROI
     /// </summary>
-    /// <param name="FullRed">Full size red source image</param>
-    /// <param name="FullGreen">Full size green source image</param>
+    /// <param name="red">Full size red source image</param>
+    /// <param name="green">Full size green source image</param>
     /// <param name="rect">Rectangular ROI</param>
     /// <param name="noiseFloor">Noise floor will be calculated as this fraction of all pixel values in the ROI</param>
     /// <param name="signalThreshold">Only analyze pixels whose value is greater than this multiple of the noise floor</param>
-    public RoiAnalysis(SciTIF.Image FullRed, SciTIF.Image FullGreen, Rectangle rect, double noiseFloor = 0.2, double signalThreshold = 5)
+    public RoiAnalysis(SciTIF.Image red, SciTIF.Image green, Rectangle rect, double noiseFloor = 0.2, double signalThreshold = 5)
     {
         Rect = rect;
-        SciTIF.Image red = FullRed.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
-        SciTIF.Image green = FullGreen.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
+        SciTIF.Image roiRed = red.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
+        SciTIF.Image roiGreen = green.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
 
-        SortedValues = red.Values.OrderBy(x => x).ToArray();
+        SortedValues = roiRed.Values.OrderBy(x => x).ToArray();
         NoiseFloorIndex = (int)(SortedValues.Length * noiseFloor);
         NoiseFloor = SortedValues[NoiseFloorIndex];
 
@@ -47,7 +47,7 @@ public struct RoiAnalysis
                 break;
         }
 
-        SortedRatios = GetThresholdedRatios(red, green, Threshold);
+        SortedRatios = GetThresholdedRatios(roiRed, roiGreen, Threshold);
     }
 
     /// <summary>

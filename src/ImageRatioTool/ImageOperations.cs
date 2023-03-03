@@ -41,4 +41,25 @@ public static class ImageOperations
             gfx.DrawRectangle(Pens.Black, cornerRect);
         }
     }
+
+    public static void DrawRoiRectangle(Graphics gfx, RoiRectangle roi)
+    {
+        gfx.DrawRectangle(Pens.Yellow, roi.Rect);
+
+        int r = 2;
+
+        foreach (Point corner in roi.Corners)
+        {
+            Rectangle cornerRect = new(corner.X - r, corner.Y - r, r * 2 + 1, r * 2 + 1);
+            gfx.FillRectangle(Brushes.White, cornerRect);
+            gfx.DrawRectangle(Pens.Black, cornerRect);
+        }
+
+        foreach (Point corner in roi.Centers)
+        {
+            Rectangle cornerRect = new(corner.X - r, corner.Y - r, r * 2 + 1, r * 2 + 1);
+            gfx.FillRectangle(Brushes.White, cornerRect);
+            gfx.DrawRectangle(Pens.Black, cornerRect);
+        }
+    }
 }
