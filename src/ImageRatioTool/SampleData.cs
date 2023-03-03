@@ -12,12 +12,19 @@ public static class SampleData
         if (File.Exists(localPath))
             return Path.GetFullPath(localPath);
 
-        string sampleDataFolder = Path.Join(
+        string sampleDataFolderSingle = Path.Join(
             path1: Application.StartupPath,
             path2: "../../../../../data/single");
-        string sampleDataFolderPath = Path.Combine(sampleDataFolder, filename);
+        string sampleDataFolderPath = Path.Combine(sampleDataFolderSingle, filename);
         if (File.Exists(sampleDataFolderPath))
             return Path.GetFullPath(sampleDataFolderPath);
+
+        string sampleDataFolderTSeries = Path.Join(
+            path1: Application.StartupPath,
+            path2: "../../../../../data/tseries");
+        string sampleDataFolderTSeriesPath = Path.Combine(sampleDataFolderTSeries, filename);
+        if (File.Exists(sampleDataFolderTSeriesPath))
+            return Path.GetFullPath(sampleDataFolderTSeriesPath);
 
         string networkFolder = Path.GetFullPath("X:\\zTemp\\2p sample data");
         string networkFolderPath = Path.Combine(networkFolder, filename);
