@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="SciTIF" Version="0.1.4" />
-    <PackageReference Include="ScottPlot.WinForms" Version="4.1.60" />
+    <PackageReference Include="ScottPlot.WinForms" Version="4.1.61" />
   </ItemGroup>
 
 </Project>

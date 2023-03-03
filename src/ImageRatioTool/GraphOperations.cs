@@ -39,16 +39,46 @@ internal static class GraphOperations
 
         fp.Visible = true;
         fp.Plot.Clear();
-        fp.Plot.AddSignal(roi.SortedRatios);
 
-        fp.Plot.AddVerticalLine(roi.MedianIndex, Color.Black, 1, LineStyle.Dot);
-        var hline = fp.Plot.AddHorizontalLine(roi.MedianRatio, Color.Black, 1, LineStyle.Dash);
+        //PlotRatioDistributionAndMedian(fp.Plot, roi);
+        PlotRatioHistogram(fp.Plot, roi);
+
+        fp.Refresh();
+    }
+
+    private static void PlotRatioDistributionAndMedian(Plot plt, RoiAnalysis roi)
+    {
+        plt.AddSignal(roi.SortedRatios);
+
+        plt.AddVerticalLine(roi.MedianIndex, Color.Black, 1, LineStyle.Dot);
+        var hline = plt.AddHorizontalLine(roi.MedianRatio, Color.Black, 1, LineStyle.Dash);
         hline.PositionLabel = true;
         hline.PositionLabelOppositeAxis = true;
         hline.PositionFormatter = (double x) => $"{x * 100:N2}%";
 
-        fp.Plot.YLabel("G/R Ratio");
-        fp.Plot.Layout(right: 50);
-        fp.Refresh();
+        plt.YLabel("G/R Ratio");
+        plt.Layout(right: 50);
+    }
+
+    private static void PlotRatioHistogram(Plot plt, RoiAnalysis roi)
+    {
+        ScottPlot.Statistics.Histogram hist = new(min: 0, max: 100, binCount: 100);
+
+        foreach (double ratio in roi.SortedRatios)
+        {
+            hist.Add(ratio * 100);
+        }
+
+        var bar = plt.AddBar(hist.Counts);
+        bar.BorderLineWidth = 0;
+        bar.BarWidth = 1.2;
+
+        double median = roi.MedianRatio * 100;
+        plt.AddVerticalLine(median, Color.Black, 2, LineStyle.Dash);
+
+        plt.YLabel("Count");
+        plt.XLabel("G/R (%)");
+        plt.Title($"Median: {median:N3}%");
+        plt.SetAxisLimits(xMin: 0, xMax: 100, yMin: 0);
     }
 }
