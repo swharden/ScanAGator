@@ -1,6 +1,6 @@
-﻿namespace ImageRatioTool;
+﻿namespace ImageRatioTool.Forms;
 
-partial class Main
+partial class SquareRoiForm
 {
     /// <summary>
     ///  Required designer variable.

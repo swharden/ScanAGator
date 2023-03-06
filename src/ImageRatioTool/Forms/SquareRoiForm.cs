@@ -1,12 +1,10 @@
-using ScottPlot;
+namespace ImageRatioTool.Forms;
 
-namespace ImageRatioTool;
-
-public partial class Main : Form
+public partial class SquareRoiForm : Form
 {
     private string ResultsToCopy = string.Empty;
 
-    public Main()
+    public SquareRoiForm()
     {
         InitializeComponent();
         tSeriesRoiSelector1.AnalysisUpdated += TSeriesRoiSelector1_AnalysisUpdated;
