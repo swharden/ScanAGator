@@ -31,7 +31,7 @@ public partial class Main : Form
         GraphOperations.PlotRatios(formsPlot2, e);
     }
 
-    private void button1_Click(object sender, EventArgs e)
+    private void btnAnalyzeAllFrames_Click(object sender, EventArgs e)
     {
         double[] values = new double[tSeriesRoiSelector1.FrameCount];
 
@@ -50,7 +50,7 @@ public partial class Main : Form
         ResultsToCopy = string.Join("\n", values.Select(x => x.ToString()));
     }
 
-    private void button2_Click(object sender, EventArgs e)
+    private void btnCopyResults_Click(object sender, EventArgs e)
     {
         if (string.IsNullOrEmpty(ResultsToCopy))
             return;
@@ -58,8 +58,16 @@ public partial class Main : Form
         Clipboard.SetText(ResultsToCopy);
     }
 
-    private void button3_Click(object sender, EventArgs e)
+    private void btnCopyImage_Click(object sender, EventArgs e)
     {
         Clipboard.SetImage(tSeriesRoiSelector1.GetImage());
+    }
+
+    private void tbThreshold_Scroll(object sender, EventArgs e)
+    {
+        double threshold = tbThreshold.Value / 10.0;
+        lblThreshold.Text = $"Threshold: {threshold:#.#}";
+        tSeriesRoiSelector1.Threshold = threshold;
+        tSeriesRoiSelector1.Analyze();
     }
 }

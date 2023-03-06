@@ -16,6 +16,11 @@ public partial class TSeriesRoiSelector : UserControl
     private Point MouseDownPoint;
 
     /// <summary>
+    /// Only evaluate pixels this multiple greater than the noise floor
+    /// </summary>
+    public double Threshold { get; set; } = 5.0;
+
+    /// <summary>
     /// How large the displayed image is relative to the underlying image
     /// </summary>
     private double ImageScaleX => (double)pictureBox1.Width / RedImages.First().Width;
@@ -102,7 +107,7 @@ public partial class TSeriesRoiSelector : UserControl
 
         SciTIF.Image red = RedImages[hScrollBar1.Value];
         SciTIF.Image green = GreenImages[hScrollBar1.Value];
-        RoiAnalysis analysis = new(red, green, Roi.Rect);
+        RoiAnalysis analysis = new(red, green, Roi.Rect, signalThreshold: Threshold);
 
         AnalysisUpdated.Invoke(this, analysis);
         return analysis;

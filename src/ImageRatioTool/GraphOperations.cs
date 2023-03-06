@@ -62,16 +62,16 @@ internal static class GraphOperations
 
     private static void PlotRatioHistogram(Plot plt, RoiAnalysis roi)
     {
-        ScottPlot.Statistics.Histogram hist = new(min: 0, max: 100, binCount: 100);
+        ScottPlot.Statistics.Histogram hist = new(min: 0, max: 500, binCount: 500);
 
         foreach (double ratio in roi.SortedRatios)
         {
             hist.Add(ratio * 100);
         }
 
-        var bar = plt.AddBar(hist.Counts);
+        var bar = plt.AddBar(hist.Counts, hist.BinCenters);
         bar.BorderLineWidth = 0;
-        bar.BarWidth = 1.2;
+        bar.BarWidth = hist.BinSize * 1.2;
 
 
         double median = roi.MedianRatio * 100;
@@ -79,7 +79,11 @@ internal static class GraphOperations
 
         plt.YLabel("Count");
         plt.XLabel("G/R (%)");
-        plt.Title($"Median: {median:N3}%");
-        plt.SetAxisLimits(xMin: 0, xMax: 120, yMin: 0);
+        plt.Title($"Median: {median:##.###}% (n={roi.PixelsAboveThreshold:N0})");
+        
+        plt.SetAxisLimits(
+            xMin: roi.SortedRatios.First() * 100 - 10,
+            xMax: roi.SortedRatios.Last() * 100 + 10, 
+            yMin: 0);
     }
 }
