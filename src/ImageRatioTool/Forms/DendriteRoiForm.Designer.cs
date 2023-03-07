@@ -28,13 +28,22 @@ partial class DendriteRoiForm
     /// </summary>
     private void InitializeComponent()
     {
+            this.dendriteTracerControl1 = new ImageRatioTool.Controls.DendriteTracerControl();
             this.SuspendLayout();
+            // 
+            // dendriteTracerControl1
+            // 
+            this.dendriteTracerControl1.Location = new System.Drawing.Point(12, 12);
+            this.dendriteTracerControl1.Name = "dendriteTracerControl1";
+            this.dendriteTracerControl1.Size = new System.Drawing.Size(879, 535);
+            this.dendriteTracerControl1.TabIndex = 0;
             // 
             // DendriteRoiForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
+            this.ClientSize = new System.Drawing.Size(974, 548);
+            this.Controls.Add(this.dendriteTracerControl1);
             this.Name = "DendriteRoiForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Image Ratio Tool";
@@ -43,4 +52,6 @@ partial class DendriteRoiForm
     }
 
     #endregion
+
+    private Controls.DendriteTracerControl dendriteTracerControl1;
 }
