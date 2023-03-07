@@ -62,4 +62,29 @@ public static class ImageOperations
             gfx.DrawRectangle(Pens.Black, cornerRect);
         }
     }
+
+    public static RectangleF GetRectangle(PointF pt, int radius)
+    {
+        return new RectangleF(pt.X - radius, pt.Y - radius, radius * 2, radius * 2);
+    }
+
+    public static void FillCircle(Graphics gfx, PointF pt, Brush brush, int r = 2)
+    {
+        gfx.FillEllipse(brush, GetRectangle(pt, r));
+    }
+
+    public static void DrawCircle(Graphics gfx, PointF pt, Pen pen, int r = 2)
+    {
+        gfx.DrawEllipse(pen, GetRectangle(pt, r));
+    }
+
+    public static void FillRectangle(Graphics gfx, PointF pt, Brush brush, int r = 2)
+    {
+        gfx.FillRectangle(brush, GetRectangle(pt, r));
+    }
+
+    public static void DrawRectangle(Graphics gfx, PointF pt, Pen pen, int r = 2)
+    {
+        gfx.DrawRectangle(pen, GetRectangle(pt, r));
+    }
 }
