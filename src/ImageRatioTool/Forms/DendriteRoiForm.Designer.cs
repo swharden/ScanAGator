@@ -28,27 +28,29 @@ partial class DendriteRoiForm
     /// </summary>
     private void InitializeComponent()
     {
-            this.dendriteTracerControl1 = new ImageRatioTool.Controls.DendriteTracerControl();
-            this.SuspendLayout();
-            // 
-            // dendriteTracerControl1
-            // 
-            this.dendriteTracerControl1.Location = new System.Drawing.Point(12, 12);
-            this.dendriteTracerControl1.Name = "dendriteTracerControl1";
-            this.dendriteTracerControl1.Size = new System.Drawing.Size(879, 535);
-            this.dendriteTracerControl1.TabIndex = 0;
-            // 
-            // DendriteRoiForm
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(974, 548);
-            this.Controls.Add(this.dendriteTracerControl1);
-            this.Name = "DendriteRoiForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Image Ratio Tool";
-            this.ResumeLayout(false);
-
+        dendriteTracerControl1 = new Controls.DendriteTracerControl();
+        SuspendLayout();
+        // 
+        // dendriteTracerControl1
+        // 
+        dendriteTracerControl1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        dendriteTracerControl1.Location = new Point(17, 20);
+        dendriteTracerControl1.Margin = new Padding(6, 8, 6, 8);
+        dendriteTracerControl1.Name = "dendriteTracerControl1";
+        dendriteTracerControl1.Size = new Size(1359, 892);
+        dendriteTracerControl1.TabIndex = 0;
+        // 
+        // DendriteRoiForm
+        // 
+        AutoScaleDimensions = new SizeF(10F, 25F);
+        AutoScaleMode = AutoScaleMode.Font;
+        ClientSize = new Size(1391, 913);
+        Controls.Add(dendriteTracerControl1);
+        Margin = new Padding(4, 5, 4, 5);
+        Name = "DendriteRoiForm";
+        StartPosition = FormStartPosition.CenterScreen;
+        Text = "Image Ratio Tool";
+        ResumeLayout(false);
     }
 
     #endregion

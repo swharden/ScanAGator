@@ -28,82 +28,100 @@ partial class DendriteTracerControl
     /// </summary>
     private void InitializeComponent()
     {
-            this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.tbRoiSpacing = new System.Windows.Forms.TrackBar();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbRoiSize = new System.Windows.Forms.TrackBar();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbRoiSpacing)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbRoiSize)).BeginInit();
-            this.SuspendLayout();
-            // 
-            // pictureBox1
-            // 
-            this.pictureBox1.BackColor = System.Drawing.SystemColors.ControlDark;
-            this.pictureBox1.Location = new System.Drawing.Point(3, 3);
-            this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(512, 512);
-            this.pictureBox1.TabIndex = 0;
-            this.pictureBox1.TabStop = false;
-            // 
-            // tbRoiSpacing
-            // 
-            this.tbRoiSpacing.Location = new System.Drawing.Point(521, 39);
-            this.tbRoiSpacing.Maximum = 100;
-            this.tbRoiSpacing.Minimum = 5;
-            this.tbRoiSpacing.Name = "tbRoiSpacing";
-            this.tbRoiSpacing.Size = new System.Drawing.Size(331, 45);
-            this.tbRoiSpacing.TabIndex = 1;
-            this.tbRoiSpacing.Value = 20;
-            this.tbRoiSpacing.Scroll += new System.EventHandler(this.tbRoiSpacing_Scroll);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(521, 21);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(71, 15);
-            this.label1.TabIndex = 2;
-            this.label1.Text = "ROI Spacing";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(521, 132);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(49, 15);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "ROI Size";
-            // 
-            // tbRoiSize
-            // 
-            this.tbRoiSize.Location = new System.Drawing.Point(521, 150);
-            this.tbRoiSize.Maximum = 50;
-            this.tbRoiSize.Minimum = 2;
-            this.tbRoiSize.Name = "tbRoiSize";
-            this.tbRoiSize.Size = new System.Drawing.Size(331, 45);
-            this.tbRoiSize.TabIndex = 3;
-            this.tbRoiSize.Value = 5;
-            this.tbRoiSize.Scroll += new System.EventHandler(this.tbRoiSize_Scroll);
-            // 
-            // DendriteTracerControl
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.tbRoiSize);
-            this.Controls.Add(this.label1);
-            this.Controls.Add(this.tbRoiSpacing);
-            this.Controls.Add(this.pictureBox1);
-            this.Name = "DendriteTracerControl";
-            this.Size = new System.Drawing.Size(1070, 535);
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbRoiSpacing)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.tbRoiSize)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+        pictureBox1 = new PictureBox();
+        tbRoiSpacing = new TrackBar();
+        label1 = new Label();
+        label2 = new Label();
+        tbRoiSize = new TrackBar();
+        formsPlot1 = new ScottPlot.FormsPlot();
+        ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)tbRoiSpacing).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)tbRoiSize).BeginInit();
+        SuspendLayout();
+        // 
+        // pictureBox1
+        // 
+        pictureBox1.BackColor = SystemColors.ControlDark;
+        pictureBox1.Location = new Point(4, 5);
+        pictureBox1.Margin = new Padding(4, 5, 4, 5);
+        pictureBox1.Name = "pictureBox1";
+        pictureBox1.Size = new Size(731, 853);
+        pictureBox1.TabIndex = 0;
+        pictureBox1.TabStop = false;
+        // 
+        // tbRoiSpacing
+        // 
+        tbRoiSpacing.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        tbRoiSpacing.Location = new Point(744, 65);
+        tbRoiSpacing.Margin = new Padding(4, 5, 4, 5);
+        tbRoiSpacing.Maximum = 100;
+        tbRoiSpacing.Minimum = 5;
+        tbRoiSpacing.Name = "tbRoiSpacing";
+        tbRoiSpacing.Size = new Size(486, 69);
+        tbRoiSpacing.TabIndex = 1;
+        tbRoiSpacing.Value = 50;
+        tbRoiSpacing.Scroll += tbRoiSpacing_Scroll;
+        // 
+        // label1
+        // 
+        label1.AutoSize = true;
+        label1.Location = new Point(744, 35);
+        label1.Margin = new Padding(4, 0, 4, 0);
+        label1.Name = "label1";
+        label1.Size = new Size(110, 25);
+        label1.TabIndex = 2;
+        label1.Text = "ROI Spacing";
+        // 
+        // label2
+        // 
+        label2.AutoSize = true;
+        label2.Location = new Point(744, 220);
+        label2.Margin = new Padding(4, 0, 4, 0);
+        label2.Name = "label2";
+        label2.Size = new Size(78, 25);
+        label2.TabIndex = 4;
+        label2.Text = "ROI Size";
+        // 
+        // tbRoiSize
+        // 
+        tbRoiSize.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        tbRoiSize.Location = new Point(744, 250);
+        tbRoiSize.Margin = new Padding(4, 5, 4, 5);
+        tbRoiSize.Maximum = 50;
+        tbRoiSize.Minimum = 2;
+        tbRoiSize.Name = "tbRoiSize";
+        tbRoiSize.Size = new Size(486, 69);
+        tbRoiSize.TabIndex = 3;
+        tbRoiSize.Value = 20;
+        tbRoiSize.Scroll += tbRoiSize_Scroll;
+        // 
+        // formsPlot1
+        // 
+        formsPlot1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        formsPlot1.Location = new Point(745, 329);
+        formsPlot1.Margin = new Padding(6, 5, 6, 5);
+        formsPlot1.Name = "formsPlot1";
+        formsPlot1.Size = new Size(485, 529);
+        formsPlot1.TabIndex = 5;
+        // 
+        // DendriteTracerControl
+        // 
+        AutoScaleDimensions = new SizeF(10F, 25F);
+        AutoScaleMode = AutoScaleMode.Font;
+        Controls.Add(formsPlot1);
+        Controls.Add(label2);
+        Controls.Add(tbRoiSize);
+        Controls.Add(label1);
+        Controls.Add(tbRoiSpacing);
+        Controls.Add(pictureBox1);
+        Margin = new Padding(4, 5, 4, 5);
+        Name = "DendriteTracerControl";
+        Size = new Size(1234, 892);
+        ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
+        ((System.ComponentModel.ISupportInitialize)tbRoiSpacing).EndInit();
+        ((System.ComponentModel.ISupportInitialize)tbRoiSize).EndInit();
+        ResumeLayout(false);
+        PerformLayout();
     }
 
     #endregion
@@ -113,4 +131,5 @@ partial class DendriteTracerControl
     private Label label1;
     private Label label2;
     private TrackBar tbRoiSize;
+    private ScottPlot.FormsPlot formsPlot1;
 }
