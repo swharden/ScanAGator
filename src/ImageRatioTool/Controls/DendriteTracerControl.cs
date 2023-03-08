@@ -148,8 +148,6 @@ public partial class DendriteTracerControl : UserControl
 
         double maxValue = 0;
 
-        ScottPlot.Drawing.Colormap cmap = ScottPlot.Drawing.Colormap.Turbo;
-
         for (int i = 0; i < ResultCurves.Count; i++)
         {
             if (ResultCurves[i].Length < 2)
@@ -157,7 +155,9 @@ public partial class DendriteTracerControl : UserControl
 
             maxValue = Math.Max(maxValue, ResultCurves[i].Max());
 
-            Color color = cmap.GetColor((double)i / ResultCurves.Count);
+            Color color = ResultCurves.Count > 1
+               ? ScottPlot.Drawing.Colormap.Turbo.GetColor((double)i / ResultCurves.Count)
+               : ScottPlot.Drawing.Colormap.Turbo.GetColor((double)hScrollBar1.Value / hScrollBar1.Maximum);
             var sig = formsPlot1.Plot.AddSignal(ResultCurves[i], 1.0 / ResultRoiSpacing, color);
 
             if (cbDistributeHorizontally.Checked)
