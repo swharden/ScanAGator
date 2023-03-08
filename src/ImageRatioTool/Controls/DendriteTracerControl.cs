@@ -1,18 +1,20 @@
-﻿using ScottPlot;
-using System.Data;
-using System.Diagnostics;
+﻿using System.Data;
 
 namespace ImageRatioTool.Controls;
 
 public partial class DendriteTracerControl : UserControl
 {
-    Bitmap? ReferenceImage = null;
-    SciTIF.Image? Red;
-    SciTIF.Image? Green;
+    private SciTIF.Image[] RedImages = Array.Empty<SciTIF.Image>();
+    private SciTIF.Image[] GreenImages = Array.Empty<SciTIF.Image>();
+    private Bitmap[] DisplayImages = Array.Empty<Bitmap>();
+    private string ImagePath = string.Empty;
+
+    private readonly List<double[]> ResultCurves = new();
+    private double ResultRoiSpacing;
 
     readonly List<FractionalPoint> FPoints = new();
-    float ScaleX => Red is null ? 1 : (float)Red.Width / pictureBox1.Width;
-    float ScaleY => Red is null ? 1 : (float)Red.Height / pictureBox1.Height;
+    float ScaleX => RedImages.Any() ? (float)RedImages.First().Width / pictureBox1.Width : 1;
+    float ScaleY => RedImages.Any() ? (float)RedImages.First().Height / pictureBox1.Height : 1;
 
     public DendriteTracerControl()
     {
@@ -30,7 +32,7 @@ public partial class DendriteTracerControl : UserControl
         FPoints.Add(new(0.9395, 0.6855));
         FPoints.Add(new(0.9004, 0.7207));
 
-        Analyze();
+        AnalyzeSingleFrame();
     }
 
     private void PictureBox1_MouseDown(object? sender, MouseEventArgs e)
@@ -38,7 +40,7 @@ public partial class DendriteTracerControl : UserControl
         if (e.Button == MouseButtons.Right)
         {
             FPoints.Clear();
-            Analyze();
+            AnalyzeSingleFrame();
             formsPlot1.Plot.Clear();
             formsPlot1.Refresh();
             return;
@@ -48,23 +50,34 @@ public partial class DendriteTracerControl : UserControl
         double fracY = (double)e.Y / pictureBox1.Height;
         FractionalPoint pt = new(fracX, fracY);
         FPoints.Add(pt);
-        Debug.WriteLine($"Adding fractional point: {pt}");
-        Analyze();
+        AnalyzeSingleFrame();
     }
 
-    public void SetData(SciTIF.Image red, SciTIF.Image green)
+    public void SetData(string tifFilePath)
     {
-        Red = red;
-        Green = green;
-        ReferenceImage?.Dispose();
-        ReferenceImage = ImageOperations.MakeDisplayImage(red, green);
-        Analyze();
+        var oldImages = DisplayImages.ToList();
+        (RedImages, GreenImages, DisplayImages) = ImageOperations.GetMultiFrameRatiometricImages(tifFilePath);
+        oldImages.ForEach(x => x.Dispose());
+        hScrollBar1.Value = 0;
+        hScrollBar1.Maximum = RedImages.Length - 1;
+        SetSlice(0);
     }
 
-    public void Analyze()
+    public void SetSlice(int index, bool analyze = true)
     {
-        if (ReferenceImage is null || Red is null || Green is null)
+        hScrollBar1.Value = index;
+        if (analyze)
+            AnalyzeSingleFrame();
+    }
+
+    public void AnalyzeSingleFrame(bool plotSingleFrame = true)
+    {
+        if (!RedImages.Any())
             return;
+
+        SciTIF.Image red = RedImages[hScrollBar1.Value];
+        SciTIF.Image green = GreenImages[hScrollBar1.Value];
+        Bitmap referenceImage = DisplayImages[hScrollBar1.Value];
 
         double roiSpacing = tbRoiSpacing.Value;
         double roiRadius = tbRoiSize.Value;
@@ -73,9 +86,9 @@ public partial class DendriteTracerControl : UserControl
         using Graphics gfx = Graphics.FromImage(bmp);
         gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-        Rectangle srcRect = new(0, 0, ReferenceImage.Width, ReferenceImage.Height);
+        Rectangle srcRect = new(0, 0, referenceImage.Width, referenceImage.Height);
         Rectangle destRect = new(0, 0, pictureBox1.Width, pictureBox1.Height);
-        gfx.DrawImage(ReferenceImage, destRect, srcRect, GraphicsUnit.Pixel);
+        gfx.DrawImage(referenceImage, destRect, srcRect, GraphicsUnit.Pixel);
 
         Point[] linePoints = FPoints.Select(x => x.ToPoint(bmp.Width, bmp.Height)).ToArray();
         PointF[] roiPoints = LineOperations.GetSubPoints(linePoints, roiSpacing);
@@ -84,44 +97,93 @@ public partial class DendriteTracerControl : UserControl
             ImageOperations.DrawCircle(gfx, pt, Pens.Yellow, 3);
 
         if (linePoints.Length >= 2)
-        {
             gfx.DrawLines(Pens.Yellow, linePoints);
+
+        foreach (PointF roiPoint in roiPoints)
+        {
+            RectangleF rectF = ImageOperations.GetRectangle(roiPoint, (int)roiRadius);
+            Rectangle rect = Rectangle.Round(rectF);
+            gfx.DrawRectangle(Pens.White, rect);
         }
 
+        var oldImage = pictureBox1.Image;
+        pictureBox1.Image = bmp;
+        pictureBox1.Refresh();
+        oldImage?.Dispose();
+
+        // perform analysis
         List<double> ratios = new();
         foreach (PointF roiPoint in roiPoints)
         {
             // raw coordinates for visual representation on screen
             RectangleF rectF = ImageOperations.GetRectangle(roiPoint, (int)roiRadius);
             Rectangle rect = Rectangle.Round(rectF);
-            gfx.DrawRectangle(Pens.White, rect);
 
             // scaled coordinates for analzying data
             PointF scaledPoint = new(roiPoint.X * ScaleX, roiPoint.Y * ScaleY);
             RectangleF scaledRectF = ImageOperations.GetRectangle(scaledPoint, (int)roiRadius);
             Rectangle scaledRect = Rectangle.Round(scaledRectF);
-            RoiAnalysis analysis = new(Red, Green, scaledRect);
+            RoiAnalysis analysis = new(red, green, scaledRect);
             if (analysis.PixelsAboveThreshold > 0)
                 ratios.Add(analysis.MedianRatio * 100);
         }
 
-        pictureBox1.Image?.Dispose();
-        pictureBox1.Image = bmp;
-        pictureBox1.Refresh();
+        ResultRoiSpacing = roiSpacing;
 
-        formsPlot1.Plot.Clear();
-
-        if (ratios.Count > 1)
+        if (plotSingleFrame)
         {
-            formsPlot1.Plot.AddSignal(ratios.ToArray(), roiRadius);
-            formsPlot1.Plot.YLabel("G/R (%)");
-            formsPlot1.Plot.XLabel("Distance");
-            formsPlot1.Plot.SetAxisLimits(yMin: 0, yMax: ratios.Max() * 1.1);
-            formsPlot1.Refresh();
+            ResultCurves.Clear();
+            ResultCurves.Add(ratios.ToArray());
+            PlotResults();
+        }
+        else
+        {
+            ResultCurves.Add(ratios.ToArray());
         }
     }
 
-    private void tbRoiSpacing_Scroll(object sender, EventArgs e) { Analyze(); }
+    private void PlotResults()
+    {
+        formsPlot1.Plot.Clear();
 
-    private void tbRoiSize_Scroll(object sender, EventArgs e) => Analyze();
+        double maxValue = 0;
+
+        ScottPlot.Drawing.Colormap cmap = ScottPlot.Drawing.Colormap.Turbo;
+
+        for (int i = 0; i < ResultCurves.Count; i++)
+        {
+            if (ResultCurves[i].Length < 2)
+                continue;
+
+            maxValue = Math.Max(maxValue, ResultCurves[i].Max());
+
+            Color color = cmap.GetColor((double)i / ResultCurves.Count);
+            formsPlot1.Plot.AddSignal(ResultCurves[i], 1.0 / ResultRoiSpacing, color);
+        }
+
+        formsPlot1.Plot.YLabel("G/R (%)");
+        formsPlot1.Plot.XLabel("Distance");
+        formsPlot1.Plot.SetAxisLimits(yMin: 0, yMax: maxValue * 1.1);
+        formsPlot1.Refresh();
+    }
+
+    private void tbRoiSpacing_Scroll(object sender, EventArgs e) { AnalyzeSingleFrame(); }
+
+    private void tbRoiSize_Scroll(object sender, EventArgs e) => AnalyzeSingleFrame();
+
+    private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
+    {
+        SetSlice(hScrollBar1.Value);
+    }
+
+    private void btnAnalyzeAllFrames_Click(object sender, EventArgs e)
+    {
+        ResultCurves.Clear();
+        for (int i = 0; i < RedImages.Length; i++)
+        {
+            SetSlice(i, analyze: false);
+            AnalyzeSingleFrame(plotSingleFrame: false);
+        }
+        PlotResults();
+    }
 }

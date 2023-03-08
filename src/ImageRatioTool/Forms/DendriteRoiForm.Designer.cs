@@ -33,18 +33,18 @@ partial class DendriteRoiForm
         // 
         // dendriteTracerControl1
         // 
-        dendriteTracerControl1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        dendriteTracerControl1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         dendriteTracerControl1.Location = new Point(17, 20);
         dendriteTracerControl1.Margin = new Padding(6, 8, 6, 8);
         dendriteTracerControl1.Name = "dendriteTracerControl1";
-        dendriteTracerControl1.Size = new Size(1359, 892);
+        dendriteTracerControl1.Size = new Size(1565, 900);
         dendriteTracerControl1.TabIndex = 0;
         // 
         // DendriteRoiForm
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1391, 913);
+        ClientSize = new Size(1597, 937);
         Controls.Add(dendriteTracerControl1);
         Margin = new Padding(4, 5, 4, 5);
         Name = "DendriteRoiForm";

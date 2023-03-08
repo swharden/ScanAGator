@@ -1,7 +1,21 @@
-﻿namespace ImageRatioTool;
+﻿using System.IO;
+
+namespace ImageRatioTool;
 
 public static class ImageOperations
 {
+    public static Bitmap[] MakeDisplayImages(SciTIF.Image[] red, SciTIF.Image[] green)
+    {
+        if (red.Length != green.Length)
+            throw new ArgumentException("number of images must be the same");
+
+        Bitmap[] bmps = new Bitmap[red.Length];
+        for (int i = 0; i < red.Length; i++)
+            bmps[i] = MakeDisplayImage(red[i], green[i]);
+
+        return bmps;
+    }
+
     public static Bitmap MakeDisplayImage(SciTIF.Image red, SciTIF.Image green)
     {
         int divisionFactor = 1 << (13 - 8); // 13-bit to 8-bit
@@ -61,6 +75,37 @@ public static class ImageOperations
             gfx.FillRectangle(Brushes.White, cornerRect);
             gfx.DrawRectangle(Pens.Black, cornerRect);
         }
+    }
+
+    public static (SciTIF.Image[] red, SciTIF.Image[] green, Bitmap[] display) GetMultiFrameRatiometricImages(string tifFilePath)
+    {
+        tifFilePath = Path.GetFullPath(tifFilePath);
+        if (!File.Exists(tifFilePath))
+            throw new FileNotFoundException(tifFilePath);
+
+        SciTIF.TifFile tif = new(tifFilePath);
+
+        if (tif.Frames < 2)
+            throw new ArgumentException($"TIF must have multiple frames: {tifFilePath}");
+
+        if (tif.Channels != 2)
+            throw new ArgumentException($"TIF must have 2 channels: {tifFilePath}");
+
+        if (tif.Slices != 1)
+            throw new ArgumentException($"TIF must have 1 slice: {tifFilePath}");
+
+        SciTIF.Image[] red = new SciTIF.Image[tif.Frames];
+        SciTIF.Image[] green = new SciTIF.Image[tif.Frames];
+        Bitmap[] display = new Bitmap[tif.Frames];
+
+        for (int i = 0; i < tif.Frames; i++)
+        {
+            red[i] = tif.GetImage(i, 0, 0);
+            green[i] = tif.GetImage(i, 0, 1);
+            display[i] = MakeDisplayImage(red[i], green[i]);
+        }
+
+        return (red, green, display);
     }
 
     public static RectangleF GetRectangle(PointF pt, int radius)
