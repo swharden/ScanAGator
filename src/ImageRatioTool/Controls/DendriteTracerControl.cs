@@ -158,7 +158,13 @@ public partial class DendriteTracerControl : UserControl
             maxValue = Math.Max(maxValue, ResultCurves[i].Max());
 
             Color color = cmap.GetColor((double)i / ResultCurves.Count);
-            formsPlot1.Plot.AddSignal(ResultCurves[i], 1.0 / ResultRoiSpacing, color);
+            var sig = formsPlot1.Plot.AddSignal(ResultCurves[i], 1.0 / ResultRoiSpacing, color);
+
+            if (cbDistributeHorizontally.Checked)
+            {
+                sig.OffsetX = ResultRoiSpacing * ResultCurves[i].Length * i;
+                sig.LineWidth = 3;
+            }
         }
 
         formsPlot1.Plot.YLabel("G/R (%)");
@@ -184,6 +190,11 @@ public partial class DendriteTracerControl : UserControl
             SetSlice(i, analyze: false);
             AnalyzeSingleFrame(plotSingleFrame: false);
         }
+        PlotResults();
+    }
+
+    private void cbDistributeHorizontally_CheckedChanged(object sender, EventArgs e)
+    {
         PlotResults();
     }
 }

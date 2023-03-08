@@ -36,6 +36,7 @@ partial class DendriteTracerControl
         formsPlot1 = new ScottPlot.FormsPlot();
         hScrollBar1 = new HScrollBar();
         btnAnalyzeAllFrames = new Button();
+        cbDistributeHorizontally = new CheckBox();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         ((System.ComponentModel.ISupportInitialize)tbRoiSpacing).BeginInit();
         ((System.ComponentModel.ISupportInitialize)tbRoiSize).BeginInit();
@@ -125,10 +126,22 @@ partial class DendriteTracerControl
         btnAnalyzeAllFrames.UseVisualStyleBackColor = true;
         btnAnalyzeAllFrames.Click += btnAnalyzeAllFrames_Click;
         // 
+        // cbDistributeHorizontally
+        // 
+        cbDistributeHorizontally.AutoSize = true;
+        cbDistributeHorizontally.Location = new Point(882, 261);
+        cbDistributeHorizontally.Name = "cbDistributeHorizontally";
+        cbDistributeHorizontally.Size = new Size(215, 29);
+        cbDistributeHorizontally.TabIndex = 8;
+        cbDistributeHorizontally.Text = "Distribute Horizontally";
+        cbDistributeHorizontally.UseVisualStyleBackColor = true;
+        cbDistributeHorizontally.CheckedChanged += cbDistributeHorizontally_CheckedChanged;
+        // 
         // DendriteTracerControl
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
+        Controls.Add(cbDistributeHorizontally);
         Controls.Add(btnAnalyzeAllFrames);
         Controls.Add(hScrollBar1);
         Controls.Add(formsPlot1);
@@ -157,4 +170,5 @@ partial class DendriteTracerControl
     private ScottPlot.FormsPlot formsPlot1;
     private HScrollBar hScrollBar1;
     private Button btnAnalyzeAllFrames;
+    private CheckBox cbDistributeHorizontally;
 }
