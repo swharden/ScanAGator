@@ -169,7 +169,8 @@ public partial class DendriteTracerControl : UserControl
 
         formsPlot1.Plot.YLabel("G/R (%)");
         formsPlot1.Plot.XLabel("Distance");
-        formsPlot1.Plot.SetAxisLimits(yMin: 0, yMax: maxValue * 1.1);
+        if (maxValue > 0)
+            formsPlot1.Plot.SetAxisLimits(yMin: 0, yMax: maxValue * 1.1);
         formsPlot1.Refresh();
     }
 
