@@ -2,6 +2,7 @@ using BitMiracle.LibTiff.Classic;
 using FluentAssertions;
 using System.Windows.Forms;
 using System.Text;
+using System.Xml.Linq;
 
 namespace ImageRatioTool.Tests;
 
@@ -36,5 +37,14 @@ public class Tests
     {
         double micronsPerPixel = TifFileOperations.GetMicronsPerPixel(SampleData.RatiometricImageSeries);
         micronsPerPixel.Should().BeApproximately(1.1788, precision: 1e-4);
+    }
+
+    [Test]
+    public void Test_Xml_Times()
+    {
+        double[] seconds = XmlFileOperations.GetSequenceTimes(SampleData.RatiometricImageSeriesXML);
+        double[] minutes = seconds.Select(x => x / 60).ToArray();
+        minutes.First().Should().Be(0);
+        minutes.Last().Should().BeApproximately(30, 1);
     }
 }
