@@ -24,6 +24,9 @@ public partial class DendriteTracerControl : UserControl
     {
         InitializeComponent();
 
+        AllowDrop = true;
+        DragEnter += OnDragEnter;
+        DragDrop += OnDragDrop;
         pictureBox1.MouseDown += PictureBox1_MouseDown;
 
         // initial data
@@ -37,6 +40,18 @@ public partial class DendriteTracerControl : UserControl
         FPoints.Add(new(0.9004, 0.7207));
 
         AnalyzeSingleFrame();
+    }
+
+    private void OnDragDrop(object? sender, DragEventArgs e)
+    {
+        string[] paths = (string[])e.Data!.GetData(DataFormats.FileDrop)!;
+        SetData(paths.First());
+    }
+
+    private void OnDragEnter(object? sender, DragEventArgs e)
+    {
+        if (e.Data!.GetDataPresent(DataFormats.FileDrop))
+            e.Effect = DragDropEffects.Copy;
     }
 
     private void PictureBox1_MouseDown(object? sender, MouseEventArgs e)
