@@ -36,6 +36,11 @@ public partial class TSeriesRoiSelector : UserControl
     {
         InitializeComponent();
 
+        AllowDrop = true;
+        DragEnter += OnDragEnter;
+        DragDrop += OnDragDrop;
+        pictureBox1.MouseDown += PictureBox1_MouseDown;
+
         pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
         pictureBox1.MouseWheel += PictureBox1_MouseWheel;
         pictureBox1.MouseDown += PictureBox1_MouseDown;
@@ -44,6 +49,18 @@ public partial class TSeriesRoiSelector : UserControl
 
         hScrollBar1.ValueChanged += (s, e) => Analyze(hScrollBar1.Value);
         pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+    }
+
+    private void OnDragDrop(object? sender, DragEventArgs e)
+    {
+        string[] paths = (string[])e.Data!.GetData(DataFormats.FileDrop)!;
+        LoadFile(paths.First());
+    }
+
+    private void OnDragEnter(object? sender, DragEventArgs e)
+    {
+        if (e.Data!.GetDataPresent(DataFormats.FileDrop))
+            e.Effect = DragDropEffects.Copy;
     }
 
     private void PictureBox1_MouseDown(object? sender, MouseEventArgs e)
