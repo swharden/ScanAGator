@@ -1,4 +1,6 @@
 ﻿using System.Data;
+using System.Globalization;
+using System.Text;
 
 namespace ImageRatioTool.Controls;
 
@@ -7,7 +9,9 @@ public partial class DendriteTracerControl : UserControl
     private SciTIF.Image[] RedImages = Array.Empty<SciTIF.Image>();
     private SciTIF.Image[] GreenImages = Array.Empty<SciTIF.Image>();
     private Bitmap[] DisplayImages = Array.Empty<Bitmap>();
-    private string ImagePath = string.Empty;
+    private double ImageMicronsPerPixel = 1;
+    double MicronsPerRoi => ResultRoiSpacing * ImageMicronsPerPixel * ScaleX;
+    double MicronsRoiRadius => tbRoiSize.Value * ImageMicronsPerPixel * ScaleX;
 
     private readonly List<double[]> ResultCurves = new();
     private double ResultRoiSpacing;
@@ -55,6 +59,7 @@ public partial class DendriteTracerControl : UserControl
 
     public void SetData(string tifFilePath)
     {
+        ImageMicronsPerPixel = TifFileOperations.GetMicronsPerPixel(tifFilePath);
         var oldImages = DisplayImages.ToList();
         (RedImages, GreenImages, DisplayImages) = ImageOperations.GetMultiFrameRatiometricImages(tifFilePath);
         oldImages.ForEach(x => x.Dispose());
@@ -144,6 +149,12 @@ public partial class DendriteTracerControl : UserControl
 
     private void PlotResults()
     {
+        lblRoiSpacing.Text = $"ROI Spacing: {MicronsPerRoi:N2} µm";
+        lblRoiSpacing.Refresh();
+
+        lblRoiSize.Text = $"ROI Size: {MicronsRoiRadius:N2} µm";
+        lblRoiSize.Refresh();
+
         formsPlot1.Plot.Clear();
 
         double maxValue = 0;
@@ -158,7 +169,8 @@ public partial class DendriteTracerControl : UserControl
             Color color = ResultCurves.Count > 1
                ? ScottPlot.Drawing.Colormap.Turbo.GetColor((double)i / ResultCurves.Count)
                : ScottPlot.Drawing.Colormap.Turbo.GetColor((double)hScrollBar1.Value / hScrollBar1.Maximum);
-            var sig = formsPlot1.Plot.AddSignal(ResultCurves[i], 1.0 / ResultRoiSpacing, color);
+
+            var sig = formsPlot1.Plot.AddSignal(ResultCurves[i], 1.0 / MicronsPerRoi, color);
 
             if (cbDistributeHorizontally.Checked)
             {
@@ -174,14 +186,11 @@ public partial class DendriteTracerControl : UserControl
         formsPlot1.Refresh();
     }
 
-    private void tbRoiSpacing_Scroll(object sender, EventArgs e) { AnalyzeSingleFrame(); }
+    private void tbRoiSpacing_Scroll(object sender, EventArgs e) => AnalyzeSingleFrame();
 
     private void tbRoiSize_Scroll(object sender, EventArgs e) => AnalyzeSingleFrame();
 
-    private void hScrollBar1_Scroll(object sender, ScrollEventArgs e)
-    {
-        SetSlice(hScrollBar1.Value);
-    }
+    private void hScrollBar1_Scroll(object sender, ScrollEventArgs e) => SetSlice(hScrollBar1.Value);
 
     private void btnAnalyzeAllFrames_Click(object sender, EventArgs e)
     {
@@ -197,5 +206,21 @@ public partial class DendriteTracerControl : UserControl
     private void cbDistributeHorizontally_CheckedChanged(object sender, EventArgs e)
     {
         PlotResults();
+    }
+
+    private void btnCopyData_Click(object sender, EventArgs e)
+    {
+        StringBuilder sb = new();
+        for (int row = 0; row < ResultCurves.First().Length; row++)
+        {
+            double x = MicronsPerRoi * row;
+            sb.Append(x.ToString());
+            for (int col = 0; col < ResultCurves.Count(); col++)
+            {
+                sb.Append(" " + ResultCurves[col][row].ToString());
+            }
+            sb.AppendLine();
+        }
+        Clipboard.SetText(sb.ToString());
     }
 }

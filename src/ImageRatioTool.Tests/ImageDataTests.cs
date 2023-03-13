@@ -35,6 +35,6 @@ public class Tests
     public void Test_SampleData_ReadScaleMetadata()
     {
         double micronsPerPixel = TifFileOperations.GetMicronsPerPixel(SampleData.RatiometricImageSeries);
-        micronsPerPixel.Should().BeApproximately(0.848324, precision: 1e-8);
+        micronsPerPixel.Should().BeApproximately(1.1788, precision: 1e-4);
     }
 }

@@ -30,13 +30,14 @@ partial class DendriteTracerControl
     {
         pictureBox1 = new PictureBox();
         tbRoiSpacing = new TrackBar();
-        label1 = new Label();
-        label2 = new Label();
+        lblRoiSpacing = new Label();
+        lblRoiSize = new Label();
         tbRoiSize = new TrackBar();
         formsPlot1 = new ScottPlot.FormsPlot();
         hScrollBar1 = new HScrollBar();
         btnAnalyzeAllFrames = new Button();
         cbDistributeHorizontally = new CheckBox();
+        btnCopyData = new Button();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         ((System.ComponentModel.ISupportInitialize)tbRoiSpacing).BeginInit();
         ((System.ComponentModel.ISupportInitialize)tbRoiSize).BeginInit();
@@ -65,25 +66,25 @@ partial class DendriteTracerControl
         tbRoiSpacing.Value = 50;
         tbRoiSpacing.Scroll += tbRoiSpacing_Scroll;
         // 
-        // label1
+        // lblRoiSpacing
         // 
-        label1.AutoSize = true;
-        label1.Location = new Point(744, 35);
-        label1.Margin = new Padding(4, 0, 4, 0);
-        label1.Name = "label1";
-        label1.Size = new Size(110, 25);
-        label1.TabIndex = 2;
-        label1.Text = "ROI Spacing";
+        lblRoiSpacing.AutoSize = true;
+        lblRoiSpacing.Location = new Point(744, 35);
+        lblRoiSpacing.Margin = new Padding(4, 0, 4, 0);
+        lblRoiSpacing.Name = "lblRoiSpacing";
+        lblRoiSpacing.Size = new Size(110, 25);
+        lblRoiSpacing.TabIndex = 2;
+        lblRoiSpacing.Text = "ROI Spacing";
         // 
-        // label2
+        // lblRoiSize
         // 
-        label2.AutoSize = true;
-        label2.Location = new Point(744, 132);
-        label2.Margin = new Padding(4, 0, 4, 0);
-        label2.Name = "label2";
-        label2.Size = new Size(78, 25);
-        label2.TabIndex = 4;
-        label2.Text = "ROI Size";
+        lblRoiSize.AutoSize = true;
+        lblRoiSize.Location = new Point(744, 132);
+        lblRoiSize.Margin = new Padding(4, 0, 4, 0);
+        lblRoiSize.Name = "lblRoiSize";
+        lblRoiSize.Size = new Size(78, 25);
+        lblRoiSize.TabIndex = 4;
+        lblRoiSize.Text = "ROI Size";
         // 
         // tbRoiSize
         // 
@@ -137,17 +138,28 @@ partial class DendriteTracerControl
         cbDistributeHorizontally.UseVisualStyleBackColor = true;
         cbDistributeHorizontally.CheckedChanged += cbDistributeHorizontally_CheckedChanged;
         // 
+        // btnCopyData
+        // 
+        btnCopyData.Location = new Point(1103, 241);
+        btnCopyData.Name = "btnCopyData";
+        btnCopyData.Size = new Size(112, 70);
+        btnCopyData.TabIndex = 9;
+        btnCopyData.Text = "Copy Data";
+        btnCopyData.UseVisualStyleBackColor = true;
+        btnCopyData.Click += btnCopyData_Click;
+        // 
         // DendriteTracerControl
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
+        Controls.Add(btnCopyData);
         Controls.Add(cbDistributeHorizontally);
         Controls.Add(btnAnalyzeAllFrames);
         Controls.Add(hScrollBar1);
         Controls.Add(formsPlot1);
-        Controls.Add(label2);
+        Controls.Add(lblRoiSize);
         Controls.Add(tbRoiSize);
-        Controls.Add(label1);
+        Controls.Add(lblRoiSpacing);
         Controls.Add(tbRoiSpacing);
         Controls.Add(pictureBox1);
         Margin = new Padding(4, 5, 4, 5);
@@ -164,11 +176,12 @@ partial class DendriteTracerControl
 
     private PictureBox pictureBox1;
     private TrackBar tbRoiSpacing;
-    private Label label1;
-    private Label label2;
+    private Label lblRoiSpacing;
+    private Label lblRoiSize;
     private TrackBar tbRoiSize;
     private ScottPlot.FormsPlot formsPlot1;
     private HScrollBar hScrollBar1;
     private Button btnAnalyzeAllFrames;
     private CheckBox cbDistributeHorizontally;
+    private Button btnCopyData;
 }
