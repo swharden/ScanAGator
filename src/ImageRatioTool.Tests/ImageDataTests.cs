@@ -1,4 +1,7 @@
+using BitMiracle.LibTiff.Classic;
 using FluentAssertions;
+using System.Windows.Forms;
+using System.Text;
 
 namespace ImageRatioTool.Tests;
 
@@ -26,5 +29,12 @@ public class Tests
         tif.Frames.Should().Be(24);
         tif.Slices.Should().Be(1);
         tif.Channels.Should().Be(2);
+    }
+
+    [Test]
+    public void Test_SampleData_ReadScaleMetadata()
+    {
+        double micronsPerPixel = TifFileOperations.GetMicronsPerPixel(SampleData.RatiometricImageSeries);
+        micronsPerPixel.Should().BeApproximately(0.848324, precision: 1e-8);
     }
 }
