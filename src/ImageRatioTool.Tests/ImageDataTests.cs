@@ -11,7 +11,7 @@ public class Tests
     [Test]
     public void Test_SampleData_RatiometricSingleImage()
     {
-        SciTIF.TifFile tif = new(SampleData.RatiometricImage);
+        SciTIF.TifFile tif = new(ImageRatioTool.SampleData.RatiometricImage);
         tif.Frames.Should().Be(1);
         tif.Slices.Should().Be(1);
         tif.Channels.Should().Be(2);
@@ -26,7 +26,7 @@ public class Tests
     [Test]
     public void Test_SampleData_RatiometricTSeries()
     {
-        SciTIF.TifFile tif = new(SampleData.RatiometricImageSeries);
+        SciTIF.TifFile tif = new(ImageRatioTool.SampleData.RatiometricImageSeries);
         tif.Frames.Should().Be(24);
         tif.Slices.Should().Be(1);
         tif.Channels.Should().Be(2);
@@ -35,14 +35,14 @@ public class Tests
     [Test]
     public void Test_SampleData_ReadScaleMetadata()
     {
-        double micronsPerPixel = TifFileOperations.GetMicronsPerPixel(SampleData.RatiometricImageSeries);
+        double micronsPerPixel = TifFileOperations.GetMicronsPerPixel(ImageRatioTool.SampleData.RatiometricImageSeries);
         micronsPerPixel.Should().BeApproximately(1.1788, precision: 1e-4);
     }
 
     [Test]
     public void Test_Xml_Times()
     {
-        double[] seconds = XmlFileOperations.GetSequenceTimes(SampleData.RatiometricImageSeriesXML);
+        double[] seconds = XmlFileOperations.GetSequenceTimes(ImageRatioTool.SampleData.RatiometricImageSeriesXML);
         double[] minutes = seconds.Select(x => x / 60).ToArray();
         minutes.First().Should().Be(0);
         minutes.Last().Should().BeApproximately(30, 1);

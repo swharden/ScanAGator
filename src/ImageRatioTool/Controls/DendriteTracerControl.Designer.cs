@@ -38,6 +38,7 @@ partial class DendriteTracerControl
         btnAnalyzeAllFrames = new Button();
         cbDistributeHorizontally = new CheckBox();
         btnCopyData = new Button();
+        btnSaveData = new Button();
         ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
         ((System.ComponentModel.ISupportInitialize)tbRoiSpacing).BeginInit();
         ((System.ComponentModel.ISupportInitialize)tbRoiSize).BeginInit();
@@ -148,10 +149,21 @@ partial class DendriteTracerControl
         btnCopyData.UseVisualStyleBackColor = true;
         btnCopyData.Click += btnCopyData_Click;
         // 
+        // btnSaveData
+        // 
+        btnSaveData.Location = new Point(1221, 241);
+        btnSaveData.Name = "btnSaveData";
+        btnSaveData.Size = new Size(112, 70);
+        btnSaveData.TabIndex = 10;
+        btnSaveData.Text = "Save Data";
+        btnSaveData.UseVisualStyleBackColor = true;
+        btnSaveData.Click += btnSaveData_Click;
+        // 
         // DendriteTracerControl
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
+        Controls.Add(btnSaveData);
         Controls.Add(btnCopyData);
         Controls.Add(cbDistributeHorizontally);
         Controls.Add(btnAnalyzeAllFrames);
@@ -184,4 +196,5 @@ partial class DendriteTracerControl
     private Button btnAnalyzeAllFrames;
     private CheckBox cbDistributeHorizontally;
     private Button btnCopyData;
+    private Button btnSaveData;
 }

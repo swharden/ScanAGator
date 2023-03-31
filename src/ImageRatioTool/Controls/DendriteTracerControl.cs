@@ -15,6 +15,7 @@ public partial class DendriteTracerControl : UserControl
 
     private readonly List<double[]> ResultCurves = new();
     private double ResultRoiSpacing;
+    private string TifFilePath = string.Empty;
 
     readonly List<FractionalPoint> FPoints = new();
     float ScaleX => RedImages.Any() ? (float)RedImages.First().Width / pictureBox1.Width : 1;
@@ -74,6 +75,7 @@ public partial class DendriteTracerControl : UserControl
 
     public void SetData(string tifFilePath)
     {
+        TifFilePath = Path.GetFullPath(tifFilePath);
         ImageMicronsPerPixel = TifFileOperations.GetMicronsPerPixel(tifFilePath);
         var oldImages = DisplayImages.ToList();
         (RedImages, GreenImages, DisplayImages) = ImageOperations.GetMultiFrameRatiometricImages(tifFilePath);
@@ -207,7 +209,9 @@ public partial class DendriteTracerControl : UserControl
 
     private void hScrollBar1_Scroll(object sender, ScrollEventArgs e) => SetSlice(hScrollBar1.Value);
 
-    private void btnAnalyzeAllFrames_Click(object sender, EventArgs e)
+    private void btnAnalyzeAllFrames_Click(object sender, EventArgs e) => AnalyzeAllFrames();
+
+    private void AnalyzeAllFrames()
     {
         ResultCurves.Clear();
         for (int i = 0; i < RedImages.Length; i++)
@@ -223,6 +227,9 @@ public partial class DendriteTracerControl : UserControl
         PlotResults();
     }
 
+    /// <summary>
+    /// Copy values of the first visible curve to the clipboard
+    /// </summary>
     private void btnCopyData_Click(object sender, EventArgs e)
     {
         StringBuilder sb = new();
@@ -237,5 +244,20 @@ public partial class DendriteTracerControl : UserControl
             sb.AppendLine();
         }
         Clipboard.SetText(sb.ToString());
+    }
+
+    private void btnSaveData_Click(object sender, EventArgs e)
+    {
+        AnalyzeAllFrames();
+
+        SquareRoiCollection rois = new(TifFilePath, GreenImages.First().Width, GreenImages.First().Height);
+        
+        // TODO: read times from XML somehow
+        //double[] times = XmlFileOperations.GetSequenceTimes(TifFilePath);
+        double[] times = Enumerable.Range(0, ResultCurves.Count).Select(x => (double)x).ToArray();
+
+        string saveAs = TifFilePath + ".csv";
+        rois.Save(saveAs, ResultCurves, times);
+        System.Diagnostics.Process.Start("explorer.exe", $"/select, \"{saveAs}\"");
     }
 }
