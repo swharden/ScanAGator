@@ -7,12 +7,16 @@ internal class RoiIOTests
     {
         // create sample ROIs
         SquareRoiCollection rois = new("test path", 512, 512);
-        rois.Points.AddRange(SampleData.RandomPoints(10));
+        rois.RoiCenters.AddRange(SampleData.RandomPoints(10));
+        rois.MousePoints.AddRange(SampleData.RandomPoints(10));
 
         // simulate ROI AFU measurement
         List<double[]> afusByFrame = SampleData.RandomAfuCurves(20, rois.Count);
-        double[] frameTimes = Enumerable.Range(0, afusByFrame.Count).Select(x => (double)x * 60).ToArray();
+        rois.AfusByFrame.AddRange(afusByFrame);
 
-        rois.Save("roi-test.csv", afusByFrame, frameTimes);
+        double[] frameTimes = Enumerable.Range(0, afusByFrame.Count).Select(x => (double)x * 60).ToArray();
+        rois.FrameTimes.AddRange(frameTimes);
+
+        rois.Save("roi-test.csv");
     }
 }

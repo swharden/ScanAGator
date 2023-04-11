@@ -8,11 +8,17 @@ public class SquareRoiCollection
     public string Source { get; }
     public int Width { get; }
     public int Height { get; }
-    public int Count => Points.Count;
+    public int Count => RoiCenters.Count;
 
     public int Radius { get; } = 5;
 
-    public List<FractionalPoint> Points { get; } = new();
+    public List<FractionalPoint> RoiCenters { get; } = new();
+
+    public List<FractionalPoint> MousePoints { get; } = new();
+
+    public List<double> FrameTimes { get; } = new();
+    public List<double[]> AfusByFrame { get; } = new();
+
 
     public SquareRoiCollection(string source, int width, int height)
     {
@@ -21,10 +27,10 @@ public class SquareRoiCollection
         Height = height;
     }
 
-    public void Save(string csvFile, List<double[]> afusByFrame, double[] frameTimes)
+    public void Save(string csvFile)
     {
         string saveAsCSV = Path.GetFullPath(csvFile);
-        File.WriteAllText(saveAsCSV, GetCSV(afusByFrame, frameTimes));
+        File.WriteAllText(saveAsCSV, GetCSV(AfusByFrame));
         Console.WriteLine(saveAsCSV);
 
         string saveAsJSON = saveAsCSV + ".json";
@@ -32,10 +38,10 @@ public class SquareRoiCollection
         Console.WriteLine(saveAsJSON);
     }
 
-    public string GetCSV(List<double[]> afusByFrame, double[] frameTimes)
+    public string GetCSV(List<double[]> afusByFrame)
     {
-        if (frameTimes.Length != afusByFrame.Count)
-            throw new ArgumentException("length of times must equal the number of AFU curves");
+        if (FrameTimes.Count != AfusByFrame.Count)
+            throw new InvalidOperationException($"{nameof(FrameTimes)} should be same length as {nameof(afusByFrame)}");
 
         int frameCount = afusByFrame.Count;
         int roiCount = afusByFrame.First().Length;
@@ -52,7 +58,7 @@ public class SquareRoiCollection
         for (int frameIndex = 0; frameIndex < frameCount; frameIndex++)
         {
             string[] values = afusByFrame[frameIndex].Select(x => x.ToString()).ToArray();
-            string line = frameTimes[frameIndex].ToString() + ", " + string.Join(", ", values);
+            string line = FrameTimes[frameIndex].ToString() + ", " + string.Join(", ", values);
             sb.AppendLine(line);
         }
 
@@ -71,8 +77,19 @@ public class SquareRoiCollection
         writer.WriteString(nameof(Source), Source);
         writer.WriteNumber(nameof(Width), Width);
         writer.WriteNumber(nameof(Height), Height);
+
+        writer.WriteStartArray("MousePoints");
+        foreach (FractionalPoint point in MousePoints)
+        {
+            writer.WriteStartObject();
+            writer.WriteNumber("X", point.X);
+            writer.WriteNumber("Y", point.Y);
+            writer.WriteEndObject();
+        }
+        writer.WriteEndArray();
+
         writer.WriteStartArray("ROIs");
-        foreach (FractionalPoint point in Points)
+        foreach (FractionalPoint point in RoiCenters)
         {
             writer.WriteStartObject();
             writer.WriteNumber("X", point.X);
@@ -81,6 +98,7 @@ public class SquareRoiCollection
             writer.WriteEndObject();
         }
         writer.WriteEndArray();
+
         writer.WriteEndObject();
 
         writer.Flush();

@@ -13,11 +13,20 @@ public partial class DendriteTracerControl : UserControl
     double MicronsPerRoi => ResultRoiSpacing * ImageMicronsPerPixel * ScaleX;
     double MicronsRoiRadius => tbRoiSize.Value * ImageMicronsPerPixel * ScaleX;
 
-    private readonly List<double[]> ResultCurves = new();
+    private readonly List<double[]> AfusByFrame = new();
     private double ResultRoiSpacing;
     private string TifFilePath = string.Empty;
 
-    readonly List<FractionalPoint> FPoints = new();
+    /// <summary>
+    /// Where the user clicked to trace the dendrite
+    /// </summary>
+    readonly List<FractionalPoint> MousePoints = new();
+
+    /// <summary>
+    /// Where ROIs were placed
+    /// </summary>
+    readonly List<FractionalPoint> RoiCenters = new();
+
     float ScaleX => RedImages.Any() ? (float)RedImages.First().Width / pictureBox1.Width : 1;
     float ScaleY => RedImages.Any() ? (float)RedImages.First().Height / pictureBox1.Height : 1;
 
@@ -31,14 +40,14 @@ public partial class DendriteTracerControl : UserControl
         pictureBox1.MouseDown += PictureBox1_MouseDown;
 
         // initial data
-        FPoints.Add(new(0.4925, 0.4912));
-        FPoints.Add(new(0.5840, 0.4922));
-        FPoints.Add(new(0.6211, 0.4277));
-        FPoints.Add(new(0.7148, 0.4297));
-        FPoints.Add(new(0.8867, 0.5039));
-        FPoints.Add(new(0.9258, 0.6191));
-        FPoints.Add(new(0.9395, 0.6855));
-        FPoints.Add(new(0.9004, 0.7207));
+        MousePoints.Add(new(0.4925, 0.4912));
+        MousePoints.Add(new(0.5840, 0.4922));
+        MousePoints.Add(new(0.6211, 0.4277));
+        MousePoints.Add(new(0.7148, 0.4297));
+        MousePoints.Add(new(0.8867, 0.5039));
+        MousePoints.Add(new(0.9258, 0.6191));
+        MousePoints.Add(new(0.9395, 0.6855));
+        MousePoints.Add(new(0.9004, 0.7207));
 
         AnalyzeSingleFrame();
     }
@@ -59,7 +68,7 @@ public partial class DendriteTracerControl : UserControl
     {
         if (e.Button == MouseButtons.Right)
         {
-            FPoints.Clear();
+            MousePoints.Clear();
             AnalyzeSingleFrame();
             formsPlot1.Plot.Clear();
             formsPlot1.Refresh();
@@ -69,7 +78,7 @@ public partial class DendriteTracerControl : UserControl
         double fracX = (double)e.X / pictureBox1.Width;
         double fracY = (double)e.Y / pictureBox1.Height;
         FractionalPoint pt = new(fracX, fracY);
-        FPoints.Add(pt);
+        MousePoints.Add(pt);
         AnalyzeSingleFrame();
     }
 
@@ -112,8 +121,18 @@ public partial class DendriteTracerControl : UserControl
         Rectangle destRect = new(0, 0, pictureBox1.Width, pictureBox1.Height);
         gfx.DrawImage(referenceImage, destRect, srcRect, GraphicsUnit.Pixel);
 
-        Point[] linePoints = FPoints.Select(x => x.ToPoint(bmp.Width, bmp.Height)).ToArray();
+        Point[] linePoints = MousePoints.Select(x => x.ToPoint(bmp.Width, bmp.Height)).ToArray();
         PointF[] roiPoints = LineOperations.GetSubPoints(linePoints, roiSpacing);
+
+        // save ROI points for future reference
+        RoiCenters.Clear();
+        foreach (PointF pt in roiPoints)
+        {
+            double fracX = (double)pt.X / bmp.Width;
+            double fracY = (double)pt.Y / bmp.Height;
+            FractionalPoint fp = new(fracX, fracY);
+            RoiCenters.Add(fp);
+        }
 
         foreach (Point pt in linePoints)
             ImageOperations.DrawCircle(gfx, pt, Pens.Yellow, 3);
@@ -154,13 +173,13 @@ public partial class DendriteTracerControl : UserControl
 
         if (plotSingleFrame)
         {
-            ResultCurves.Clear();
-            ResultCurves.Add(ratios.ToArray());
+            AfusByFrame.Clear();
+            AfusByFrame.Add(ratios.ToArray());
             PlotResults();
         }
         else
         {
-            ResultCurves.Add(ratios.ToArray());
+            AfusByFrame.Add(ratios.ToArray());
         }
     }
 
@@ -176,22 +195,22 @@ public partial class DendriteTracerControl : UserControl
 
         double maxValue = 0;
 
-        for (int i = 0; i < ResultCurves.Count; i++)
+        for (int i = 0; i < AfusByFrame.Count; i++)
         {
-            if (ResultCurves[i].Length < 2)
+            if (AfusByFrame[i].Length < 2)
                 continue;
 
-            maxValue = Math.Max(maxValue, ResultCurves[i].Max());
+            maxValue = Math.Max(maxValue, AfusByFrame[i].Max());
 
-            Color color = ResultCurves.Count > 1
-               ? ScottPlot.Drawing.Colormap.Turbo.GetColor((double)i / ResultCurves.Count)
+            Color color = AfusByFrame.Count > 1
+               ? ScottPlot.Drawing.Colormap.Turbo.GetColor((double)i / AfusByFrame.Count)
                : ScottPlot.Drawing.Colormap.Turbo.GetColor((double)hScrollBar1.Value / hScrollBar1.Maximum);
 
-            var sig = formsPlot1.Plot.AddSignal(ResultCurves[i], 1.0 / MicronsPerRoi, color);
+            var sig = formsPlot1.Plot.AddSignal(AfusByFrame[i], 1.0 / MicronsPerRoi, color);
 
             if (cbDistributeHorizontally.Checked)
             {
-                sig.OffsetX = ResultRoiSpacing * ResultCurves[i].Length * i;
+                sig.OffsetX = ResultRoiSpacing * AfusByFrame[i].Length * i;
                 sig.LineWidth = 3;
             }
         }
@@ -213,7 +232,7 @@ public partial class DendriteTracerControl : UserControl
 
     private void AnalyzeAllFrames()
     {
-        ResultCurves.Clear();
+        AfusByFrame.Clear();
         for (int i = 0; i < RedImages.Length; i++)
         {
             SetSlice(i, analyze: false);
@@ -233,13 +252,13 @@ public partial class DendriteTracerControl : UserControl
     private void btnCopyData_Click(object sender, EventArgs e)
     {
         StringBuilder sb = new();
-        for (int row = 0; row < ResultCurves.First().Length; row++)
+        for (int row = 0; row < AfusByFrame.First().Length; row++)
         {
             double x = MicronsPerRoi * row;
             sb.Append(x.ToString());
-            for (int col = 0; col < ResultCurves.Count(); col++)
+            for (int col = 0; col < AfusByFrame.Count(); col++)
             {
-                sb.Append(" " + ResultCurves[col][row].ToString());
+                sb.Append(" " + AfusByFrame[col][row].ToString());
             }
             sb.AppendLine();
         }
@@ -251,13 +270,15 @@ public partial class DendriteTracerControl : UserControl
         AnalyzeAllFrames();
 
         SquareRoiCollection rois = new(TifFilePath, GreenImages.First().Width, GreenImages.First().Height);
-        
-        // TODO: read times from XML somehow
-        //double[] times = XmlFileOperations.GetSequenceTimes(TifFilePath);
-        double[] times = Enumerable.Range(0, ResultCurves.Count).Select(x => (double)x).ToArray();
+        rois.RoiCenters.AddRange(RoiCenters);
+        rois.MousePoints.AddRange(MousePoints);
+        rois.AfusByFrame.AddRange(AfusByFrame);
+
+        // TODO: read times from XML
+        rois.FrameTimes.AddRange(Enumerable.Range(0, AfusByFrame.Count).Select(x => (double)x));
 
         string saveAs = TifFilePath + ".csv";
-        rois.Save(saveAs, ResultCurves, times);
+        rois.Save(saveAs);
         System.Diagnostics.Process.Start("explorer.exe", $"/select, \"{saveAs}\"");
     }
 }
