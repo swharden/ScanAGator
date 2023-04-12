@@ -2,10 +2,10 @@
 
 internal static class Parsing
 {
-    public static (double[] xs, double[] ys)? GetXY(string txt, string sep = "\t")
+    public static (double[]? xs, double[]? ys) GetXY(string txt, string sep = "\t")
     {
         if (string.IsNullOrWhiteSpace(txt))
-            return null;
+            return (null, null);
 
         List<double> xs = new();
         List<double> ys = new();
@@ -28,10 +28,10 @@ internal static class Parsing
         }
 
         if (xs.Count() < 3)
-            return null;
+            return (null, null);
 
         if (xs.Count() != ys.Count())
-            return null;
+            return (null, null);
 
         return (xs.ToArray(), ys.ToArray());
     }

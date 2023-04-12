@@ -35,6 +35,7 @@ partial class Form1
         rtbIn = new RichTextBox();
         rtbOut = new RichTextBox();
         label3 = new Label();
+        lblError = new Label();
         SuspendLayout();
         // 
         // formsPlot1
@@ -69,7 +70,7 @@ partial class Form1
         label2.Name = "label2";
         label2.Size = new Size(239, 54);
         label2.TabIndex = 11;
-        label2.Text = "Copy/paste XY columns from OriginLab:";
+        label2.Text = "Input: copy/paste XY columns from OriginLab";
         // 
         // rtbIn
         // 
@@ -96,11 +97,22 @@ partial class Form1
         label3.TabIndex = 13;
         label3.Text = "Output: copy/paste Y column to OriginLab";
         // 
+        // lblError
+        // 
+        lblError.AutoSize = true;
+        lblError.BackColor = Color.Salmon;
+        lblError.Location = new Point(811, 18);
+        lblError.Name = "lblError";
+        lblError.Size = new Size(68, 25);
+        lblError.TabIndex = 14;
+        lblError.Text = "ERROR";
+        // 
         // Form1
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1453, 747);
+        Controls.Add(lblError);
         Controls.Add(label3);
         Controls.Add(rtbOut);
         Controls.Add(rtbIn);
@@ -124,4 +136,5 @@ partial class Form1
     private RichTextBox rtbIn;
     private RichTextBox rtbOut;
     private Label label3;
+    private Label lblError;
 }

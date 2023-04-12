@@ -8,42 +8,33 @@ public partial class Form1 : Form
         Load += (s, e) => { rtbIn.Text = SampleData.XYPair; };
     }
 
-    private void textBox1_TextChanged(object sender, EventArgs e) => ValidateAndAnalyze();
+    private void textBox1_TextChanged(object sender, EventArgs e) => Analyze();
 
-    private void rtbIn_TextChanged(object sender, EventArgs e) => ValidateAndAnalyze();
+    private void rtbIn_TextChanged(object sender, EventArgs e) => Analyze();
 
-    private void ValidateAndAnalyze()
+    private void Analyze()
     {
-        double? spacing = ReadSpacingTextbox();
-        var xys = ReadXYTextbox();
+        lblError.Text = string.Empty;
 
-        bool validInputs = spacing is not null && xys is not null;
-        formsPlot1.Visible = validInputs;
-        rtbOut.Visible = validInputs;
+        (double[]? xs, double[]? ys) = Parsing.GetXY(rtbIn.Text);
+        if (xs is null || ys is null)
+            lblError.Text = "Invalid XY data";
 
-        if (!validInputs)
-            return;
-
-        (double[] xs, double[] ys) = xys!.Value;
-        (double[] xs2, double[] ys2) = Interpolation.Resample(xs, ys, spacing!.Value);
-        rtbOut.Text = string.Join("\n", ys2.Select(x => x.ToString()));
-        UpdatePlot(xs, ys, xs2, ys2);
-    }
-
-    private double? ReadSpacingTextbox()
-    {
         bool spacingIsNumeric = double.TryParse(textBox1.Text, out double spacing);
-        bool isValid = spacingIsNumeric && spacing > 0;
-        textBox1.BackColor = isValid ? Color.White : Color.Salmon;
-        return isValid ? spacing : null;
+        if (!spacingIsNumeric || spacing <= 0)
+            lblError.Text = "Invalid spacing";
+
+        if (lblError.Text == string.Empty)
+        {
+            (double[] xs2, double[] ys2) = Interpolation.Resample(xs!, ys!, spacing);
+            UpdateOutputTextbox(ys2);
+            UpdatePlot(xs!, ys!, xs2, ys2);
+        }
     }
 
-    private (double[] xs, double[] ys)? ReadXYTextbox()
+    private void UpdateOutputTextbox(double[] ys)
     {
-        var parsedColumns = Parsing.GetXY(rtbIn.Text);
-        bool isValid = parsedColumns is not null;
-        rtbIn.BackColor = isValid ? Color.White : Color.Salmon;
-        return parsedColumns;
+        rtbOut.Text = string.Join("\n", ys.Select(x => x.ToString()));
     }
 
     private void UpdatePlot(double[] xs, double[] ys, double[] xs2, double[] ys2)

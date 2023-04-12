@@ -2,15 +2,19 @@
 
 public static class Interpolation
 {
-    public static (double[] xs, double[] ys) Resample(double[] xs, double[] ys, double spacing)
+    /// <summary>
+    /// Create a cubic spline from a set of arbitrary X/Y points and return a new set of X/Y points
+    /// evenly distributed along the X axis starting at the first X and increasing by <paramref name="newPeriod"/>.
+    /// </summary>
+    public static (double[] xs, double[] ys) Resample(double[] xs, double[] ys, double newPeriod)
     {
-        int newCount = (int)(xs.Max() / spacing) + 1;
-        double[] xs2 = Enumerable.Range(0, newCount).Select(x => x * spacing).ToArray();
-        (_, double[] ys2) = Interpolation.Interpolate1D(xs, ys, xs2);
-        return (xs2, ys2);
+        double xSpan = xs.Last() - xs.First();
+        int newXCount = (int)(xSpan / newPeriod) + 1;
+        double[] newXs = Enumerable.Range(0, newXCount).Select(x => x * newPeriod).ToArray();
+        return Interpolation.Interpolate1D(xs, ys, newXs);
     }
 
-    public static (double[] xs, double[] ys) Interpolate1D(double[] xs, double[] ys, double[] evenDistances)
+    private static (double[] xs, double[] ys) Interpolate1D(double[] xs, double[] ys, double[] evenDistances)
     {
         if (xs is null || ys is null || xs.Length != ys.Length)
             throw new ArgumentException($"{nameof(xs)} and {nameof(ys)} must have same length");
