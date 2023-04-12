@@ -31,85 +31,81 @@ partial class Form1
         formsPlot1 = new ScottPlot.FormsPlot();
         label1 = new Label();
         textBox1 = new TextBox();
-        rtbIn = new RichTextBox();
         label2 = new Label();
-        label3 = new Label();
+        rtbIn = new RichTextBox();
         rtbOut = new RichTextBox();
+        label3 = new Label();
         SuspendLayout();
         // 
         // formsPlot1
         // 
-        formsPlot1.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        formsPlot1.Location = new Point(15, 222);
+        formsPlot1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        formsPlot1.Location = new Point(15, 227);
         formsPlot1.Margin = new Padding(6, 5, 6, 5);
         formsPlot1.Name = "formsPlot1";
-        formsPlot1.Size = new Size(1132, 473);
+        formsPlot1.Size = new Size(1423, 506);
         formsPlot1.TabIndex = 0;
         // 
         // label1
         // 
-        label1.AutoSize = true;
-        label1.Location = new Point(47, 42);
+        label1.Location = new Point(337, 18);
         label1.Name = "label1";
-        label1.Size = new Size(79, 25);
+        label1.Size = new Size(113, 54);
         label1.TabIndex = 2;
-        label1.Text = "Spacing:";
+        label1.Text = "Sample period:";
         // 
         // textBox1
         // 
-        textBox1.Location = new Point(47, 70);
+        textBox1.Location = new Point(337, 75);
         textBox1.Name = "textBox1";
         textBox1.Size = new Size(101, 31);
         textBox1.TabIndex = 3;
-        textBox1.Text = ".3";
+        textBox1.Text = "60";
         textBox1.TextChanged += textBox1_TextChanged;
-        // 
-        // rtbIn
-        // 
-        rtbIn.Location = new Point(233, 70);
-        rtbIn.Name = "rtbIn";
-        rtbIn.Size = new Size(270, 144);
-        rtbIn.TabIndex = 4;
-        rtbIn.Text = "";
-        rtbIn.TextChanged += rtbIn_TextChanged;
         // 
         // label2
         // 
-        label2.AutoSize = true;
-        label2.Location = new Point(233, 42);
+        label2.Location = new Point(23, 18);
         label2.Name = "label2";
-        label2.Size = new Size(140, 25);
-        label2.TabIndex = 5;
-        label2.Text = "Input (X/Y pairs)";
+        label2.Size = new Size(239, 54);
+        label2.TabIndex = 11;
+        label2.Text = "Copy/paste XY columns from OriginLab:";
         // 
-        // label3
+        // rtbIn
         // 
-        label3.AutoSize = true;
-        label3.Location = new Point(576, 42);
-        label3.Name = "label3";
-        label3.Size = new Size(155, 25);
-        label3.TabIndex = 6;
-        label3.Text = "Output (X/Y pairs)";
+        rtbIn.Location = new Point(23, 75);
+        rtbIn.Name = "rtbIn";
+        rtbIn.Size = new Size(283, 144);
+        rtbIn.TabIndex = 0;
+        rtbIn.Text = "";
+        rtbIn.TextChanged += rtbIn_TextChanged;
         // 
         // rtbOut
         // 
-        rtbOut.Location = new Point(576, 70);
+        rtbOut.Location = new Point(503, 75);
         rtbOut.Name = "rtbOut";
-        rtbOut.Size = new Size(270, 144);
-        rtbOut.TabIndex = 7;
+        rtbOut.Size = new Size(283, 144);
+        rtbOut.TabIndex = 0;
         rtbOut.Text = "";
-        rtbOut.TextChanged += rtbOut_TextChanged;
+        // 
+        // label3
+        // 
+        label3.Location = new Point(503, 18);
+        label3.Name = "label3";
+        label3.Size = new Size(192, 54);
+        label3.TabIndex = 13;
+        label3.Text = "Output: copy/paste Y column to OriginLab";
         // 
         // Form1
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1162, 709);
+        ClientSize = new Size(1453, 747);
         Controls.Add(label3);
-        Controls.Add(label2);
-        Controls.Add(label1);
         Controls.Add(rtbOut);
         Controls.Add(rtbIn);
+        Controls.Add(label2);
+        Controls.Add(label1);
         Controls.Add(textBox1);
         Controls.Add(formsPlot1);
         Name = "Form1";
@@ -124,8 +120,8 @@ partial class Form1
     private ScottPlot.FormsPlot formsPlot1;
     private Label label1;
     private TextBox textBox1;
-    private RichTextBox rtbIn;
     private Label label2;
-    private Label label3;
+    private RichTextBox rtbIn;
     private RichTextBox rtbOut;
+    private Label label3;
 }

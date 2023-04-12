@@ -2,6 +2,14 @@
 
 public static class Interpolation
 {
+    public static (double[] xs, double[] ys) Resample(double[] xs, double[] ys, double spacing)
+    {
+        int newCount = (int)(xs.Max() / spacing) + 1;
+        double[] xs2 = Enumerable.Range(0, newCount).Select(x => x * spacing).ToArray();
+        (_, double[] ys2) = Interpolation.Interpolate1D(xs, ys, xs2);
+        return (xs2, ys2);
+    }
+
     public static (double[] xs, double[] ys) Interpolate1D(double[] xs, double[] ys, double[] evenDistances)
     {
         if (xs is null || ys is null || xs.Length != ys.Length)

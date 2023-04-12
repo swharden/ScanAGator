@@ -2,43 +2,37 @@
 
 internal static class Parsing
 {
-    public static double[,]? GetValues(string txt, string sep = "\t")
+    public static (double[] xs, double[] ys)? GetXY(string txt, string sep = "\t")
     {
         if (string.IsNullOrWhiteSpace(txt))
             return null;
 
-        string[] lines = txt.Split("\n");
-        int rowCount = lines.Length;
-        int colCount = lines.First().Split(sep).Length;
-        double[,] values = new double[rowCount, colCount];
+        List<double> xs = new();
+        List<double> ys = new();
 
-        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++)
+        foreach (string line in txt.Split("\n"))
         {
-            string[] lineValues = lines[rowIndex].Split(sep).ToArray();
-            for (int colIndex = 0; colIndex < colCount; colIndex++)
-            {
-                if (lineValues.Length >= colIndex)
-                {
-                    values[rowIndex, colIndex] = double.NaN;
-                    continue;
-                }
+            string[] parts = line.Split(sep);
 
-                if (string.IsNullOrWhiteSpace(lineValues[colIndex]))
-                {
-                    values[rowIndex, colIndex] = double.NaN;
-                    continue;
-                }
+            if (parts.Length != 2)
+                continue;
 
-                if (!double.TryParse(lineValues[colIndex], out double parsedValue))
-                {
-                    values[rowIndex, colIndex] = double.NaN;
-                    continue;
-                }
+            if (!double.TryParse(parts[0], out double x))
+                continue;
 
-                values[rowIndex, colIndex] = parsedValue;
-            }
+            if (!double.TryParse(parts[1], out double y))
+                continue;
+
+            xs.Add(x);
+            ys.Add(y);
         }
 
-        return values;
+        if (xs.Count() < 3)
+            return null;
+
+        if (xs.Count() != ys.Count())
+            return null;
+
+        return (xs.ToArray(), ys.ToArray());
     }
 }
