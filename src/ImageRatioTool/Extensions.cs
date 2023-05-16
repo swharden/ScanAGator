@@ -21,7 +21,16 @@ public static class Extensions
         {
             for (int y = 0; y < height; y++)
             {
-                img2.SetPixel(x, y, img.GetPixel(xMin + x, yMin + y));
+                int getX = xMin + x;
+                int getY = yMin + y;
+
+                if (getX < 0 || getX >= img.Width)
+                    throw new InvalidOperationException($"X ({getX}) must be inside image (width={img.Width})");
+
+                if (getY < 0 || getY >= img.Height)
+                    throw new InvalidOperationException($"Y ({getY}) must be inside image (height={img.Height})");
+
+                img2.SetPixel(x, y, img.GetPixel(getX, getY));
             }
         }
 

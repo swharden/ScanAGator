@@ -139,6 +139,11 @@ public partial class DendriteTracerControl : UserControl
             gfx.DrawRectangle(Pens.White, rect);
         }
 
+        // draw safe outline
+        int safePadding = (int)roiRadius;
+        RectangleF safeRect = new(safePadding, safePadding, bmp.Width - safePadding * 2, bmp.Height - safePadding * 2);
+        gfx.DrawRectangle(Pens.OrangeRed, safeRect);
+
         var oldImage = pictureBox1.Image;
         pictureBox1.Image = bmp;
         pictureBox1.Refresh();
@@ -154,7 +159,7 @@ public partial class DendriteTracerControl : UserControl
 
             // scaled coordinates for analzying data
             PointF scaledPoint = new(roiPoint.X * ScaleX, roiPoint.Y * ScaleY);
-            RectangleF scaledRectF = ImageOperations.GetRectangle(scaledPoint, (int)roiRadius);
+            RectangleF scaledRectF = ImageOperations.GetRectangle(scaledPoint, (int)(roiRadius * ScaleX));
             Rectangle scaledRect = Rectangle.Round(scaledRectF);
             RoiAnalysis analysis = new(red, green, scaledRect);
             if (analysis.PixelsAboveThreshold > 0)
