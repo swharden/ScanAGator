@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using ImageRatioTool.Analyses;
+using System.Data;
 using System.Globalization;
 using System.Text;
 
@@ -6,6 +7,8 @@ namespace ImageRatioTool.Controls;
 
 public partial class DendriteTracerControl : UserControl
 {
+    DendriteTracingAnalysis Analysis = new();
+
     private SciTIF.Image[] RedImages = Array.Empty<SciTIF.Image>();
     private SciTIF.Image[] GreenImages = Array.Empty<SciTIF.Image>();
     private Bitmap[] DisplayImages = Array.Empty<Bitmap>();
@@ -17,14 +20,6 @@ public partial class DendriteTracerControl : UserControl
     private double ResultRoiSpacing;
     private string TifFilePath = string.Empty;
 
-    /// <summary>
-    /// Where the user clicked to trace the dendrite
-    /// </summary>
-    readonly List<FractionalPoint> MousePoints = new();
-
-    /// <summary>
-    /// Where ROIs were placed
-    /// </summary>
     readonly List<FractionalPoint> RoiCenters = new();
 
     float ScaleX => RedImages.Any() ? (float)RedImages.First().Width / pictureBox1.Width : 1;
@@ -40,14 +35,14 @@ public partial class DendriteTracerControl : UserControl
         pictureBox1.MouseDown += PictureBox1_MouseDown;
 
         // initial data
-        MousePoints.Add(new(0.4925, 0.4912));
-        MousePoints.Add(new(0.5840, 0.4922));
-        MousePoints.Add(new(0.6211, 0.4277));
-        MousePoints.Add(new(0.7148, 0.4297));
-        MousePoints.Add(new(0.8867, 0.5039));
-        MousePoints.Add(new(0.9258, 0.6191));
-        MousePoints.Add(new(0.9395, 0.6855));
-        MousePoints.Add(new(0.9004, 0.7207));
+        Analysis.AddMousePoint(0.4925, 0.4912);
+        Analysis.AddMousePoint(0.5840, 0.4922);
+        Analysis.AddMousePoint(0.6211, 0.4277);
+        Analysis.AddMousePoint(0.7148, 0.4297);
+        Analysis.AddMousePoint(0.8867, 0.5039);
+        Analysis.AddMousePoint(0.9258, 0.6191);
+        Analysis.AddMousePoint(0.9395, 0.6855);
+        Analysis.AddMousePoint(0.9004, 0.7207);
 
         AnalyzeSingleFrame();
     }
@@ -68,17 +63,14 @@ public partial class DendriteTracerControl : UserControl
     {
         if (e.Button == MouseButtons.Right)
         {
-            MousePoints.Clear();
+            Analysis.ClearMousePoints();
             AnalyzeSingleFrame();
             formsPlot1.Plot.Clear();
             formsPlot1.Refresh();
             return;
         }
 
-        double fracX = (double)e.X / pictureBox1.Width;
-        double fracY = (double)e.Y / pictureBox1.Height;
-        FractionalPoint pt = new(fracX, fracY);
-        MousePoints.Add(pt);
+        Analysis.AddMousePoint(e.X, e.Y, pictureBox1.Width, pictureBox1.Height);
         AnalyzeSingleFrame();
     }
 
@@ -121,7 +113,7 @@ public partial class DendriteTracerControl : UserControl
         Rectangle destRect = new(0, 0, pictureBox1.Width, pictureBox1.Height);
         gfx.DrawImage(referenceImage, destRect, srcRect, GraphicsUnit.Pixel);
 
-        Point[] linePoints = MousePoints.Select(x => x.ToPoint(bmp.Width, bmp.Height)).ToArray();
+        Point[] linePoints = Analysis.GetMousePoints(bmp.Width, bmp.Height);
         PointF[] roiPoints = LineOperations.GetSubPoints(linePoints, roiSpacing);
 
         // save ROI points for future reference
@@ -271,7 +263,7 @@ public partial class DendriteTracerControl : UserControl
 
         SquareRoiCollection rois = new(TifFilePath, GreenImages.First().Width, GreenImages.First().Height);
         rois.RoiCenters.AddRange(RoiCenters);
-        rois.MousePoints.AddRange(MousePoints);
+        rois.MousePoints.AddRange(Analysis.GetMousePoints());
         rois.AfusByFrame.AddRange(AfusByFrame);
 
         // TODO: read times from XML
