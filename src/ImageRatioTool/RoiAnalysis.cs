@@ -33,7 +33,10 @@ public struct RoiAnalysis
     /// <param name="signalThreshold">Only analyze pixels whose value is greater than this multiple of the noise floor</param>
     public RoiAnalysis(SciTIF.Image red, SciTIF.Image green, Rectangle rect, double noiseFloor = 0.2, double signalThreshold = 5)
     {
-        Rect = rect;
+        Rectangle imageRect = new(0, 0, red.Width, red.Height);
+        if (!imageRect.Contains(rect))
+            throw new InvalidOperationException($"Rectangle ({rect}) is larger than image ({imageRect})");
+
         SciTIF.Image roiRed = red.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
         SciTIF.Image roiGreen = green.Crop(rect.Left, rect.Right, rect.Top, rect.Bottom);
 
