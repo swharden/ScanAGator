@@ -36,6 +36,21 @@ public class BitmapTests
 
         bmp.DrawLine(13, 69, 123, 222, Colors.White);
 
+        List<Pixel> pixels = new() {
+            new((int)(0.4925*256), (int)(0.4912*256)),
+            new((int)(0.5840*256), (int)(0.4922*256)),
+            new((int)(0.6211*256), (int)(0.4277*256)),
+            new((int)(0.7148*256), (int)(0.4297*256)),
+            new((int)(0.8867*256), (int)(0.5039*256)),
+            new((int)(0.9258*256), (int)(0.6191*256)),
+            new((int)(0.9395*256), (int)(0.6855*256)),
+            new((int)(0.9004*256), (int)(0.7207*256)),
+        };
+        bmp.DrawLines(pixels, Colors.White);
+
+        foreach (Pixel px in pixels)
+            bmp.DrawRect(new Rectangle(px, 2), Colors.Yellow);
+
         bmp.TestSave("test1.png");
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace DendriteTracer.Core;
+﻿using System.Security.Cryptography;
+
+namespace DendriteTracer.Core;
 
 public class Bitmap
 {
@@ -67,14 +69,42 @@ public class Bitmap
             for (int x = xMin; x <= xMax; x++)
                 SetPixel(x, yMin, color);
         }
-        else
+        else if (ySpan > xSpan)
         {
             for (int y = yMin; y <= yMax; y++)
             {
                 double frac = (y - yMin) / (double)ySpan;
+                if (y2 < y1)
+                    frac = 1 - frac;
                 int x = (int)(frac * xSpan + xMin);
                 SetPixel(x, y, color);
             }
+        }
+        else
+        {
+            for (int x = xMin; x <= xMax; x++)
+            {
+                double frac = (x - xMin) / (double)xSpan;
+                if (x2 < x1)
+                    frac = 1 - frac;
+                int y = (int)(frac * ySpan + yMin);
+                SetPixel(x, y, color);
+            }
+        }
+    }
+
+    public void DrawLine(Pixel px1, Pixel px2, Color color)
+    {
+        DrawLine(px1.X, px1.Y, px2.X, px2.Y, color);
+    }
+
+    public void DrawLines(IEnumerable<Pixel> pixels, Color color)
+    {
+        Pixel lastPixel = pixels.First();
+        foreach (Pixel pixel in pixels.Skip(1))
+        {
+            DrawLine(lastPixel, pixel, color);
+            lastPixel = pixel;
         }
     }
 

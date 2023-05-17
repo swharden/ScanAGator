@@ -30,4 +30,12 @@ public struct Rectangle
         YMin = y - r;
         YMax = y + r;
     }
+
+    public Rectangle(Pixel px, int r)
+    {
+        XMin = px.X - r;
+        XMax = px.X + r;
+        YMin = px.Y - r;
+        YMax = px.Y + r;
+    }
 }
