@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33627.172
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DendriteTracer.Core", "DendriteTracer\DendriteTracer.Core\DendriteTracer.Core.csproj", "{CD6B47B0-B823-4E8D-9270-7A320218735B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DendriteTracer.Gui", "DendriteTracer\DendriteTracer.Gui\DendriteTracer.Gui.csproj", "{783FCBD9-B8B6-496A-8321-C14A10E8EC4A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DendriteTracer.Tests", "DendriteTracer\DendriteTracer.Tests\DendriteTracer.Tests.csproj", "{4D249F0E-95CC-4C42-9149-A8A50B7AD867}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CD6B47B0-B823-4E8D-9270-7A320218735B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD6B47B0-B823-4E8D-9270-7A320218735B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD6B47B0-B823-4E8D-9270-7A320218735B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD6B47B0-B823-4E8D-9270-7A320218735B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{783FCBD9-B8B6-496A-8321-C14A10E8EC4A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{783FCBD9-B8B6-496A-8321-C14A10E8EC4A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{783FCBD9-B8B6-496A-8321-C14A10E8EC4A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{783FCBD9-B8B6-496A-8321-C14A10E8EC4A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4D249F0E-95CC-4C42-9149-A8A50B7AD867}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4D249F0E-95CC-4C42-9149-A8A50B7AD867}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4D249F0E-95CC-4C42-9149-A8A50B7AD867}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4D249F0E-95CC-4C42-9149-A8A50B7AD867}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B67BBD20-DCCF-49B9-A0B9-7259F7194D2F}
+	EndGlobalSection
+EndGlobal
