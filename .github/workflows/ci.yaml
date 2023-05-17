@@ -28,7 +28,7 @@ jobs:
         run: |
           dotnet restore src/ScanAGator.sln
           dotnet restore src/ImageRatioTool.sln
-          dotnet build src/DendriteTracer.sln --no-restore
+          dotnet restore src/DendriteTracer.sln
 
       - name: 🛠️ Build
         run: |
