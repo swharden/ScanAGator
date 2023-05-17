@@ -1,6 +1,6 @@
 ﻿namespace DendriteTracer.Core;
 
-internal class DendritePath
+public class DendritePath
 {
     public readonly int Width;
     public readonly int Height;
@@ -11,6 +11,11 @@ internal class DendritePath
     {
         Width = width;
         Height = height;
+    }
+
+    public void Add(Pixel px)
+    {
+        Add(px.X, px.Y);
     }
 
     public void Add(int x, int y)
@@ -27,5 +32,17 @@ internal class DendritePath
     public void Clear()
     {
         Points.Clear();
+    }
+
+    public Bitmap Draw(Bitmap bmp)
+    {
+        Bitmap bmp2 = bmp.Clone();
+
+        bmp2.DrawLines(Points, Colors.White);
+
+        foreach (Pixel px in Points)
+            bmp2.DrawRect(new Rectangle(px, 2), Colors.Yellow);
+
+        return bmp2;
     }
 }

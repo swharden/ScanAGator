@@ -16,6 +16,20 @@ public class Bitmap
         ImageBytes = new byte[width * height * 4];
     }
 
+    public Bitmap Clone()
+    {
+        Bitmap bmp = new(Width, Height);
+        bmp.SetImageBytes(ImageBytes);
+        return bmp;
+    }
+
+    public void SetImageBytes(byte[] bytes)
+    {
+        if (bytes.Length != ImageBytes.Length)
+            throw new ArgumentException("different lengths");
+        Array.Copy(bytes, 0, ImageBytes, 0, bytes.Length);
+    }
+
     public void SetPixel(int x, int y, Color c)
     {
         if (x < 0 || x >= Width)
