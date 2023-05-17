@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="SciTIF" Version="0.1.4" />
+  </ItemGroup>
+
 </Project>
