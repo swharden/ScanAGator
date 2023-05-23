@@ -33,10 +33,10 @@ public class Bitmap
     public void SetPixel(int x, int y, Color c)
     {
         if (x < 0 || x >= Width)
-            throw new ArgumentException($"X ({x}) outside image area (0-{Width})");
+            return;
 
         if (y < 0 || y >= Height)
-            throw new ArgumentException($"Y ({y}) outside image area (0-{Height})");
+            return;
 
         int offset = ((Height - y - 1) * Width + x) * 4;
         ImageBytes[offset + 0] = c.Blue;

@@ -34,15 +34,19 @@ public class DendritePath
         Points.Clear();
     }
 
-    public Bitmap Draw(Bitmap bmp)
+    public Pixel[] GetEvenlySpacedPoints(double spacing)
     {
-        Bitmap bmp2 = bmp.Clone();
+        return PathOperations.GetSubPoints(Points, spacing);
+    }
 
-        bmp2.DrawLines(Points, Colors.White);
+    public void Draw(Bitmap bmp)
+    {
+        bmp.DrawLines(Points, Colors.White);
 
         foreach (Pixel px in Points)
-            bmp2.DrawRect(new Rectangle(px, 2), Colors.Yellow);
-
-        return bmp2;
+        {
+            Rectangle rect = new(px, 2);
+            bmp.DrawRect(rect, Colors.Yellow);
+        }
     }
 }

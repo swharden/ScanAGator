@@ -10,4 +10,9 @@ public struct Pixel
         X = x;
         Y = y;
     }
+
+    public override string ToString()
+    {
+        return $"Pixel ({X}, {Y})";
+    }
 }
