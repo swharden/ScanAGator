@@ -1,5 +1,4 @@
 using DendriteTracer.Core;
-using SciTIF.LUTs;
 
 namespace DendriteTracer.Tests;
 
@@ -43,8 +42,20 @@ public class BitmapTests
         SciTIF.Image green = tif.GetImage(frame: 0, slice: 0, channel: 1);
         Bitmap bmp = ImageOperations.MakeBitmap(green);
 
-        Rectangle rect = new(26, 220, 26+12, 220+8);
+        Rectangle rect = new(26, 220, 26 + 12, 220 + 8);
         Bitmap crop = bmp.Crop(rect);
         crop.TestSave("test-crop.png");
+    }
+
+    [Test]
+    public void Test_Bitmap_CropOffEdge()
+    {
+        Bitmap bmp = new(100, 100);
+
+        Rectangle rect = new(90, 90, 110, 110);
+        Bitmap crop = bmp.Crop(rect);
+
+        Assert.That(crop.Width, Is.EqualTo(20));
+        Assert.That(crop.Height, Is.EqualTo(20));
     }
 }

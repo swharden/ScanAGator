@@ -23,9 +23,18 @@ public class Bitmap
         return bmp;
     }
 
-    public Bitmap Crop(Rectangle rect)
+    public Bitmap Crop(Rectangle rect, bool constrain = true)
     {
         Bitmap bmp = new(rect.Width, rect.Height);
+
+        if (constrain)
+        {
+            rect = new(
+                x1: Math.Max(0, rect.XMin),
+                x2: Math.Min(rect.Width - 1, rect.XMax),
+                y1: Math.Max(0, rect.YMin),
+                y2: Math.Min(rect.Height - 1, rect.YMax));
+        }
 
         for (int y = rect.YMin; y <= rect.YMax; y++)
         {
