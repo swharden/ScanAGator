@@ -28,11 +28,54 @@ partial class Form1
     /// </summary>
     private void InitializeComponent()
     {
-        this.components = new System.ComponentModel.Container();
-        this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-        this.ClientSize = new System.Drawing.Size(800, 450);
-        this.Text = "Form1";
+        tracerControl1 = new ImageTracerControl();
+        hScrollBar1 = new HScrollBar();
+        panel1 = new Panel();
+        panel1.SuspendLayout();
+        SuspendLayout();
+        // 
+        // tracerControl1
+        // 
+        tracerControl1.BackColor = SystemColors.ControlDark;
+        tracerControl1.Location = new Point(12, 12);
+        tracerControl1.Name = "tracerControl1";
+        tracerControl1.Size = new Size(500, 500);
+        tracerControl1.TabIndex = 0;
+        // 
+        // hScrollBar1
+        // 
+        hScrollBar1.Dock = DockStyle.Fill;
+        hScrollBar1.Location = new Point(0, 0);
+        hScrollBar1.Name = "hScrollBar1";
+        hScrollBar1.Size = new Size(498, 23);
+        hScrollBar1.TabIndex = 1;
+        // 
+        // panel1
+        // 
+        panel1.BorderStyle = BorderStyle.FixedSingle;
+        panel1.Controls.Add(hScrollBar1);
+        panel1.Location = new Point(12, 518);
+        panel1.Name = "panel1";
+        panel1.Size = new Size(500, 25);
+        panel1.TabIndex = 2;
+        // 
+        // Form1
+        // 
+        AutoScaleDimensions = new SizeF(7F, 15F);
+        AutoScaleMode = AutoScaleMode.Font;
+        ClientSize = new Size(1140, 559);
+        Controls.Add(panel1);
+        Controls.Add(tracerControl1);
+        Name = "Form1";
+        StartPosition = FormStartPosition.CenterScreen;
+        Text = "Form1";
+        panel1.ResumeLayout(false);
+        ResumeLayout(false);
     }
 
     #endregion
+
+    private ImageTracerControl tracerControl1;
+    private HScrollBar hScrollBar1;
+    private Panel panel1;
 }
