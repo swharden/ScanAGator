@@ -9,6 +9,11 @@ internal class SampleData
             TestContext.CurrentContext.TestDirectory,
             "../../../../../../data/tseries/TSeries-03022023-1227-2098-2ch.tif"));
 
+    public static string RGB_PATH = Path.GetFullPath(
+        Path.Combine(
+            TestContext.CurrentContext.TestDirectory,
+            "../../../../../../data/mona.tif"));
+
     public static DendritePath DendritePath()
     {
         List<Pixel> pixels = new() {
