@@ -1,4 +1,5 @@
 using DendriteTracer.Core;
+using SciTIF.LUTs;
 
 namespace DendriteTracer.Tests;
 
@@ -33,5 +34,17 @@ public class BitmapTests
         bmp.DrawLines(pixels, Colors.White);
 
         bmp.TestSave("test1.png");
+    }
+
+    [Test]
+    public void Test_Bitmap_Crop()
+    {
+        SciTIF.TifFile tif = new(SampleData.RGB_PATH);
+        SciTIF.Image green = tif.GetImage(frame: 0, slice: 0, channel: 1);
+        Bitmap bmp = ImageOperations.MakeBitmap(green);
+
+        Rectangle rect = new(26, 220, 26+12, 220+8);
+        Bitmap crop = bmp.Crop(rect);
+        crop.TestSave("test-crop.png");
     }
 }

@@ -14,6 +14,8 @@ public struct Rectangle
     public int Bottom => YMax;
     public int Left => XMin;
     public int Right => XMax;
+    public int Width => XMax - XMin;
+    public int Height => YMax - YMin;
 
     public Rectangle(int x1, int y1, int x2, int y2)
     {

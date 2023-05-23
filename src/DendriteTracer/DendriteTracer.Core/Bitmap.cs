@@ -23,6 +23,21 @@ public class Bitmap
         return bmp;
     }
 
+    public Bitmap Crop(Rectangle rect)
+    {
+        Bitmap bmp = new(rect.Width, rect.Height);
+
+        for (int y = rect.YMin; y <= rect.YMax; y++)
+        {
+            for (int x = rect.XMin; x <= rect.XMax; x++)
+            {
+                Color c = GetPixel(x, y);
+                bmp.SetPixel(x - rect.XMin, y - rect.YMin, c);
+            }
+        }
+        return bmp;
+    }
+
     public void SetImageBytes(byte[] bytes)
     {
         if (bytes.Length != ImageBytes.Length)
@@ -42,6 +57,15 @@ public class Bitmap
         ImageBytes[offset + 0] = c.Blue;
         ImageBytes[offset + 1] = c.Green;
         ImageBytes[offset + 2] = c.Red;
+    }
+
+    public Color GetPixel(int x, int y)
+    {
+        int offset = ((Height - y - 1) * Width + x) * 4;
+        byte b = ImageBytes[offset + 0];
+        byte g = ImageBytes[offset + 1];
+        byte r = ImageBytes[offset + 2];
+        return new Color(r, b, b);
     }
 
     public void FillRect(Rectangle rect, Color color)
