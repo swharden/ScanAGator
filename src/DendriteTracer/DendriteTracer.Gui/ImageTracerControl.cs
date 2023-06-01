@@ -1,7 +1,17 @@
-﻿namespace DendriteTracer.Gui;
+﻿using DendriteTracer.Core;
+
+namespace DendriteTracer.Gui;
 
 public class ImageTracerControl : UserControl
 {
+    private bool RenderNeeded = false;
+
+    private readonly System.Windows.Forms.Timer RenderTimer = new()
+    {
+        Interval = 20,
+        Enabled = true
+    };
+
     private readonly PictureBox PictureBox1 = new()
     {
         Dock = DockStyle.Fill,
@@ -9,13 +19,15 @@ public class ImageTracerControl : UserControl
         Cursor = Cursors.Cross,
     };
 
-    private readonly List<PointF> ClickedPoints = new();
+    public readonly DendritePath DendritePath = new(0, 0);
 
-    private Bitmap? SourceImage;
+    private System.Drawing.Bitmap? SourceImage;
 
     private readonly int ControlPointRadius = 5;
 
     private int? DraggingPointIndex = null;
+
+    public event EventHandler PointsChanged = delegate { };
 
     public ImageTracerControl()
     {
@@ -31,14 +43,16 @@ public class ImageTracerControl : UserControl
 
             if (e.Button == MouseButtons.Left)
             {
-                ClickedPoints.Add(e.Location);
+                DendritePath.Add(e.Location.X, e.Location.Y);
+                PointsChanged.Invoke(this, EventArgs.Empty);
                 AnnotateImage();
                 return;
             }
 
             if (e.Button == MouseButtons.Right)
             {
-                ClickedPoints.Clear();
+                DendritePath.Clear();
+                PointsChanged.Invoke(this, EventArgs.Empty);
                 AnnotateImage();
                 return;
             }
@@ -48,7 +62,8 @@ public class ImageTracerControl : UserControl
         {
             if (DraggingPointIndex is not null)
             {
-                ClickedPoints[DraggingPointIndex.Value] = e.Location;
+                DendritePath.Points[DraggingPointIndex.Value] = new(e.Location.X, e.Location.Y);
+                PointsChanged.Invoke(this, EventArgs.Empty);
                 AnnotateImage();
                 return;
             }
@@ -66,15 +81,23 @@ public class ImageTracerControl : UserControl
         {
             DraggingPointIndex = null;
         };
+
+        RenderTimer.Tick += (s, e) =>
+        {
+            if (RenderNeeded)
+            {
+                AnnotateImageNow();
+                RenderNeeded = false;
+            }
+        };
     }
 
     private int? GetPointUnderMouse(PointF mouse)
     {
-        for (int i = 0; i < ClickedPoints.Count; i++)
+        for (int i = 0; i < DendritePath.Count; i++)
         {
-            PointF pt = ClickedPoints[i];
-            float dx = Math.Abs(pt.X - mouse.X);
-            float dy = Math.Abs(pt.Y - mouse.Y);
+            float dx = Math.Abs(DendritePath.Points[i].X - mouse.X);
+            float dy = Math.Abs(DendritePath.Points[i].Y - mouse.Y);
             if (dx <= ControlPointRadius && dy <= ControlPointRadius)
             {
                 return i;
@@ -88,7 +111,7 @@ public class ImageTracerControl : UserControl
     {
         byte[] bytes = bmp.GetBitmapBytes();
         using MemoryStream ms = new(bytes);
-        using Image img = Bitmap.FromStream(ms);
+        using Image img = System.Drawing.Bitmap.FromStream(ms);
 
         SourceImage?.Dispose();
         SourceImage = new(Width, Height);
@@ -96,26 +119,35 @@ public class ImageTracerControl : UserControl
         gfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
         gfx.DrawImage(img, 0, 0, Width, Height);
 
+        DendritePath.Resize(Width, Height);
         AnnotateImage();
     }
 
     private void AnnotateImage()
     {
+        RenderNeeded = true;
+    }
+
+    private void AnnotateImageNow()
+    {
         if (SourceImage is null)
             return;
 
-        Bitmap bmp = new(SourceImage);
+        System.Drawing.Bitmap bmp = new(SourceImage);
         using Graphics gfx = Graphics.FromImage(bmp);
         gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-        if (ClickedPoints.Count > 1)
-            gfx.DrawLines(Pens.White, ClickedPoints.ToArray());
+        if (DendritePath.Count > 1)
+        {
+            PointF[] points = DendritePath.Points.Select(pt => new PointF(pt.X, pt.Y)).ToArray();
+            gfx.DrawLines(Pens.White, points);
+        }
 
-        foreach (PointF pt in ClickedPoints)
+        foreach (Pixel px in DendritePath.Points)
         {
             RectangleF rect = new(
-                x: pt.X - ControlPointRadius,
-                y: pt.Y - ControlPointRadius,
+                x: px.X - ControlPointRadius,
+                y: px.Y - ControlPointRadius,
                 width: ControlPointRadius * 2,
                 height: ControlPointRadius * 2);
 

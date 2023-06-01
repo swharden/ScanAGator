@@ -1,13 +1,22 @@
-﻿namespace DendriteTracer.Core;
+﻿using System.Drawing;
+
+namespace DendriteTracer.Core;
 
 public class DendritePath
 {
-    public readonly int Width;
-    public readonly int Height;
+    public int Width { get; private set; }
+    public int Height { get; private set; }
 
-    readonly List<Pixel> Points = new();
+    public readonly List<Pixel> Points = new();
+    public int Count => Points.Count;
 
     public DendritePath(int width, int height)
+    {
+        Width = width;
+        Height = height;
+    }
+
+    public void Resize(int width, int height)
     {
         Width = width;
         Height = height;
@@ -47,6 +56,26 @@ public class DendritePath
         {
             Rectangle rect = new(px, 2);
             bmp.DrawRect(rect, Colors.Yellow);
+        }
+    }
+
+    public string GetPointsString()
+    {
+        return string.Join(" ", Points.Select(x => $"{x.X},{x.Y};"));
+    }
+
+    public void LoadFromString(string text)
+    {
+        Points.Clear();
+        foreach (string line in text.Split(";"))
+        {
+            string[] parts = line.Split(",");
+            if (parts.Length != 2)
+                continue;
+            int x = int.Parse(parts[0]);
+            int y = int.Parse(parts[1]);
+            Pixel px = new(x, y);
+            Points.Add(px);
         }
     }
 }

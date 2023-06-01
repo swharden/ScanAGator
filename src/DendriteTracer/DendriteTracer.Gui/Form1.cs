@@ -10,11 +10,22 @@ public partial class Form1 : Form
     {
         InitializeComponent();
 
+        string initialPath = "350,410; 417,406; 430,384; 457,359; 515,364; " +
+            "531,359; 645,427; 651,437; 645,452; 652,478; 663,502; 659,530; " +
+            "670,554; 665,580; 643,602;";
+
+        imageTracerControl1.DendritePath.LoadFromString(initialPath);
+
         Load += (s, e) =>
         {
             string startupImagePath = Path.GetFullPath("../../../../../../data/tseries/TSeries-03022023-1227-2098-2ch.tif");
             if (File.Exists(startupImagePath))
                 LoadTif(startupImagePath);
+        };
+
+        imageTracerControl1.PointsChanged += (s, e) =>
+        {
+            
         };
     }
 
@@ -35,7 +46,7 @@ public partial class Form1 : Form
         SciTIF.Image green = tif.GetImage(frame: 0, slice: 0, channel: 1);
 
         PixelBitmap bmp = ImageOperations.MakeBitmap(red, green);
-        tracerControl1.SetImage(bmp);
+        imageTracerControl1.SetImage(bmp);
         Text = Path.GetFileName(tifFilePath);
     }
 }
