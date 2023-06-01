@@ -10,9 +10,9 @@ public partial class Form1 : Form
     {
         InitializeComponent();
 
-        string initialPath = "350,410; 417,406; 430,384; 457,359; 515,364; " +
-            "531,359; 645,427; 651,437; 645,452; 652,478; 663,502; 659,530; " +
-            "670,554; 665,580; 643,602;";
+        string initialPath = "124,126; 149,126; 154,118; 164,110; " +
+            "186,111; 193,110; 207,118; 222,127; 233,133; 232,145; " +
+            "237,153; 238,164; 238,173; 238,179; 231,184;";
 
         imageTracerControl1.DendritePath.LoadFromString(initialPath);
 
@@ -25,7 +25,7 @@ public partial class Form1 : Form
 
         imageTracerControl1.PointsChanged += (s, e) =>
         {
-            
+            //System.Diagnostics.Debug.WriteLine(imageTracerControl1.DendritePath.GetPointsString());
         };
     }
 

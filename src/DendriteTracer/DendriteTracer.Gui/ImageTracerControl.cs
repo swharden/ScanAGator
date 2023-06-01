@@ -1,4 +1,5 @@
 ﻿using DendriteTracer.Core;
+using Microsoft.VisualBasic.Devices;
 
 namespace DendriteTracer.Gui;
 
@@ -29,12 +30,18 @@ public class ImageTracerControl : UserControl
 
     public event EventHandler PointsChanged = delegate { };
 
+    private float ScaleX => DendritePath is null ? 1 : (float)Width / DendritePath.Width;
+    private float ScaleY => DendritePath is null ? 1 : (float)Height / DendritePath.Height;
+
     public ImageTracerControl()
     {
         Controls.Add(PictureBox1);
 
         PictureBox1.MouseClick += (s, e) =>
         {
+            if (SourceImage is null)
+                return;
+
             if (DraggingPointIndex is not null)
             {
                 AnnotateImage();
@@ -43,7 +50,8 @@ public class ImageTracerControl : UserControl
 
             if (e.Button == MouseButtons.Left)
             {
-                DendritePath.Add(e.Location.X, e.Location.Y);
+                Pixel px = new((int)(e.X / ScaleX), (int)(e.Y / ScaleY)); // scale down
+                DendritePath.Add(px);
                 PointsChanged.Invoke(this, EventArgs.Empty);
                 AnnotateImage();
                 return;
@@ -60,9 +68,13 @@ public class ImageTracerControl : UserControl
 
         PictureBox1.MouseMove += (s, e) =>
         {
+            if (SourceImage is null)
+                return;
+
             if (DraggingPointIndex is not null)
             {
-                DendritePath.Points[DraggingPointIndex.Value] = new(e.Location.X, e.Location.Y);
+                Pixel px = new((int)(e.X / ScaleX), (int)(e.Y / ScaleY)); // scale down
+                DendritePath.Points[DraggingPointIndex.Value] = px;
                 PointsChanged.Invoke(this, EventArgs.Empty);
                 AnnotateImage();
                 return;
@@ -94,10 +106,15 @@ public class ImageTracerControl : UserControl
 
     private int? GetPointUnderMouse(PointF mouse)
     {
+        if (SourceImage is null)
+            return null;
+
+        Pixel px = new((int)(mouse.X / ScaleX), (int)(mouse.Y / ScaleY)); // scale down
+
         for (int i = 0; i < DendritePath.Count; i++)
         {
-            float dx = Math.Abs(DendritePath.Points[i].X - mouse.X);
-            float dy = Math.Abs(DendritePath.Points[i].Y - mouse.Y);
+            float dx = Math.Abs(DendritePath.Points[i].X - px.X);
+            float dy = Math.Abs(DendritePath.Points[i].Y - px.Y);
             if (dx <= ControlPointRadius && dy <= ControlPointRadius)
             {
                 return i;
@@ -119,7 +136,7 @@ public class ImageTracerControl : UserControl
         gfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
         gfx.DrawImage(img, 0, 0, Width, Height);
 
-        DendritePath.Resize(Width, Height);
+        DendritePath.Resize(bmp.Width, bmp.Height);
         AnnotateImage();
     }
 
@@ -139,15 +156,18 @@ public class ImageTracerControl : UserControl
 
         if (DendritePath.Count > 1)
         {
-            PointF[] points = DendritePath.Points.Select(pt => new PointF(pt.X, pt.Y)).ToArray();
+            PointF[] points = DendritePath.Points
+                .Select(pt => new PointF(pt.X * ScaleX, pt.Y * ScaleY))
+                .ToArray();
+
             gfx.DrawLines(Pens.White, points);
         }
 
         foreach (Pixel px in DendritePath.Points)
         {
             RectangleF rect = new(
-                x: px.X - ControlPointRadius,
-                y: px.Y - ControlPointRadius,
+                x: px.X * ScaleX - ControlPointRadius,
+                y: px.Y * ScaleY - ControlPointRadius,
                 width: ControlPointRadius * 2,
                 height: ControlPointRadius * 2);
 
