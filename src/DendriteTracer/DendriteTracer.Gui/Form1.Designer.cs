@@ -37,10 +37,17 @@ partial class Form1
         nudRoiSpacing = new NumericUpDown();
         nudMicronsPerPx = new NumericUpDown();
         label3 = new Label();
+        hsbRoi = new HScrollBar();
+        pbRoi = new PictureBox();
+        panel2 = new Panel();
+        gbRoi = new GroupBox();
         panel1.SuspendLayout();
         ((System.ComponentModel.ISupportInitialize)nudRoiRadius).BeginInit();
         ((System.ComponentModel.ISupportInitialize)nudRoiSpacing).BeginInit();
         ((System.ComponentModel.ISupportInitialize)nudMicronsPerPx).BeginInit();
+        ((System.ComponentModel.ISupportInitialize)pbRoi).BeginInit();
+        panel2.SuspendLayout();
+        gbRoi.SuspendLayout();
         SuspendLayout();
         // 
         // imageTracerControl1
@@ -49,6 +56,8 @@ partial class Form1
         imageTracerControl1.Location = new Point(17, 20);
         imageTracerControl1.Margin = new Padding(4, 5, 4, 5);
         imageTracerControl1.Name = "imageTracerControl1";
+        imageTracerControl1.RoiRadius = 15;
+        imageTracerControl1.RoiSpacing = 5;
         imageTracerControl1.Size = new Size(714, 833);
         imageTracerControl1.TabIndex = 0;
         // 
@@ -127,11 +136,50 @@ partial class Form1
         label3.TabIndex = 9;
         label3.Text = "microns / px";
         // 
+        // hsbRoi
+        // 
+        hsbRoi.Dock = DockStyle.Fill;
+        hsbRoi.Location = new Point(0, 0);
+        hsbRoi.Name = "hsbRoi";
+        hsbRoi.Size = new Size(254, 30);
+        hsbRoi.TabIndex = 10;
+        // 
+        // pbRoi
+        // 
+        pbRoi.BackColor = SystemColors.ControlDark;
+        pbRoi.BorderStyle = BorderStyle.Fixed3D;
+        pbRoi.Location = new Point(6, 34);
+        pbRoi.Name = "pbRoi";
+        pbRoi.Size = new Size(256, 256);
+        pbRoi.TabIndex = 11;
+        pbRoi.TabStop = false;
+        // 
+        // panel2
+        // 
+        panel2.BorderStyle = BorderStyle.FixedSingle;
+        panel2.Controls.Add(hsbRoi);
+        panel2.Location = new Point(6, 296);
+        panel2.Name = "panel2";
+        panel2.Size = new Size(256, 32);
+        panel2.TabIndex = 12;
+        // 
+        // gbRoi
+        // 
+        gbRoi.Controls.Add(pbRoi);
+        gbRoi.Controls.Add(panel2);
+        gbRoi.Location = new Point(777, 118);
+        gbRoi.Name = "gbRoi";
+        gbRoi.Size = new Size(268, 337);
+        gbRoi.TabIndex = 13;
+        gbRoi.TabStop = false;
+        gbRoi.Text = "ROI 5 of 9";
+        // 
         // Form1
         // 
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1744, 932);
+        Controls.Add(gbRoi);
         Controls.Add(label3);
         Controls.Add(nudMicronsPerPx);
         Controls.Add(nudRoiSpacing);
@@ -148,6 +196,9 @@ partial class Form1
         ((System.ComponentModel.ISupportInitialize)nudRoiRadius).EndInit();
         ((System.ComponentModel.ISupportInitialize)nudRoiSpacing).EndInit();
         ((System.ComponentModel.ISupportInitialize)nudMicronsPerPx).EndInit();
+        ((System.ComponentModel.ISupportInitialize)pbRoi).EndInit();
+        panel2.ResumeLayout(false);
+        gbRoi.ResumeLayout(false);
         ResumeLayout(false);
         PerformLayout();
     }
@@ -163,4 +214,8 @@ partial class Form1
     private NumericUpDown nudRoiSpacing;
     private NumericUpDown nudMicronsPerPx;
     private Label label3;
+    private HScrollBar hsbRoi;
+    private PictureBox pbRoi;
+    private Panel panel2;
+    private GroupBox gbRoi;
 }

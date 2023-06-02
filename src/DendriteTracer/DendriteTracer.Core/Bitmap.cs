@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Drawing;
+using System.Security.Cryptography;
 
 namespace DendriteTracer.Core;
 
@@ -27,21 +28,29 @@ public class Bitmap
     {
         Bitmap bmp = new(rect.Width, rect.Height);
 
+        int xMin = rect.XMin;
+        int xMax = rect.XMax;
+        int yMin = rect.YMin;
+        int yMax = rect.YMax;
+
         if (constrain)
         {
-            rect = new(
-                x1: Math.Max(0, rect.XMin),
-                x2: Math.Min(rect.Width - 1, rect.XMax),
-                y1: Math.Max(0, rect.YMin),
-                y2: Math.Min(rect.Height - 1, rect.YMax));
+            if (xMin < 0)
+                xMin = 0;
+            if (xMax > Width - 1)
+                xMax = Width - 1;
+            if (yMin < 0) 
+                yMin = 0;
+            if (yMax > Height - 1)
+                yMax = Height - 1;
         }
 
-        for (int y = rect.YMin; y <= rect.YMax; y++)
+        for (int y = yMin; y <= yMax; y++)
         {
-            for (int x = rect.XMin; x <= rect.XMax; x++)
+            for (int x = xMin; x <= xMax; x++)
             {
                 Color c = GetPixel(x, y);
-                bmp.SetPixel(x - rect.XMin, y - rect.YMin, c);
+                bmp.SetPixel(x - xMin, y - yMin, c);
             }
         }
         return bmp;
@@ -170,6 +179,12 @@ public class Bitmap
         Array.Copy(BitConverter.GetBytes(ImageBytes.Length), 0, bmpBytes, 34, 4);
         Array.Copy(ImageBytes, 0, bmpBytes, imageHeaderSize, ImageBytes.Length);
         return bmpBytes;
+    }
+
+    public void Multiply(double mult)
+    {
+        for (int i = 0; i < ImageBytes.Length; i++)
+            ImageBytes[i] = (byte)(ImageBytes[i] * mult);
     }
 
     public void Save(string filename)

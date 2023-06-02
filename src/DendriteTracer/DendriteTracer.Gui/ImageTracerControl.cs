@@ -21,6 +21,8 @@ public class ImageTracerControl : UserControl
 
     public readonly DendritePath DendritePath = new(0, 0);
 
+    private Core.Bitmap? SourceData;
+
     private System.Drawing.Bitmap? SourceImage;
 
     private readonly int ControlPointRadius = 5;
@@ -128,6 +130,8 @@ public class ImageTracerControl : UserControl
 
     public void SetImage(Core.Bitmap bmp)
     {
+        SourceData = bmp; // save it so we can extract ROIs later
+
         byte[] bytes = bmp.GetBitmapBytes();
         using MemoryStream ms = new(bytes);
         using Image img = System.Drawing.Bitmap.FromStream(ms);
@@ -145,6 +149,18 @@ public class ImageTracerControl : UserControl
     public void AnnotateImage()
     {
         RenderNeeded = true;
+    }
+
+    public DendriteTracer.Core.Bitmap[] GetRoiImages()
+    {
+        if (SourceData is null)
+            return Array.Empty<DendriteTracer.Core.Bitmap>();
+
+        var rects = DendritePath.GetRois(RoiSpacing, RoiRadius).Select(roi => roi.Rectangle);
+
+        var bmps = rects.Select(rect => SourceData.Crop(rect));
+
+        return bmps.ToArray();
     }
 
     private void AnnotateImageNow()

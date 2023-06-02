@@ -6,6 +6,8 @@ public struct Roi
     public int Y { get; }
     public int Radius { get; }
 
+    public readonly Rectangle Rectangle => new(X, Y, Radius);
+
     public Roi(Pixel center, int radius)
     {
         X = center.X;

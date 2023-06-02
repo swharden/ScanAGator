@@ -59,11 +59,39 @@ public partial class Form1 : Form
         Text = Path.GetFileName(tifFilePath);
     }
 
+    private void PutInPicturebox(PixelBitmap bmp, PictureBox pb)
+    {
+        bmp.Multiply(10);
+
+        byte[] bytes = bmp.GetBitmapBytes();
+        using MemoryStream ms = new(bytes);
+        using Image img = System.Drawing.Bitmap.FromStream(ms);
+
+        System.Drawing.Bitmap bmp2 = new(pb.Width, pb.Height);
+        pb.SizeMode = PictureBoxSizeMode.StretchImage;
+        using Graphics gfx = Graphics.FromImage(bmp2);
+        gfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+        gfx.DrawImage(img, 0, 0, bmp2.Width, bmp2.Height);
+
+        Image? bmpOld = pb.Image;
+        pb.Image = bmp2;
+        bmpOld?.Dispose();
+    }
+
     private void UpdateRois()
     {
         //float micronsPerPixel = 1;
         imageTracerControl1.RoiRadius = (int)nudRoiRadius.Value;
         imageTracerControl1.RoiSpacing = (int)nudRoiSpacing.Value;
+
         imageTracerControl1.AnnotateImage();
+
+        PixelBitmap[] bmps = imageTracerControl1.GetRoiImages();
+        if (!bmps.Any())
+            return;
+
+        hsbRoi.Value = 0;
+        hsbRoi.Maximum = bmps.Length;
+        PutInPicturebox(bmps[0], pbRoi);
     }
 }
