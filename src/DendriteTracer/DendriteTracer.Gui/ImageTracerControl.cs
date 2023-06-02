@@ -1,5 +1,4 @@
 ﻿using DendriteTracer.Core;
-using Microsoft.VisualBasic.Devices;
 
 namespace DendriteTracer.Gui;
 
@@ -32,6 +31,9 @@ public class ImageTracerControl : UserControl
 
     private float ScaleX => DendritePath is null ? 1 : (float)Width / DendritePath.Width;
     private float ScaleY => DendritePath is null ? 1 : (float)Height / DendritePath.Height;
+
+    public int RoiSpacing { get; set; } = 5;
+    public int RoiRadius { get; set; } = 15;
 
     public ImageTracerControl()
     {
@@ -140,7 +142,7 @@ public class ImageTracerControl : UserControl
         AnnotateImage();
     }
 
-    private void AnnotateImage()
+    public void AnnotateImage()
     {
         RenderNeeded = true;
     }
@@ -154,6 +156,7 @@ public class ImageTracerControl : UserControl
         using Graphics gfx = Graphics.FromImage(bmp);
         gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
+        // draw dendrite line
         if (DendritePath.Count > 1)
         {
             PointF[] points = DendritePath.Points
@@ -163,6 +166,7 @@ public class ImageTracerControl : UserControl
             gfx.DrawLines(Pens.White, points);
         }
 
+        // draw dendrite control points
         foreach (Pixel px in DendritePath.Points)
         {
             RectangleF rect = new(
@@ -172,6 +176,18 @@ public class ImageTracerControl : UserControl
                 height: ControlPointRadius * 2);
 
             gfx.DrawEllipse(Pens.Yellow, rect);
+        }
+
+        // draw ROIs
+        foreach (Roi roi in DendritePath.GetRois(RoiSpacing, RoiRadius))
+        {
+            RectangleF rect = new(
+                x: roi.X * ScaleX - RoiRadius,
+                y: roi.Y * ScaleY - RoiRadius,
+                width: RoiRadius * 2,
+                height: RoiRadius * 2);
+
+            gfx.DrawRectangle(Pens.Gray, rect);
         }
 
         Image old = PictureBox1.Image;

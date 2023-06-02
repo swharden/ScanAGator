@@ -73,9 +73,12 @@ partial class Form1
         // nudRoiRadius
         // 
         nudRoiRadius.Location = new Point(1088, 48);
+        nudRoiRadius.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
         nudRoiRadius.Name = "nudRoiRadius";
         nudRoiRadius.Size = new Size(100, 31);
         nudRoiRadius.TabIndex = 4;
+        nudRoiRadius.Value = new decimal(new int[] { 5, 0, 0, 0 });
+        nudRoiRadius.ValueChanged += nudRoiRadius_ValueChanged;
         // 
         // label1
         // 
@@ -98,9 +101,12 @@ partial class Form1
         // nudRoiSpacing
         // 
         nudRoiSpacing.Location = new Point(935, 48);
+        nudRoiSpacing.Minimum = new decimal(new int[] { 1, 0, 0, 0 });
         nudRoiSpacing.Name = "nudRoiSpacing";
         nudRoiSpacing.Size = new Size(100, 31);
         nudRoiSpacing.TabIndex = 7;
+        nudRoiSpacing.Value = new decimal(new int[] { 5, 0, 0, 0 });
+        nudRoiSpacing.ValueChanged += nudRoiSpacing_ValueChanged;
         // 
         // nudMicronsPerPx
         // 
@@ -110,6 +116,7 @@ partial class Form1
         nudMicronsPerPx.Size = new Size(126, 31);
         nudMicronsPerPx.TabIndex = 8;
         nudMicronsPerPx.Value = new decimal(new int[] { 117879, 0, 0, 327680 });
+        nudMicronsPerPx.ValueChanged += nudMicronsPerPx_ValueChanged;
         // 
         // label3
         // 

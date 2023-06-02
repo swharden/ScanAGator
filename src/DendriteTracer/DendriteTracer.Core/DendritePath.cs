@@ -1,4 +1,6 @@
-﻿namespace DendriteTracer.Core;
+﻿using System.Runtime.Intrinsics.Arm;
+
+namespace DendriteTracer.Core;
 
 public class DendritePath
 {
@@ -124,5 +126,12 @@ public class DendritePath
         double nextSetback = distanceBetweenPoints - totalDistanceTravelled;
 
         return (points, nextSetback);
+    }
+
+    public Roi[] GetRois(double spacing, int radius)
+    {
+        return GetEvenlySpacedPoints(spacing)
+            .Select(x => new Roi(x, radius))
+            .ToArray();
     }
 }

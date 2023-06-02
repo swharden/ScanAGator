@@ -10,6 +10,9 @@ public partial class Form1 : Form
     {
         InitializeComponent();
 
+        nudRoiRadius.Value = imageTracerControl1.RoiRadius;
+        nudRoiSpacing.Value = imageTracerControl1.RoiSpacing;
+
         string initialPath = "124,126; 149,126; 154,118; 164,110; " +
             "186,111; 193,110; 207,118; 222,127; 233,133; 232,145; " +
             "237,153; 238,164; 238,173; 238,179; 231,184;";
@@ -28,6 +31,12 @@ public partial class Form1 : Form
             //System.Diagnostics.Debug.WriteLine(imageTracerControl1.DendritePath.GetPointsString());
         };
     }
+
+    private void nudMicronsPerPx_ValueChanged(object sender, EventArgs e) => UpdateRois();
+
+    private void nudRoiSpacing_ValueChanged(object sender, EventArgs e) => UpdateRois();
+
+    private void nudRoiRadius_ValueChanged(object sender, EventArgs e) => UpdateRois();
 
     void LoadTif(string tifFilePath)
     {
@@ -48,5 +57,13 @@ public partial class Form1 : Form
         PixelBitmap bmp = ImageOperations.MakeBitmap(red, green);
         imageTracerControl1.SetImage(bmp);
         Text = Path.GetFileName(tifFilePath);
+    }
+
+    private void UpdateRois()
+    {
+        //float micronsPerPixel = 1;
+        imageTracerControl1.RoiRadius = (int)nudRoiRadius.Value;
+        imageTracerControl1.RoiSpacing = (int)nudRoiSpacing.Value;
+        imageTracerControl1.AnnotateImage();
     }
 }
