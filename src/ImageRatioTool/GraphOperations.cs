@@ -80,10 +80,10 @@ internal static class GraphOperations
         plt.YLabel("Count");
         plt.XLabel("G/R (%)");
         plt.Title($"Median: {median:##.###}% (n={roi.PixelsAboveThreshold:N0})");
-        
+
         plt.SetAxisLimits(
             xMin: roi.SortedRatios.First() * 100 - 10,
-            xMax: roi.SortedRatios.Last() * 100 + 10, 
+            xMax: roi.SortedRatios.Last() * 100 + 10,
             yMin: 0);
     }
 }

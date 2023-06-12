@@ -3,6 +3,7 @@ using FluentAssertions;
 using System.Windows.Forms;
 using System.Text;
 using System.Xml.Linq;
+using System.Drawing;
 
 namespace ImageRatioTool.Tests;
 
@@ -46,5 +47,26 @@ public class Tests
         double[] minutes = seconds.Select(x => x / 60).ToArray();
         minutes.First().Should().Be(0);
         minutes.Last().Should().BeApproximately(30, 1);
+    }
+
+    [Test]
+    public void Test_Fixed_TIF()
+    {
+        SciTIF.TifFile tif = new(ImageRatioTool.SampleData.FixedTif);
+        tif.Frames.Should().Be(20);
+        tif.Slices.Should().Be(1);
+        tif.Channels.Should().Be(2);
+
+        for (int i=0; i<tif.Frames; i++)
+        {
+            SciTIF.Image red = tif.GetImage(i, 0, 0);
+            SciTIF.Image green = tif.GetImage(i, 0, 1);
+            Bitmap display = ImageOperations.MakeDisplayImage(red, green, downscale: false);
+
+            string saveAs = Path.GetFullPath($"display-{i:00}.png");
+            display.Save(saveAs);
+            Console.WriteLine(saveAs);
+        }
+        
     }
 }

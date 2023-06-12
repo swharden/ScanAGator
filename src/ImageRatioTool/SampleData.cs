@@ -5,6 +5,7 @@ public static class SampleData
     public static string RatiometricImage => GetSampleDataFile("2ch-baseline.tif");
     public static string RatiometricImageSeries => GetSampleDataFile("TSeries-03022023-1227-2098-2ch.tif");
     public static string RatiometricImageSeriesXML => GetSampleDataFile("TSeries-03022023-1227-2098.xml");
+    public static string FixedTif => GetSampleDataFile("TSeries-06022023-1246-2207 FIXED.tif");
 
     public static string GetSampleDataFile(string filename)
     {

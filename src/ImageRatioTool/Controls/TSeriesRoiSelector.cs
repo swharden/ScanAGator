@@ -152,7 +152,7 @@ public partial class TSeriesRoiSelector : UserControl
         {
             RedImages[i] = tif.GetImage(i, 0, 0);
             GreenImages[i] = tif.GetImage(i, 0, 1);
-            DisplayImages[i] = ImageOperations.MakeDisplayImage(RedImages[i], GreenImages[i]);
+            DisplayImages[i] = ImageOperations.MakeDisplayImage(RedImages[i], GreenImages[i], downscale: true);
         }
 
         hScrollBar1.Value = 0;

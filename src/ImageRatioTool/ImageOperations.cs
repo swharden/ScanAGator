@@ -4,26 +4,21 @@ namespace ImageRatioTool;
 
 public static class ImageOperations
 {
-    public static Bitmap[] MakeDisplayImages(SciTIF.Image[] red, SciTIF.Image[] green)
+    public static Bitmap MakeDisplayImage(SciTIF.Image red, SciTIF.Image green, bool downscale)
     {
-        if (red.Length != green.Length)
-            throw new ArgumentException("number of images must be the same");
+        SciTIF.ImageRGB displayMerge;
 
-        Bitmap[] bmps = new Bitmap[red.Length];
-        for (int i = 0; i < red.Length; i++)
-            bmps[i] = MakeDisplayImage(red[i], green[i]);
+        if (downscale)
+        {
+            int divisionFactor = 1 << (13 - 8); // 13-bit to 8-bit
+            red = red / divisionFactor;
+            green = green / divisionFactor;
+        }
 
-        return bmps;
-    }
-
-    public static Bitmap MakeDisplayImage(SciTIF.Image red, SciTIF.Image green)
-    {
-        int divisionFactor = 1 << (13 - 8); // 13-bit to 8-bit
-        var displayRed = red / divisionFactor;
-        var displayGreen = green / divisionFactor;
-        SciTIF.ImageRGB displayMerge = new(displayRed, displayGreen, displayRed);
+        displayMerge = new SciTIF.ImageRGB(red, green, red);
         Bitmap bmp = displayMerge.GetBitmap();
-        return bmp;
+        Bitmap bmp2 = new(bmp);
+        return bmp2;
     }
 
     public static Bitmap Annotate(Bitmap reference, RoiAnalysis roi)
@@ -102,7 +97,19 @@ public static class ImageOperations
         {
             red[i] = tif.GetImage(i, 0, 0);
             green[i] = tif.GetImage(i, 0, 1);
-            display[i] = MakeDisplayImage(red[i], green[i]);
+        }
+
+        double max = 0;
+        for (int i = 0; i < tif.Frames; i++)
+        {
+            max = Math.Max(max, red[i].Max());
+            max = Math.Max(max, green[i].Max());
+        }
+        bool isHighDepth = max > 255;
+
+        for (int i = 0; i < tif.Frames; i++)
+        {
+            display[i] = MakeDisplayImage(red[i], green[i], downscale: isHighDepth);
         }
 
         return (red, green, display);
