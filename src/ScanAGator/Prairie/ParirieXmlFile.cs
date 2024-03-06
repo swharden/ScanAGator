@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScanAGator.Prairie;
 
@@ -16,10 +12,12 @@ namespace ScanAGator.Prairie;
 public class ParirieXmlFile
 {
     public readonly string FilePath;
+    public string Filename => Path.GetFileName(FilePath);
     public readonly DateTime AcquisitionDate;
     public readonly double MsecPerPixel;
     public readonly double MicronsPerPixel;
     public readonly Vector3 Position;
+    public readonly LinescanMode Mode;
 
     public string FolderPath => System.IO.Path.GetDirectoryName(FilePath);
 
@@ -33,6 +31,7 @@ public class ParirieXmlFile
         MsecPerPixel = ReadMsecPerPixel(xmlLines);
         MicronsPerPixel = ReadMicronsPerPixel(xmlLines);
         Position = ReadPosition(xmlLines);
+        Mode = ReadLinescanType(xmlLines);
     }
 
     private static DateTime ReadAcquisitionDate(string[] xmlLines)
@@ -116,4 +115,18 @@ public class ParirieXmlFile
     }
 
     private static double ReadDoubleValue(string line) => double.Parse(line.Split('"')[3]);
+
+    public static LinescanMode ReadLinescanType(string[] xmlLines)
+    {
+        foreach (string line in xmlLines)
+        {
+            if (line.Contains("mode=\"straightLine\""))
+                return LinescanMode.StraightLine;
+
+            if (line.Contains("mode=\"freeHand\""))
+                return LinescanMode.FreeHand;
+        }
+
+        throw new InvalidOperationException("unable to determine mode");
+    }
 }
