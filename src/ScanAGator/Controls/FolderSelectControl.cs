@@ -278,21 +278,14 @@ namespace ScanAGator.Controls
             foreach (string path in Directory.GetDirectories(folderPath))
             {
                 string name = indentation + Path.GetFileName(path) + "/";
-                ListViewItem item = new(name, path) { ForeColor = GetFolderColor(path) };
+                ListViewItem item = new(name, path)
+                {
+                    ForeColor = IsLinescanFolder(path) ? Color.Blue : Color.Black,
+                };
                 lvFolders.Items.Add(item);
             }
 
             lvFolders.AutoResizeColumns(ColumnHeaderAutoResizeStyle.ColumnContent);
-        }
-
-        private Color GetFolderColor(string path)
-        {
-            if (IsLinescanFolder(path))
-                return Color.Blue;
-            else if (IsZSeriesFolder(path))
-                return Color.Green;
-            else
-                return Color.Black;
         }
 
         public static bool IsLinescanFolder(string folderPath)
@@ -306,11 +299,6 @@ namespace ScanAGator.Controls
         public static string[] GetZSeriesTifPaths(string folderPath)
         {
             return Directory.GetFiles(folderPath, "ZSeries-*_Ch1_*.tif");
-        }
-
-        public static bool IsZSeriesFolder(string folderPath)
-        {
-            return GetZSeriesTifPaths(folderPath).Any();
         }
 
         private static string[] GetParentPaths(string folderPath)
