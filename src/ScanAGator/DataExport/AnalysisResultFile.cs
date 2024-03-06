@@ -46,7 +46,7 @@ public static class AnalysisResultFile
         using Utf8JsonWriter writer = new(stream, options);
 
         writer.WriteStartObject();
-        writer.WriteString("version", AnalysisResult.VersionString);
+        writer.WriteString("version", Version.VersionString);
         writer.WriteString("acquisitionDate", settings.Xml.AcquisitionDate.ToString("s"));
         writer.WriteString("analysisDate", DateTime.Now.ToString("s"));
         writer.WriteString("folderPV", settings.Xml.FolderPath);
