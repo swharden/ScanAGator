@@ -1,25 +1,25 @@
 ﻿using NUnit.Framework;
 using System.IO;
 
-namespace ScanAGator.Tests
+namespace ScanAGator.Tests;
+
+static class SampleData
 {
-    class SampleData
+    private static string FolderPath
     {
-        public static string FolderPath
+        get
         {
-            get
-            {
-                string folderPath = System.IO.Path.Combine(
-                    TestContext.CurrentContext.TestDirectory,
-                    "../../../../../data/linescans/");
+            string folderPath = System.IO.Path.Combine(
+                TestContext.CurrentContext.TestDirectory,
+                "../../../../../data/linescans/");
 
-                return System.IO.Path.GetFullPath(folderPath);
-            }
+            return System.IO.Path.GetFullPath(folderPath);
         }
-
-        public static string MultiFrameRatiometricFolderPath => Path.Combine(FolderPath, "LineScan-08092022-1225-528");
-        public static string MultiFrameRatiometricFolderWithMarkPointsPath => Path.Combine(FolderPath, "LineScan-11182022-1250-763");
-        public static string GreenLinescanImagePath => Path.Combine(FolderPath, "LineScan-08092022-1225-528/LineScan-08092022-1225-528_Cycle00001_Ch2_000001.ome.tif");
-        public static string RedLinescanImagePath => Path.Combine(FolderPath, "LineScan-08092022-1225-528/LineScan-08092022-1225-528_Cycle00001_Ch1_000001.ome.tif");
     }
+
+    public static string MultiFrameRatiometricFolderPath => Path.Combine(FolderPath, "LineScan-08092022-1225-528");
+    public static string MultiFrameRatiometricFolderWithMarkPointsPath => Path.Combine(FolderPath, "LineScan-11182022-1250-763");
+    public static string GreenLinescanImagePath => Path.Combine(FolderPath, "LineScan-08092022-1225-528/LineScan-08092022-1225-528_Cycle00001_Ch2_000001.ome.tif");
+    public static string RedLinescanImagePath => Path.Combine(FolderPath, "LineScan-08092022-1225-528/LineScan-08092022-1225-528_Cycle00001_Ch1_000001.ome.tif");
+    public static string SineLinescanXmlFile => Path.Combine(FolderPath, "LineScan-03052024-1208-1065/LineScan-03052024-1208-1065.xml");
 }
