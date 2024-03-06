@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Numerics;
 
 namespace ScanAGator.Prairie;
@@ -18,20 +20,22 @@ public class ParirieXmlFile
     public readonly double MicronsPerPixel;
     public readonly Vector3 Position;
     public readonly LinescanMode Mode;
+    public readonly Vector2[] FreehandPoints;
 
-    public string FolderPath => System.IO.Path.GetDirectoryName(FilePath);
+    public string FolderPath => Path.GetDirectoryName(FilePath);
 
     public ParirieXmlFile(string xmlFilePath)
     {
-        FilePath = System.IO.Path.GetFullPath(xmlFilePath);
+        FilePath = Path.GetFullPath(xmlFilePath);
 
-        string[] xmlLines = System.IO.File.ReadAllLines(xmlFilePath);
+        string[] xmlLines = File.ReadAllLines(xmlFilePath);
 
         AcquisitionDate = ReadAcquisitionDate(xmlLines);
         MsecPerPixel = ReadMsecPerPixel(xmlLines);
         MicronsPerPixel = ReadMicronsPerPixel(xmlLines);
         Position = ReadPosition(xmlLines);
         Mode = ReadLinescanType(xmlLines);
+        FreehandPoints = (Mode == LinescanMode.FreeHand) ? ReadFreehandPoints(xmlLines) : [];
     }
 
     private static DateTime ReadAcquisitionDate(string[] xmlLines)
@@ -128,5 +132,20 @@ public class ParirieXmlFile
         }
 
         throw new InvalidOperationException("unable to determine mode");
+    }
+
+    public static Vector2[] ReadFreehandPoints(string[] xmlLines)
+    {
+        List<Vector2> points = [];
+
+        foreach (string line in xmlLines.Where(x => x.Contains("PVFreehand")))
+        {
+            string[] parts = line.Trim().Split('"');
+            double x = double.Parse(parts[1]);
+            double y = double.Parse(parts[3]);
+            points.Add(new Vector2((float)x, (float)y));
+        }
+
+        return points.ToArray();
     }
 }
