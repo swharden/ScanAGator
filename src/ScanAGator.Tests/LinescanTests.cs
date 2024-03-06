@@ -19,13 +19,12 @@ public class LinescanTests
     }
 
     [Test]
-    public void Test_Linescan_Freehand()
+    public void Test_Linescan_Points()
     {
-        Prairie.ParirieXmlFile pv = SampleData.LinescanXmlFiles
-            .Select(x => new Prairie.ParirieXmlFile(x))
-            .Where(x => x.Mode == LinescanMode.FreeHand)
-            .First();
-
-        pv.FreehandPoints.Should().NotBeEmpty();
+        foreach (string xmlFilePath in SampleData.LinescanXmlFiles)
+        {
+            Prairie.ParirieXmlFile pv = new(xmlFilePath);
+            pv.Points.Should().NotBeEmpty();
+        };
     }
 }

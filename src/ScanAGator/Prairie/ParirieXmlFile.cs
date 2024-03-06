@@ -20,13 +20,15 @@ public class ParirieXmlFile
     public readonly double MicronsPerPixel;
     public readonly Vector3 Position;
     public readonly LinescanMode Mode;
-    public readonly Vector2[] FreehandPoints;
+    public readonly Vector2[] Points;
 
     public string FolderPath => Path.GetDirectoryName(FilePath);
 
     public ParirieXmlFile(string xmlFilePath)
     {
         FilePath = Path.GetFullPath(xmlFilePath);
+        if (!File.Exists(FilePath))
+            throw new FileNotFoundException(FilePath);
 
         string[] xmlLines = File.ReadAllLines(xmlFilePath);
 
@@ -34,8 +36,7 @@ public class ParirieXmlFile
         MsecPerPixel = ReadMsecPerPixel(xmlLines);
         MicronsPerPixel = ReadMicronsPerPixel(xmlLines);
         Position = ReadPosition(xmlLines);
-        Mode = ReadLinescanType(xmlLines);
-        FreehandPoints = (Mode == LinescanMode.FreeHand) ? ReadFreehandPoints(xmlLines) : [];
+        (Mode, Points) = ReadLinescanType(xmlLines);
     }
 
     private static DateTime ReadAcquisitionDate(string[] xmlLines)
@@ -120,18 +121,32 @@ public class ParirieXmlFile
 
     private static double ReadDoubleValue(string line) => double.Parse(line.Split('"')[3]);
 
-    public static LinescanMode ReadLinescanType(string[] xmlLines)
+    public static (LinescanMode, Vector2[] points) ReadLinescanType(string[] xmlLines)
     {
         foreach (string line in xmlLines)
         {
             if (line.Contains("mode=\"straightLine\""))
-                return LinescanMode.StraightLine;
+                return (LinescanMode.StraightLine, ReadStraightLinePoints(xmlLines));
 
             if (line.Contains("mode=\"freeHand\""))
-                return LinescanMode.FreeHand;
+                return (LinescanMode.FreeHand, ReadFreehandPoints(xmlLines));
         }
 
         throw new InvalidOperationException("unable to determine mode");
+    }
+
+    public static Vector2[] ReadStraightLinePoints(string[] xmlLines)
+    {
+        foreach (string line in xmlLines.Where(x => x.Contains("<PVLine startPixelY")))
+        {
+            string[] parts = line.Trim().Split('"');
+            float y = float.Parse(parts[1]);
+            float x1 = float.Parse(parts[3]);
+            float x2 = float.Parse(parts[5]);
+            return [new Vector2(x1, y), new Vector2(x2, y)];
+        }
+
+        throw new InvalidOperationException("unable to read line positions");
     }
 
     public static Vector2[] ReadFreehandPoints(string[] xmlLines)
@@ -141,11 +156,14 @@ public class ParirieXmlFile
         foreach (string line in xmlLines.Where(x => x.Contains("PVFreehand")))
         {
             string[] parts = line.Trim().Split('"');
-            double x = double.Parse(parts[1]);
-            double y = double.Parse(parts[3]);
-            points.Add(new Vector2((float)x, (float)y));
+            float x = float.Parse(parts[1]);
+            float y = float.Parse(parts[3]);
+            points.Add(new Vector2(x, y));
         }
 
-        return points.ToArray();
+        if (points.Count == 0)
+            throw new InvalidOperationException("unable to read line positions");
+
+        return [.. points];
     }
 }

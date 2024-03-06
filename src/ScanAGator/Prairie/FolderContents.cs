@@ -22,6 +22,9 @@ public class FolderContents
     {
         FolderPath = Path.GetFullPath(folderPath);
 
+        if (!Directory.Exists(FolderPath))
+            throw new DirectoryNotFoundException(FolderPath);
+
         if (!Directory.Exists(ReferenceFolderPath))
             throw new DirectoryNotFoundException(ReferenceFolderPath);
 

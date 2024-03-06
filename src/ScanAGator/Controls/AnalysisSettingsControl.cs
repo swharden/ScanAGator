@@ -56,6 +56,7 @@ namespace ScanAGator.Controls
         }
 
         private string? CurrentFolderpath = string.Empty;
+
         public void SetLinescanFolder(string? folderPath)
         {
             CurrentFolderpath = folderPath;

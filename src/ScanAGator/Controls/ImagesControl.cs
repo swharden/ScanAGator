@@ -1,129 +1,130 @@
 ﻿using ScanAGator.Imaging;
+using ScanAGator.Prairie;
+using ScottPlot;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ScanAGator.Controls
+namespace ScanAGator.Controls;
+
+public partial class ImagesControl : UserControl
 {
-    public partial class ImagesControl : UserControl
+    Prairie.ParirieXmlFile? PvXml = null;
+    List<string> ImagePaths = [];
+
+    public ImagesControl()
     {
-        List<string> ImagePaths = new();
+        InitializeComponent();
+        hScrollBar1.ValueChanged += (s, e) => LoadSelectedImage();
+        pictureBox1.MouseClick += PictureBox1_MouseClick;
+    }
 
-        public ImagesControl()
+    private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
+    {
+        if (e.Button == MouseButtons.Right)
         {
-            InitializeComponent();
-            hScrollBar1.ValueChanged += (s, e) => LoadSelectedImage();
-            pictureBox1.MouseClick += PictureBox1_MouseClick;
+            ContextMenu context = new();
+
+            MenuItem mi1 = new() { Text = $"Show in Explorer" };
+            mi1.Click += (s, e) =>
+            {
+                System.Diagnostics.Process.Start("explorer.exe", $"/select, \"{ImagePaths[hScrollBar1.Value]}\"");
+            };
+            context.MenuItems.Add(mi1);
+
+            MenuItem mi2 = new() { Text = $"Copy Image" };
+            mi2.Click += (s, e) =>
+            {
+                Clipboard.SetImage(pictureBox1.Image);
+            };
+            context.MenuItems.Add(mi2);
+
+            context.Show(this, e.Location);
+        }
+    }
+
+    public void LoadSelectedImage()
+    {
+        if (!ImagePaths.Any())
+        {
+            pictureBox1.Image = null;
+            label1.Text = "no valid images";
+            return;
         }
 
-        private void PictureBox1_MouseClick(object sender, MouseEventArgs e)
+        string imagePath = ImagePaths[hScrollBar1.Value];
+
+        Bitmap bmp = ImageDataTools.ReadTif_ST(imagePath);
+        ImageDrawing.DrawLinescan(bmp, PvXml);
+        Image oldImage = pictureBox1.Image;
+        pictureBox1.Image = bmp;
+        oldImage?.Dispose();
+
+        string title = Path.GetFileName(imagePath);
+        if (title.StartsWith("LineScan-") && title.Contains("-Cycle"))
+            title = "Cycle" + title.Split(new string[] { "Cycle" }, StringSplitOptions.None)[1];
+        label1.Text = title;
+    }
+
+    public void SelelctBestImage()
+    {
+        for (int i = 0; i < ImagePaths.Count; i++)
         {
-            if (e.Button == MouseButtons.Right)
+            string path = ImagePaths[i];
+            string filename = Path.GetFileName(path);
+            if (filename.Contains("-8bit-") && filename.Contains("-Ch1-"))
             {
-                ContextMenu context = new();
-
-                MenuItem mi1 = new() { Text = $"Show in Explorer" };
-                mi1.Click += (s, e) =>
-                {
-                    System.Diagnostics.Process.Start("explorer.exe", $"/select, \"{ImagePaths[hScrollBar1.Value]}\"");
-                };
-                context.MenuItems.Add(mi1);
-
-                MenuItem mi2 = new() { Text = $"Copy Image" };
-                mi2.Click += (s, e) =>
-                {
-                    Clipboard.SetImage(pictureBox1.Image);
-                };
-                context.MenuItems.Add(mi2);
-
-                context.Show(this, e.Location);
-            }
-        }
-
-        public void LoadSelectedImage()
-        {
-            if (!ImagePaths.Any())
-            {
-                pictureBox1.Image = null;
-                label1.Text = "no valid images";
+                SelectImage(i);
                 return;
             }
-
-            string imagePath = ImagePaths[hScrollBar1.Value];
-
-            Bitmap bmp = ImageDataTools.ReadTif_ST(imagePath);
-            Image oldImage = pictureBox1.Image;
-            pictureBox1.Image = bmp;
-            oldImage?.Dispose();
-
-            string title = Path.GetFileName(imagePath);
-            if (title.StartsWith("LineScan-") && title.Contains("-Cycle"))
-                title = "Cycle" + title.Split(new string[] { "Cycle" }, StringSplitOptions.None)[1];
-            label1.Text = title;
         }
 
-        public void SelelctBestImage()
+        SelectImage(0);
+    }
+
+    private void SelectImage(int newValue)
+    {
+        int oldValue = hScrollBar1.Value;
+        hScrollBar1.Value = newValue;
+        if (newValue == oldValue)
+            LoadSelectedImage();
+    }
+
+    public void SetLinescanFolder(string? linescanFolder)
+    {
+        if (linescanFolder is null)
+            return;
+
+        FolderContents contents = new(linescanFolder);
+        PvXml = new ParirieXmlFile(contents.XmlFilePath);
+
+        List<string> imagePaths = [];
+
+        string referenceFolder = Path.Combine(linescanFolder, "References");
+        if (Directory.Exists(referenceFolder))
         {
-            for (int i = 0; i < ImagePaths.Count; i++)
-            {
-                string path = ImagePaths[i];
-                string filename = Path.GetFileName(path);
-                if (filename.Contains("-8bit-") && filename.Contains("-Ch1-"))
-                {
-                    SelectImage(i);
-                    return;
-                }
-            }
-
-            SelectImage(0);
+            imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.tif"));
+            imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.jpg"));
+            imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.bmp"));
+            imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.png"));
         }
 
-        private void SelectImage(int newValue)
+        ImagePaths.Clear();
+        ImagePaths.AddRange(imagePaths.Where(x => File.Exists(x)));
+
+        if (!ImagePaths.Any())
         {
-            int oldValue = hScrollBar1.Value;
-            hScrollBar1.Value = newValue;
-            if (newValue == oldValue)
-                LoadSelectedImage();
+            hScrollBar1.Value = 0;
+            hScrollBar1.Maximum = 0;
+            LoadSelectedImage();
+            return;
         }
 
-        public void SetLinescanFolder(string? linescanFolder)
-        {
-            if (linescanFolder is null)
-                return;
-
-            List<string> imagePaths = new();
-
-            string referenceFolder = Path.Combine(linescanFolder, "References");
-            if (Directory.Exists(referenceFolder))
-            {
-                imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.tif"));
-                imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.jpg"));
-                imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.bmp"));
-                imagePaths.AddRange(Directory.GetFiles(referenceFolder, "*.png"));
-            }
-
-            ImagePaths.Clear();
-            ImagePaths.AddRange(imagePaths.Where(x => File.Exists(x)));
-
-            if (!ImagePaths.Any())
-            {
-                hScrollBar1.Value = 0;
-                hScrollBar1.Maximum = 0;
-                LoadSelectedImage();
-                return;
-            }
-
-            hScrollBar1.Value = Math.Min(hScrollBar1.Value, ImagePaths.Count - 1);
-            hScrollBar1.Maximum = ImagePaths.Count - 1;
-            SelelctBestImage();
-        }
+        hScrollBar1.Value = Math.Min(hScrollBar1.Value, ImagePaths.Count - 1);
+        hScrollBar1.Maximum = ImagePaths.Count - 1;
+        SelelctBestImage();
     }
 }
