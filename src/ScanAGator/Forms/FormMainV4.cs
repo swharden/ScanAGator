@@ -50,60 +50,39 @@ namespace ScanAGator.Forms
 
         public void OnFolderSelected(string? folderPath)
         {
-            bool isLinescanFolder = (folderPath is not null) && FolderSelectControl.IsLinescanFolder(folderPath);
-            bool isNotesFolder = (folderPath is not null) && NotesControl.IsNotesFolder(folderPath);
-
-            ColumnStyle menuColumn = tableLayoutPanel1.ColumnStyles[0];
-            ColumnStyle settingsColumn = tableLayoutPanel1.ColumnStyles[1];
-            ColumnStyle resultsColumn = tableLayoutPanel1.ColumnStyles[2];
-            ColumnStyle notesColumn = tableLayoutPanel1.ColumnStyles[3];
-            ColumnStyle stackColumn = tableLayoutPanel1.ColumnStyles[4];
-
-            tableLayoutPanel1.SuspendLayout();
-
-            // hide everything
-            Enumerable.Range(1, tableLayoutPanel1.ColumnCount - 1)
-                .Select(i => tableLayoutPanel1.ColumnStyles[i])
-                .ToList()
-                .ForEach(x => x.Width = 0);
-
-            imagesControl1.Visible = false;
+            HideLinescanControls();
 
             if (folderPath is null)
             {
-                // use invisible notes as a placeholder to take up space
-                notesControl1.Visible = false;
-                notesColumn.Width = 100;
+                return;
             }
-            else if (isLinescanFolder)
+
+            bool isLinescanFolder = (folderPath is not null) && FolderSelectControl.IsLinescanFolder(folderPath);
+
+            if (isLinescanFolder)
             {
                 try
                 {
                     analysisSettingsControl.SetLinescanFolder(folderPath);
                     imagesControl1.SetLinescanFolder(folderPath);
-                    imagesControl1.Visible = true;
-                    settingsColumn.Width = 373;
-                    resultsColumn.Width = 100;
+                    ShowLinescanControls();
                 }
                 catch (Exception ex)
                 {
-                    new CrashForm(folderPath, ex.ToString()).ShowDialog();
+                    new CrashForm(folderPath!, ex.ToString()).ShowDialog();
                 }
             }
-            else if (isNotesFolder)
-            {
-                notesControl1.SetFolder(folderPath);
-                notesControl1.Visible = true;
-                notesColumn.Width = 100;
-            }
-            else
-            {
-                // use invisible notes as a placeholder to take up space
-                notesControl1.Visible = false;
-                notesColumn.Width = 100;
-            }
+        }
 
-            tableLayoutPanel1.ResumeLayout();
+        public void HideLinescanControls() => SetLinescanControlVisibility(false);
+
+        public void ShowLinescanControls() => SetLinescanControlVisibility(true);
+
+        public void SetLinescanControlVisibility(bool visible)
+        {
+            imagesControl1.Visible = visible;
+            analysisSettingsControl.Visible = visible;
+            analysisResultsControl.Visible = visible;
         }
 
         public void OnRecalculate(Analysis.AnalysisSettings settings)

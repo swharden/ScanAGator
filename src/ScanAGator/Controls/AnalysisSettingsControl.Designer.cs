@@ -53,9 +53,9 @@
             this.cbFloor = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.lblLineScanTime = new System.Windows.Forms.Label();
             this.cbFilter = new System.Windows.Forms.CheckBox();
             this.panel3 = new System.Windows.Forms.Panel();
-            this.lblLineScanTime = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pbGraph)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline2)).BeginInit();
@@ -74,11 +74,13 @@
             // 
             // pbGraph
             // 
+            this.pbGraph.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pbGraph.BackColor = System.Drawing.Color.Purple;
             this.pbGraph.Location = new System.Drawing.Point(11, 15);
             this.pbGraph.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.pbGraph.Name = "pbGraph";
-            this.pbGraph.Size = new System.Drawing.Size(450, 109);
+            this.pbGraph.Size = new System.Drawing.Size(719, 109);
             this.pbGraph.TabIndex = 12;
             this.pbGraph.TabStop = false;
             // 
@@ -156,21 +158,22 @@
             // 
             // panel1
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BackColor = System.Drawing.Color.Purple;
             this.panel1.Location = new System.Drawing.Point(11, 14);
             this.panel1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(450, 422);
+            this.panel1.Size = new System.Drawing.Size(719, 422);
             this.panel1.TabIndex = 31;
             // 
             // tbBaseline2
             // 
             this.tbBaseline2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbBaseline2.AutoSize = false;
-            this.tbBaseline2.Location = new System.Drawing.Point(505, 1);
+            this.tbBaseline2.Location = new System.Drawing.Point(779, -3);
             this.tbBaseline2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tbBaseline2.Maximum = 50;
             this.tbBaseline2.Name = "tbBaseline2";
@@ -183,9 +186,9 @@
             // tbBaseline1
             // 
             this.tbBaseline1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbBaseline1.AutoSize = false;
-            this.tbBaseline1.Location = new System.Drawing.Point(464, 1);
+            this.tbBaseline1.Location = new System.Drawing.Point(738, -3);
             this.tbBaseline1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tbBaseline1.Maximum = 50;
             this.tbBaseline1.Name = "tbBaseline1";
@@ -197,26 +200,28 @@
             // 
             // tbStructure2
             // 
-            this.tbStructure2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tbStructure2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbStructure2.AutoSize = false;
             this.tbStructure2.Location = new System.Drawing.Point(-6, 487);
             this.tbStructure2.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tbStructure2.Maximum = 50;
             this.tbStructure2.Name = "tbStructure2";
-            this.tbStructure2.Size = new System.Drawing.Size(482, 38);
+            this.tbStructure2.Size = new System.Drawing.Size(736, 38);
             this.tbStructure2.TabIndex = 28;
             this.tbStructure2.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.tbStructure2.Value = 30;
             // 
             // tbStructure1
             // 
-            this.tbStructure1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tbStructure1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tbStructure1.AutoSize = false;
             this.tbStructure1.Location = new System.Drawing.Point(-6, 446);
             this.tbStructure1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.tbStructure1.Maximum = 50;
             this.tbStructure1.Name = "tbStructure1";
-            this.tbStructure1.Size = new System.Drawing.Size(482, 38);
+            this.tbStructure1.Size = new System.Drawing.Size(736, 38);
             this.tbStructure1.TabIndex = 27;
             this.tbStructure1.TickStyle = System.Windows.Forms.TickStyle.TopLeft;
             this.tbStructure1.Value = 20;
@@ -379,7 +384,7 @@
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(560, 871);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(823, 871);
             this.tableLayoutPanel1.TabIndex = 41;
             // 
             // panel2
@@ -407,8 +412,18 @@
             this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel2.Location = new System.Drawing.Point(3, 539);
             this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(554, 329);
+            this.panel2.Size = new System.Drawing.Size(817, 329);
             this.panel2.TabIndex = 0;
+            // 
+            // lblLineScanTime
+            // 
+            this.lblLineScanTime.AutoSize = true;
+            this.lblLineScanTime.ForeColor = System.Drawing.SystemColors.ControlDark;
+            this.lblLineScanTime.Location = new System.Drawing.Point(14, 285);
+            this.lblLineScanTime.Name = "lblLineScanTime";
+            this.lblLineScanTime.Size = new System.Drawing.Size(157, 20);
+            this.lblLineScanTime.TabIndex = 42;
+            this.lblLineScanTime.Text = "2021-02-03 15:16:17";
             // 
             // cbFilter
             // 
@@ -431,18 +446,8 @@
             this.panel3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel3.Location = new System.Drawing.Point(3, 3);
             this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(554, 530);
+            this.panel3.Size = new System.Drawing.Size(817, 530);
             this.panel3.TabIndex = 1;
-            // 
-            // lblLineScanTime
-            // 
-            this.lblLineScanTime.AutoSize = true;
-            this.lblLineScanTime.ForeColor = System.Drawing.SystemColors.ControlDark;
-            this.lblLineScanTime.Location = new System.Drawing.Point(14, 285);
-            this.lblLineScanTime.Name = "lblLineScanTime";
-            this.lblLineScanTime.Size = new System.Drawing.Size(157, 20);
-            this.lblLineScanTime.TabIndex = 42;
-            this.lblLineScanTime.Text = "2021-02-03 15:16:17";
             // 
             // AnalysisSettingsControl
             // 
@@ -451,7 +456,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
             this.Name = "AnalysisSettingsControl";
-            this.Size = new System.Drawing.Size(560, 871);
+            this.Size = new System.Drawing.Size(823, 871);
             ((System.ComponentModel.ISupportInitialize)(this.pbGraph)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudBaseline2)).EndInit();
