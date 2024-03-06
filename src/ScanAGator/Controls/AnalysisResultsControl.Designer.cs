@@ -37,6 +37,7 @@
             this.btnCopyPeak = new System.Windows.Forms.Button();
             this.lblPeak = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnCopyCurve = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -78,6 +79,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnCopyCurve);
             this.panel1.Controls.Add(this.btnLaunch);
             this.panel1.Controls.Add(this.btnSave);
             this.panel1.Controls.Add(this.btnCopyPeak);
@@ -140,6 +142,16 @@
             this.label1.Text = "Peak ΔF/F";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
+            // btnCopyCurve
+            // 
+            this.btnCopyCurve.Location = new System.Drawing.Point(259, 15);
+            this.btnCopyCurve.Name = "btnCopyCurve";
+            this.btnCopyCurve.Size = new System.Drawing.Size(116, 47);
+            this.btnCopyCurve.TabIndex = 5;
+            this.btnCopyCurve.Text = "Copy Curve";
+            this.btnCopyCurve.UseVisualStyleBackColor = true;
+            this.btnCopyCurve.Click += new System.EventHandler(this.btnCopyCurve_Click);
+            // 
             // AnalysisResultsControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -163,5 +175,6 @@
         private System.Windows.Forms.Button btnCopyPeak;
         private System.Windows.Forms.Label lblPeak;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnCopyCurve;
     }
 }

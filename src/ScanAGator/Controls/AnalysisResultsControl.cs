@@ -84,6 +84,18 @@ namespace ScanAGator.Controls
             Clipboard.SetText(Math.Round(PeakDFF, 5).ToString());
         }
 
+        private void btnCopyCurve_Click(object sender, EventArgs e)
+        {
+            if (Result is null)
+                return;
+
+            string[] textValues = Result.SmoothDeltaGreenOverRedCurve.Values
+                .Select(x => double.IsNaN(x) ? "--" : Math.Round(x, 5).ToString())
+                .ToArray();
+
+            Clipboard.SetText(string.Join("\n", textValues));
+        }
+
         private void btnSave_Click(object sender, EventArgs e)
         {
             if (Result is not null)
