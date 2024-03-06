@@ -61,6 +61,6 @@ public static class StructureDetection
         while (columnIntensities[structure2] > cutOff && structure2 < columnIntensities.Length - 1)
             structure2++;
 
-        return new StructureRange(structure1, structure2);
+        return new StructureRange(structure1, structure2, columnIntensities.Length);
     }
 }

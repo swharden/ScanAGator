@@ -15,6 +15,18 @@ public partial class ImagesControl : UserControl
     Prairie.ParirieXmlFile? PvXml = null;
     List<string> ImagePaths = [];
 
+    private StructureRange _StructureRange;
+    public StructureRange StructureRange
+
+    {
+        get => _StructureRange;
+        set
+        {
+            _StructureRange = value;
+            LoadSelectedImage();
+        }
+    }
+
     public ImagesControl()
     {
         InitializeComponent();
@@ -58,7 +70,7 @@ public partial class ImagesControl : UserControl
         string imagePath = ImagePaths[hScrollBar1.Value];
 
         Bitmap bmp = ImageDataTools.ReadTif_ST(imagePath);
-        ImageDrawing.DrawLinescan(bmp, PvXml);
+        ImageDrawing.DrawLinescan(bmp, PvXml, StructureRange);
         Image oldImage = pictureBox1.Image;
         pictureBox1.Image = bmp;
         oldImage?.Dispose();

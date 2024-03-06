@@ -137,7 +137,7 @@ public static class ImageDataTools
             {
                 rowSum += img.Values[row * img.Width + col];
             }
-            avgByRow[row] = rowSum / structure.Size;
+            avgByRow[row] = rowSum / structure.Span;
         }
         return avgByRow;
     }

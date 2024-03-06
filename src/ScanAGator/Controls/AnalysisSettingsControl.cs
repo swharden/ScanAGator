@@ -1,16 +1,8 @@
 ﻿using System;
-using System.IO;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ScanAGator.Analysis;
-using ScanAGator.Imaging;
 
 namespace ScanAGator.Controls
 {
@@ -23,6 +15,9 @@ namespace ScanAGator.Controls
         private Imaging.RatiometricImages? Images;
         private Bitmap? DisplayBitmap;
         private Prairie.ParirieXmlFile? PVXml;
+
+        StructureRange StructureLast;
+        public EventHandler<StructureRange> StructureChanged = delegate { };
 
         public AnalysisSettingsControl()
         {
@@ -76,7 +71,7 @@ namespace ScanAGator.Controls
 
             tbFrame.Value = 0;
             tbFrame.Maximum = Images.FrameCount - 1;
-            lblLineScanTime.Text = xml.AcquisitionDate.ToString() + Environment.NewLine + 
+            lblLineScanTime.Text = xml.AcquisitionDate.ToString() + Environment.NewLine +
                 $"X={xml.Position.X}, Y={xml.Position.Y}, Z={xml.Position.Z}";
 
             OnLinescanImageChanged();
@@ -218,7 +213,7 @@ namespace ScanAGator.Controls
                 return null;
 
             BaselineRange baseline = new((int)nudBaseline1.Value, (int)nudBaseline2.Value);
-            StructureRange structure = new((int)nudStructure1.Value, (int)nudStructure2.Value);
+            StructureRange structure = new((int)nudStructure1.Value, (int)nudStructure2.Value, ratioImage.GreenData.Width);
             int filterPx = cbFilter.Checked ? (int)nudFilterPx.Value : 0;
             nudFilterPx.Enabled = cbFilter.Checked;
             double filterMs = filterPx * PVXml.MsecPerPixel;
@@ -236,6 +231,7 @@ namespace ScanAGator.Controls
             pbGraph.Image = plt.GetBitmap();
 
             Recalculate?.Invoke(settings);
+            StructureChanged.Invoke(this, structure);
             NeedsRecalculation = false;
 
             return settings;
@@ -255,9 +251,8 @@ namespace ScanAGator.Controls
             float b2y = (baseline.Max + .5f) * pxPerPxY;
 
             float pxPerPxX = (float)panel1.Width / DisplayBitmap.Width;
-            StructureRange structure = new(tbStructure1.Value, tbStructure2.Value);
-            float s1x = (structure.Min - .5f) * pxPerPxX;
-            float s2x = (structure.Max + .5f) * pxPerPxX;
+            float s1x = (tbStructure1.Value - .5f) * pxPerPxX;
+            float s2x = (tbStructure2.Value + .5f) * pxPerPxX;
 
             gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 

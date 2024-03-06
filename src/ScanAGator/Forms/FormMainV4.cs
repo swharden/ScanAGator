@@ -21,6 +21,7 @@ namespace ScanAGator.Forms
             folderSelector1.AutoAnalyze += OnAutoAnalyze;
             folderSelector1.PlotCurves += OnPlotCurves;
             analysisSettingsControl.Recalculate += OnRecalculate;
+            analysisSettingsControl.StructureChanged += (s, e) => imagesControl1.StructureRange = e;
             OnFolderSelected(null);
             Timer.Tick += Timer_Tick;
         }
