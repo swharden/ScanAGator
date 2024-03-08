@@ -46,7 +46,7 @@ namespace ScanAGator.Forms
             this.tableLayoutPanel1.ColumnCount = 3;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 400F));
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 975F));
+            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Absolute, 930F));
             this.tableLayoutPanel1.Controls.Add(this.tableLayoutPanel2, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.analysisSettingsControl, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.folderSelector1, 0, 0);
@@ -65,12 +65,12 @@ namespace ScanAGator.Forms
             this.tableLayoutPanel2.Controls.Add(this.imagesControl1, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this.analysisResultsControl, 0, 1);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(1896, 3);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(1941, 3);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(969, 1222);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(924, 1222);
             this.tableLayoutPanel2.TabIndex = 0;
             // 
             // imagesControl1
@@ -79,7 +79,7 @@ namespace ScanAGator.Forms
             this.imagesControl1.Location = new System.Drawing.Point(2, 2);
             this.imagesControl1.Margin = new System.Windows.Forms.Padding(2);
             this.imagesControl1.Name = "imagesControl1";
-            this.imagesControl1.Size = new System.Drawing.Size(965, 607);
+            this.imagesControl1.Size = new System.Drawing.Size(920, 607);
             this.imagesControl1.TabIndex = 3;
             // 
             // analysisResultsControl
@@ -88,7 +88,7 @@ namespace ScanAGator.Forms
             this.analysisResultsControl.Location = new System.Drawing.Point(2, 613);
             this.analysisResultsControl.Margin = new System.Windows.Forms.Padding(2);
             this.analysisResultsControl.Name = "analysisResultsControl";
-            this.analysisResultsControl.Size = new System.Drawing.Size(965, 607);
+            this.analysisResultsControl.Size = new System.Drawing.Size(920, 607);
             this.analysisResultsControl.TabIndex = 2;
             // 
             // analysisSettingsControl
@@ -97,7 +97,7 @@ namespace ScanAGator.Forms
             this.analysisSettingsControl.Location = new System.Drawing.Point(406, 8);
             this.analysisSettingsControl.Margin = new System.Windows.Forms.Padding(6, 8, 6, 8);
             this.analysisSettingsControl.Name = "analysisSettingsControl";
-            this.analysisSettingsControl.Size = new System.Drawing.Size(1481, 1212);
+            this.analysisSettingsControl.Size = new System.Drawing.Size(1526, 1212);
             this.analysisSettingsControl.TabIndex = 0;
             // 
             // folderSelector1

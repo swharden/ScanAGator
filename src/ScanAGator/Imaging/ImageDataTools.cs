@@ -260,10 +260,13 @@ public static class ImageDataTools
         return new ImageData(averageData, images.First().Width, images.First().Height);
     }
 
-    public static Bitmap ReadTif_ST(string imagePath) // WARNING: not supporting indexed tifs
+    public static Bitmap ReadTif_ST(string imagePath, double brightness)
     {
+        // WARNING: not supporting indexed tifs
         SciTIF.TifFile tifFile = new(imagePath);
         SciTIF.Image tifImage = tifFile.GetImage();
+        tifImage.AutoScale();
+        tifImage.ScaleBy(0, brightness);
         return tifImage.ToBitmap();
     }
 

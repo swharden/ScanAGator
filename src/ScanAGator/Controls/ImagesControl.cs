@@ -1,6 +1,5 @@
 ﻿using ScanAGator.Imaging;
 using ScanAGator.Prairie;
-using ScottPlot;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -31,6 +30,7 @@ public partial class ImagesControl : UserControl
     {
         InitializeComponent();
         hScrollBar1.ValueChanged += (s, e) => LoadSelectedImage();
+        trackBar1.ValueChanged += (s, e) => LoadSelectedImage();
         pictureBox1.MouseClick += PictureBox1_MouseClick;
     }
 
@@ -68,8 +68,8 @@ public partial class ImagesControl : UserControl
         }
 
         string imagePath = ImagePaths[hScrollBar1.Value];
-
-        Bitmap bmp = ImageDataTools.ReadTif_ST(imagePath);
+        double brightness = (double)trackBar1.Value / 100;
+        Bitmap bmp = ImageDataTools.ReadTif_ST(imagePath, brightness);
         ImageDrawing.DrawLinescan(bmp, PvXml, StructureRange);
         Image oldImage = pictureBox1.Image;
         pictureBox1.Image = bmp;
