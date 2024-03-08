@@ -23,7 +23,7 @@ public static class ImageDrawing
         using Graphics gfx = Graphics.FromImage(bmp);
         gfx.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
-        using Pen pen1 = new(Color.FromArgb(100, 255, 255, 0), width: 5);
+        using Pen pen1 = new(Color.FromArgb(100, 255, 255, 0), width: 2);
         gfx.DrawLines(pen1, points);
 
         if (points.Length > 2)
