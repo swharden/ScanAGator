@@ -55,8 +55,8 @@ public static class ImageDrawing
 
     private static void MarkFreehandEdges(Graphics gfx, PointF[] points, StructureRange structure)
     {
-        int index1 = (int)(points.Length * structure.MinFraction);
-        int index2 = (int)(points.Length * structure.MaxFraction);
+        int index1 = (int)(points.Length * structure.MinFraction) + 1;
+        int index2 = (int)(points.Length * structure.MaxFraction) + 1;
 
         using Pen pen2 = new(Color.FromArgb(255, 255, 255, 0), width: 3);
         MarkEdge(gfx, pen2, points, index1);
