@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using ScanAGator.Analysis;
+using ScanAGator.Imaging;
 
 namespace ScanAGator.Controls
 {
@@ -221,14 +223,32 @@ namespace ScanAGator.Controls
 
             AnalysisSettings settings = new(ratioImage, Images.Frames, baseline, structure, filterPx, ratioImage.FloorPercentile, PVXml);
 
-            ScottPlot.Plot plt = new(pbGraph.Width, pbGraph.Height);
-            plt.Frameless();
-            plt.AddSignal(ratioImage.GreenData.AverageByColumn(), 1, Color.Green);
-            plt.AddSignal(ratioImage.RedData.AverageByColumn(), 1, Color.Red);
-            plt.AddHorizontalSpan(structure.Min - .5, structure.Max + .5, Color.FromArgb(20, Color.Blue));
-            plt.AxisAutoX(0);
-            pbGraph.Image?.Dispose();
-            pbGraph.Image = plt.GetBitmap();
+            double[] redColumnData = ratioImage.RedData.AverageByColumn();
+            double[] greenColumnData = ratioImage.GreenData.AverageByColumn();
+            double ratioMinRed = redColumnData.Max() * .01;
+            double[] ratioData = Enumerable
+                .Range(0, redColumnData.Length)
+                .Select(i => redColumnData[i] > ratioMinRed ? greenColumnData[i] / redColumnData[i] : 0)
+                .ToArray();
+
+            ScottPlot.Plot pltRaw = new(pbGraphRaw.Width, pbGraphRaw.Height);
+            pltRaw.Frameless();
+            pltRaw.AddSignal(greenColumnData, 1, Color.Green);
+            pltRaw.AddSignal(redColumnData, 1, Color.Red);
+            pltRaw.AddHorizontalSpan(structure.Min - .5, structure.Max + .5, Color.FromArgb(20, Color.Blue));
+            pltRaw.AxisAutoX(0);
+            pltRaw.Grid(false);
+            pbGraphRaw.Image?.Dispose();
+            pbGraphRaw.Image = pltRaw.GetBitmap();
+
+            ScottPlot.Plot pltRatio = new(pbGraphRatio.Width, pbGraphRatio.Height);
+            pltRatio.Frameless();
+            pltRatio.AddSignal(ratioData, 1);
+            pltRatio.AddHorizontalSpan(structure.Min - .5, structure.Max + .5, Color.FromArgb(20, Color.Blue));
+            pltRatio.AxisAutoX(0);
+            pltRatio.Grid(false);
+            pbGraphRatio.Image?.Dispose();
+            pbGraphRatio.Image = pltRatio.GetBitmap();
 
             Recalculate?.Invoke(settings);
             StructureChanged.Invoke(this, structure);
