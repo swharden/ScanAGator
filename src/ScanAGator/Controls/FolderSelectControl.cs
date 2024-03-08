@@ -24,7 +24,7 @@ namespace ScanAGator.Controls
             FullSizeFirstColumn(lvFolders);
 
             string initialFolderPath = @"X:\Data\zProjects\OT-Tom NMDA signaling\2P bpAP NMDA\2022-08-22 1mM Mg\cell3";
-            SetFolder(initialFolderPath);
+            UpdateControlsForFolder(initialFolderPath);
 
             lvFolders.MouseDoubleClick += LvFolders_MouseDoubleClick;
             lvFolders.SelectedIndexChanged += LvFolders_SelectedIndexChanged;
@@ -54,7 +54,7 @@ namespace ScanAGator.Controls
                     context.MenuItems.Add(item0a);
 
                     MenuItem item0c = new() { Text = $"Refresh Folder" };
-                    item0c.Click += (s, e) => SetFolder(lvFolders.SelectedItems[0].ImageKey);
+                    item0c.Click += (s, e) => UpdateControlsForFolder(lvFolders.SelectedItems[0].ImageKey);
                     context.MenuItems.Add(item0c);
                 }
 
@@ -106,7 +106,7 @@ namespace ScanAGator.Controls
             }
             else
             {
-                SetFolder(clickedItemPath);
+                UpdateControlsForFolder(clickedItemPath);
             }
         }
 
@@ -124,7 +124,7 @@ namespace ScanAGator.Controls
                 Directory.Move(originalPath, newPath);
 
                 int selectedIndex = lvFolders.SelectedIndices[0];
-                SetFolder(containingFolder); // rescan to update folder names
+                UpdateControlsForFolder(containingFolder); // rescan to update folder names
                 lvFolders.SelectedIndices.Add(selectedIndex);
             }
         }
@@ -222,10 +222,14 @@ namespace ScanAGator.Controls
             string path = ((string[])e.Data.GetData(DataFormats.FileDrop)).First();
             if (!File.GetAttributes(path).HasFlag(FileAttributes.Directory))
                 path = Path.GetDirectoryName(path);
+            SetFolder(path);
+        }
 
+        public void SetFolder(string path)
+        {
             if (IsLinescanFolder(path))
             {
-                SetFolder(Path.GetDirectoryName(path));
+                UpdateControlsForFolder(Path.GetDirectoryName(path));
                 int i = Enumerable.Range(0, lvFolders.Items.Count)
                     .Where(x => lvFolders.Items[x].ImageKey == path)
                     .Single();
@@ -234,7 +238,7 @@ namespace ScanAGator.Controls
             }
             else
             {
-                SetFolder(path);
+                UpdateControlsForFolder(path);
             }
         }
 
@@ -258,7 +262,7 @@ namespace ScanAGator.Controls
                 column.Width -= 20;
         }
 
-        public void SetFolder(string folderPath)
+        private void UpdateControlsForFolder(string folderPath)
         {
             lvFolders.Items.Clear();
             if (!Directory.Exists(folderPath))

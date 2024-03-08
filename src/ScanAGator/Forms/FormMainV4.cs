@@ -24,6 +24,12 @@ namespace ScanAGator.Forms
             analysisSettingsControl.StructureChanged += (s, e) => imagesControl1.StructureRange = e;
             OnFolderSelected(null);
             Timer.Tick += Timer_Tick;
+
+            string? initialPath = UserSettings.LoadPath();
+            if (initialPath is not null)
+            {
+                folderSelector1.SetFolder(initialPath);
+            }
         }
 
         private void Timer_Tick(object sender, EventArgs e)
@@ -60,6 +66,7 @@ namespace ScanAGator.Forms
                     analysisSettingsControl.SetLinescanFolder(folderPath);
                     imagesControl1.SetLinescanFolder(folderPath);
                     ShowLinescanControls();
+                    UserSettings.SavePath(folderPath);
                 }
                 catch (Exception ex)
                 {
