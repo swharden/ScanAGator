@@ -20,13 +20,16 @@ internal class AnalysisTests
             img: images.Average,
             img2: images.Frames,
             baseline: new BaselineRange(20, 60),
-            structure: new StructureRange(21, 25),
+            structure: new StructureRange(21, 25, averageImage.Green.Width),
             filterPx: 20,
             floorPercentile: 20,
             xml: pvXml);
 
         // execute the analysis
         AnalysisResult result = new(averageImage, settings);
-        Console.WriteLine(result);
+
+        // save result
+        string reportFilePath = AnalysisReport.Generate(result);
+        Console.WriteLine(reportFilePath);
     }
 }

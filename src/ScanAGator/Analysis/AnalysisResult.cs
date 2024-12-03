@@ -39,5 +39,12 @@ public class AnalysisResult
     /// Save these results as a CSV file (containing curves) and JSON file (containing scan settings)
     /// </summary>
     /// <returns>Path to the CSV file created</returns>
-    public string Save() => AnalysisResultFile.SaveCsv(this);
+    public string Save()
+    {
+        string analysisFilePath = AnalysisReport.Generate(this);
+        ScottPlot.Tools.LaunchBrowser(analysisFilePath);
+
+        string csvFilePath = AnalysisResultFile.SaveCsv(this);
+        return csvFilePath;
+    }
 }
