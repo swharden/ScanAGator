@@ -1,7 +1,6 @@
 ﻿using ScanAGator.Imaging;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text;
 
 namespace ScanAGator.Analysis;
@@ -16,14 +15,14 @@ public static class AnalysisReport
         sb.AppendLine("<head>");
         sb.AppendLine("<meta charset=\"utf-8\">");
         sb.AppendLine("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-        sb.AppendLine("<link href=\"https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css\" rel=\"stylesheet\" integrity=\"sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH\" crossorigin=\"anonymous\">");
+        sb.AppendLine("<link href=\"http://192.168.1.9/css/bootstrap.min.css\" rel=\"stylesheet\">");
         sb.AppendLine("<style>img{max-width: 100%;}</style>");
         sb.AppendLine("</head>");
         sb.AppendLine("<body>");
-        sb.AppendLine("<div class='container'>");
+        sb.AppendLine("<div class='container my-4'>");
         AddRecordingInfo(result, sb);
 
-        sb.AppendLine("<div class='row'>");
+        sb.AppendLine("<div class='row my-5'>");
         sb.AppendLine("<div class='col-6'>");
         AddGreenOverlap(result, sb);
         sb.AppendLine("</div>");
@@ -32,12 +31,21 @@ public static class AnalysisReport
         sb.AppendLine("</div>");
         sb.AppendLine("</div>");
 
-        sb.AppendLine("<div class='row'>");
+        sb.AppendLine("<div class='row my-5'>");
         sb.AppendLine("<div class='col-6'>");
         AddRedOverlap(result, sb);
         sb.AppendLine("</div>");
         sb.AppendLine("<div class='col-6'>");
         AddRedConsecutive(result, sb);
+        sb.AppendLine("</div>");
+        sb.AppendLine("</div>");
+
+        sb.AppendLine("<div class='row my-5'>");
+        sb.AppendLine("<div class='col-6'>");
+        AddRatioOverlap(result, sb);
+        sb.AppendLine("</div>");
+        sb.AppendLine("<div class='col-6'>");
+        AddRatioConsecutive(result, sb);
         sb.AppendLine("</div>");
         sb.AppendLine("</div>");
 
@@ -58,6 +66,8 @@ public static class AnalysisReport
         sb.AppendLine($"<h1>{title}</h1>");
         sb.AppendLine($"<div class='mb-5'><code>{result.Settings.Xml.FolderPath}</code></div>");
     }
+
+    #region Overlaps
 
     private static void AddGreenOverlap(AnalysisResult result, StringBuilder sb)
     {
@@ -98,6 +108,30 @@ public static class AnalysisReport
         plot.XLabel("Time (milliseconds)");
         sb.AppendLine(plot.GetImageHTML());
     }
+
+    private static void AddRatioOverlap(AnalysisResult result, StringBuilder sb)
+    {
+        ScottPlot.Plot plot = new(600, 400);
+
+        for (int i = 0; i < result.Settings.SecondaryImages.Length; i++)
+        {
+            RatiometricImage img = result.Settings.SecondaryImages[i];
+            AnalysisResult curve = new(img, result.Settings);
+
+            var scatter = plot.AddScatterLines(curve.SmoothDeltaGreenOverRedCurve.Times, curve.SmoothDeltaGreenOverRedCurve.Values);
+            scatter.OnNaN = ScottPlot.Plottable.ScatterPlot.NanBehavior.Ignore;
+            scatter.LineColor = Color.FromArgb(200, plot.Palette.GetColor(0));
+        }
+
+        plot.Title("Overlapping G/R Traces");
+        plot.YLabel("PMT Value (AFU)");
+        plot.XLabel("Time (milliseconds)");
+        sb.AppendLine(plot.GetImageHTML());
+    }
+
+    #endregion
+
+    #region Consecutive
 
     private static void AddGreenConsecutive(AnalysisResult result, StringBuilder sb)
     {
@@ -140,4 +174,27 @@ public static class AnalysisReport
         plot.XLabel("Time (milliseconds)");
         sb.AppendLine(plot.GetImageHTML());
     }
+
+    private static void AddRatioConsecutive(AnalysisResult result, StringBuilder sb)
+    {
+        ScottPlot.Plot plot = new(600, 400);
+
+        for (int i = 0; i < result.Settings.SecondaryImages.Length; i++)
+        {
+            RatiometricImage img = result.Settings.SecondaryImages[i];
+            AnalysisResult curve = new(img, result.Settings);
+
+            var scatter = plot.AddScatterLines(curve.SmoothDeltaGreenOverRedCurve.Times, curve.SmoothDeltaGreenOverRedCurve.Values);
+            scatter.OnNaN = ScottPlot.Plottable.ScatterPlot.NanBehavior.Ignore;
+            scatter.LineColor = Color.FromArgb(200, plot.Palette.GetColor(0));
+            scatter.OffsetX = i * 15000;
+        }
+
+        plot.Title("Consecutive G/R Traces");
+        plot.YLabel("PMT Value (AFU)");
+        plot.XLabel("Time (milliseconds)");
+        sb.AppendLine(plot.GetImageHTML());
+    }
+
+    #endregion
 }
